@@ -1,3 +1,10 @@
+PROJ
+libgeotiff
+libtiff
+setup.log.full
+vcpkg
+
+
 # Prerequisites
 *.d
 
