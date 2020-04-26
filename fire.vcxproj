@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>PROJ\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>PROJ\src;libtiff\libtiff;libgeotiff\libgeotiff;libgeotiff\libgeotiff\libxtiff</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PROJ\build\lib\Debug\proj_5_2_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PROJ\build\lib\Debug\proj_5_2_d.lib;libtiff\libtiff\libtiff.lib;libgeotiff\libgeotiff\geotiff.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

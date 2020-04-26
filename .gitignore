@@ -3,6 +3,7 @@ libgeotiff
 libtiff
 setup.log.full
 vcpkg
+*.tif
 
 
 # Prerequisites
