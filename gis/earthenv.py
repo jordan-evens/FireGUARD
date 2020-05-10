@@ -1,3 +1,4 @@
+from __future__ import print_function
 #~ r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_N80W180.tar.gz'
 #~ r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_N80W005.tar.gz'
 #~ r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_N80E000.tar.gz'
@@ -17,6 +18,7 @@ import rasterio
 from rasterio.merge import merge
 from rasterio.plot import show
 import glob
+import georasters
 
 MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_{}{}.tar.gz'
 RANGE_NORTH = list(reversed(['N{:02d}'.format(5 * x) for x in list(xrange(17))]))
@@ -35,7 +37,7 @@ def download(url, to_dir='.', to_file=None):
         os.mkdir(to_dir)
     to_file = os.path.join(to_dir, to_file)
     if not os.path.exists(to_file):
-        print url
+        print(url)
         filedata = urllib2.urlopen(url)
         datatowrite = filedata.read()
         with open(to_file, 'wb') as f:
@@ -55,27 +57,20 @@ if __name__ == '__main__':
     if not os.path.exists(OUT_DIR):
         os.mkdir(OUT_DIR)
         for f in files:
-            print f
+            print(f)
             tar = tarfile.open(f)
             tar.extractall(OUT_DIR)
             tar.close()
     out_fp = 'EarthEnv.tif'
-    search_criteria = "*.bil"
-    q = os.path.join(OUT_DIR, search_criteria)
-    dem_fps = glob.glob(q)
-    src_files_to_mosaic = []
-    for fp in dem_fps:
-       src = rasterio.open(fp)
-       src_files_to_mosaic.append(src)
-    mosaic, out_trans = merge(src_files_to_mosaic)
-    out_meta = src.meta.copy()
-    out_meta.update({"driver": "GTiff",
-                      "height": mosaic.shape[1],
-                      "width": mosaic.shape[2],
-                      "transform": out_trans,
-                      #~ "crs": "+proj=utm +zone=35 +ellps=GRS80 +units=m +no_defs "
-                      })
-    with rasterio.open(out_fp, "w", **out_meta) as dest:
-        dest.write(mosaic)
-
-
+    if not os.path.exists(out_fp):
+        search_criteria = "EarthEnv-DEM90_*.bil"
+        q = os.path.join(OUT_DIR, search_criteria)
+        dem_fps = glob.glob(q)
+        src_files_to_mosaic = []
+        for fp in dem_fps:
+           #~ src = rasterio.open(fp)
+           src_files_to_mosaic.append(fp)
+        import sys
+        sys.path.append(r'C:\Python27\ArcGIS10.3\Scripts')
+        import gdal_merge as gm
+        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', out_fp] + src_files_to_mosaic)

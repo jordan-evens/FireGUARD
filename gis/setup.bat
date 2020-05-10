@@ -10,3 +10,5 @@ pip install "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
 pip install GDAL-2.2.4-cp27-cp27m-win32.whl
 pip install rasterio-1.0.28-cp27-cp27m-win32.whl
 pip install pyproj-1.9.6-cp27-cp27m-win32.whl
+pip install Fiona-1.8.13-cp27-cp27m-win32.whl
+@rem ~ pip install georasters
