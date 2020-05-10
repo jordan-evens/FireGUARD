@@ -7,6 +7,8 @@ vcpkg
 gis/data
 gis/download
 python-2.7.18.msi
+EarthEnv.tif*
+settings.ini
 
 # Prerequisites
 *.d

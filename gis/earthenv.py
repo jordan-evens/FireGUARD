@@ -20,11 +20,27 @@ from rasterio.plot import show
 import glob
 import georasters
 
+from Settings import Settings
+
+settings = Settings()
 MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_{}{}.tar.gz'
-RANGE_NORTH = list(reversed(['N{:02d}'.format(5 * x) for x in list(xrange(17))]))
-RANGE_SOUTH = ['S{:02d}'.format(5 * (x + 1)) for x in list(xrange(11))]
-RANGE_WEST = list(reversed(['W{:03d}'.format(5 * (x + 1)) for x in list(xrange(36))]))
-RANGE_EAST = ['E{:03d}'.format(5 * x) for x in list(xrange(36))]
+MIN_LAT = int(settings.latitude_min / 5) * 5
+if MIN_LAT < 0 and 0 != MIN_LAT  / 5:
+    MIN_LAT -= 5
+MAX_LAT = int(settings.latitude_max / 5) * 5
+RANGE_NORTH = map(lambda _: 'N{:02d}'.format(_),
+                  [x for x in reversed([5 * x for x in list(xrange(17))]) if x >= MIN_LAT and x <= MAX_LAT])
+RANGE_SOUTH = map(lambda _: 'S{:02d}'.format(_),
+                  [x for x in [(5 * (x + 1)) for x in list(xrange(11))] if -x >= MIN_LAT and -x <= MAX_LAT])
+MIN_LON = int(settings.longitude_min / 5) * 5
+if MIN_LON < 0 and 0 != MIN_LON  / 5:
+    MIN_LON -= 5
+MAX_LON = int(settings.longitude_max / 5) * 5
+MAX_LON -= 5
+RANGE_WEST = map(lambda _: 'W{:03d}'.format(_),
+                 [x for x in reversed([5 * (x + 1) for x in list(xrange(36))]) if -x >= MIN_LON and -x <= MAX_LON])
+RANGE_EAST = map(lambda _: 'E{:03d}'.format(_),
+                 [x for x in [5 * x for x in list(xrange(36))] if x >= MIN_LON and x <= MAX_LON])
 RANGE_LATITUDE = RANGE_NORTH + RANGE_SOUTH 
 RANGE_LONGITUDE = RANGE_WEST + RANGE_EAST
 OUT_DIR = 'data'
