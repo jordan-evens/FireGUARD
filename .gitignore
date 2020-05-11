@@ -9,6 +9,11 @@ gis/download
 python-2.7.18.msi
 EarthEnv.tif*
 settings.ini
+*.dbf
+*.prj
+*.shp
+*.shx
+*.sr.lock
 
 # Prerequisites
 *.d
