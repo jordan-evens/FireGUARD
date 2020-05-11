@@ -5,11 +5,15 @@ from Settings import Settings
 settings = Settings()
 
 ZONE_MIN = 15 + (settings.longitude_min + 93.0) / 6.0
-if int(ZONE_MIN) < ZONE_MIN:
+if int(ZONE_MIN) + 0.5 > ZONE_MIN:
+    ZONE_MIN = int(ZONE_MIN)
+else:
     ZONE_MIN = int(ZONE_MIN) + 0.5
 ZONE_MAX = 15 + (settings.longitude_max + 93.0) / 6.0
-if int(ZONE_MAX) < ZONE_MAX:
+if round(ZONE_MAX, 0) < ZONE_MAX:
     ZONE_MAX = int(ZONE_MAX) + 0.5
+else:
+    ZONE_MAX = round(ZONE_MAX, 0)
 
 zone = ZONE_MIN
 while zone <= ZONE_MAX:
