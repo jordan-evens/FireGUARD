@@ -9,11 +9,11 @@ from __future__ import print_function
 #~ r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_S05W180.tar.gz'
 #~ url = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_S55W180.tar.gz'
 
-import urllib2
 import os
 import multiprocessing
 import tarfile
 
+from shared import download
 import rasterio
 from rasterio.merge import merge
 from rasterio.plot import show
@@ -45,20 +45,6 @@ RANGE_LATITUDE = RANGE_NORTH + RANGE_SOUTH
 RANGE_LONGITUDE = RANGE_WEST + RANGE_EAST
 OUT_DIR = 'data'
 
-
-def download(url, to_dir='.', to_file=None):
-    if to_file is None:
-        to_file = os.path.basename(url)
-    if not os.path.exists(to_dir):
-        os.mkdir(to_dir)
-    to_file = os.path.join(to_dir, to_file)
-    if not os.path.exists(to_file):
-        print(url)
-        filedata = urllib2.urlopen(url)
-        datatowrite = filedata.read()
-        with open(to_file, 'wb') as f:
-            f.write(datatowrite)
-    return to_file
 
 def to_download(url):
     return download(url, 'download')
