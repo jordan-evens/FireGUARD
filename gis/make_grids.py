@@ -1,3 +1,4 @@
+import gc
 import shapefile
 import rasterio
 from rasterio.plot import show
@@ -9,12 +10,20 @@ from fiona.crs import from_epsg
 import pycrs
 import gdal
 import os
+import fiona
+import rasterio.mask
+import rasterio.rio
+import osr
 
 from Settings import Settings
 
 settings = Settings()
 
 DIR = 'grid'
+MIN_EASTING = 300000
+MAX_EASTING = 700000
+MIN_NORTHING = 0
+MAX_NORTHING = 9300000
 
 def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
@@ -41,24 +50,21 @@ while zone <= ZONE_MAX:
     shp = os.path.join(DIR, shp_base)
     w = shapefile.Writer(shp, shapeType=5)
     w.field('ZONE', 'F')
-    w.poly([[[300000, 0], [300000, 9300000], [700000, 9300000], [700000, 0]]])
+    w.poly([[[MIN_EASTING, MIN_NORTHING],
+              [MIN_EASTING, MAX_NORTHING],
+              [MAX_EASTING, MAX_NORTHING],
+              [MAX_EASTING, MIN_NORTHING]]])
     w.record(zone)
     w.close()
+    meridian = (zone - 15.0) * 6.0 - 93.0
+    wkt = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, meridian)
     with open(shp + '.prj', "wb") as prj:
-        #~ epsg = 'PROJCS["WGS_1984_UTM_Zone_15N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-93],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["Meter",1]]'
-        epsg = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, (zone - 15.0) * 6.0 - 93.0)
-        prj.write(epsg)
+        prj.write(wkt)
         prj.close()
-    #~ import fiona
-    #~ import rasterio
-    #~ import rasterio.mask
-    #~ with fiona.open(shp + '.shp', "r") as shapefile:
-        #~ shapes = [feature["geometry"] for feature in shapefile]
-    #~ with rasterio.open("EarthEnv.tif") as src:
-        #~ out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
-        #~ out_meta = src.meta
+    proj_srs = osr.SpatialReference(wkt=wkt)
     fp = 'EarthEnv.tif'
     out_tif = shp.replace('utm_', 'dem_') + '.tif'
+    buf_tif = shp.replace('utm_', 'buffer_') + '.tif'
     data = rasterio.open(fp)
     geo = gpd.read_file(shp + '.shp')
     geo = geo.to_crs(crs=data.crs.data)
@@ -84,22 +90,41 @@ while zone <= ZONE_MAX:
     epsg_code = int(data.crs.data['init'][5:])
     print(epsg_code)
     #~ print('Cropping raster')
-    import rasterio.rio
-    #~ ds = gdal.Open(fp)
-    # this is very wrong because the lat/lon bounds don't work after projecting
-    #~ gdal.Translate(out_tif,
+    ds = gdal.Open(fp)
+    #~ # this is very wrong because the lat/lon bounds don't work after projecting
+    #~ gdal.Translate(buf_tif,
                    #~ ds,
-                   #~ projWin=[min_lon, max_lat, max_lon, min_lat])
+                   #~ projWin=[meridian - 4, settings.latitude_max, meridian + 4, settings.latitude_min])
+    #~ ds = gdal.Open(buf_tif)
     #~ ds = None
-    #~ ds = gdal.Warp(out_tif,
-                   #~ ds,
-                   #~ format='GTiff',
+    #~ with fiona.open(shp + '_proj.shp', "r") as shp_in:
+        #~ shapes = [feature["geometry"] for feature in shp_in]
+    #~ with rasterio.open(buf_tif) as src:
+        #~ out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
+        #~ out_meta = src.meta
+    #~ out_meta.update({"driver": "GTiff",
+                 #~ "height": out_image.shape[1],
+                 #~ "width": out_image.shape[2],
+                 #~ "transform": out_transform})
+    #~ with rasterio.open(out_tif, "w", **out_meta) as dest:
+        #~ dest.write(out_image)
+    out_image = None
+    out_transform = None
+    #~ ds = None
+    srcWkt = data.crs.wkt
+    srcSRS = osr.SpatialReference()
+    srcSRS.ImportFromWkt(data.crs.wkt)
+    dstSRS = osr.SpatialReference()
+    dstSRS.ImportFromWkt(wkt)
+    ds = gdal.Warp(out_tif,
+                   ds,
+                   format='GTiff',
                    #~ cutlineDSName=proj,
                    #~ cutlineSQL='SELECT * FROM ' + shp_base + '_proj',
                    #~ cutlineLayer=shp_base + '_proj',
-                   #~ # outputBounds=[min_lon, min_lat, max_lon, max_lat],
-                   #~ multithread=True,
-                   #~ cropToCutline=True)
+                   outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
+                   srcSRS=srcWkt,
+                   dstSRS=wkt)
     #~ ds = gdal.Warp(out_tif,
                    #~ ds,
                    #~ format='GTiff',
@@ -107,3 +132,4 @@ while zone <= ZONE_MAX:
                    #~ multithread=True)
     ds = None
     zone += 0.5
+    gc.collect()
