@@ -46,6 +46,7 @@ def clip_zone(fp, prefix, zone):
     out_tif = os.path.join(DIR, prefix + '_{}'.format(zone).replace('.', '_')) + '.tif'
     if os.path.exists(out_tif):
         return out_tif
+    print(out_tif)
     meridian = (zone - 15.0) * 6.0 - 93.0
     wkt = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, meridian)
     proj_srs = osr.SpatialReference(wkt=wkt)
@@ -72,6 +73,8 @@ def clip_zone(fp, prefix, zone):
                    ds,
                    format='GTiff',
                    outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
+                   xRes=100,
+                   yRes=100,
                    srcSRS=srcWkt,
                    dstSRS=wkt)
     ds = None
@@ -81,5 +84,5 @@ def clip_zone(fp, prefix, zone):
 zone = ZONE_MIN
 while zone <= ZONE_MAX:
     dem = clip_zone('EarthEnv.tif', 'dem', zone)
-    #~ fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
+    fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
     zone += 0.5
