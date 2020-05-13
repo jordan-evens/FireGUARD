@@ -84,5 +84,13 @@ def clip_zone(fp, prefix, zone):
 zone = ZONE_MIN
 while zone <= ZONE_MAX:
     dem = clip_zone('EarthEnv.tif', 'dem', zone)
+    slope = dem.replace('dem_', 'slope_')
+    if not os.path.exists(slope):
+        print(slope)
+        gdal.DEMProcessing(slope, dem, 'slope')
+    aspect = dem.replace('dem_', 'aspect_')
+    if not os.path.exists(aspect):
+        print(aspect)
+        gdal.DEMProcessing(aspect, dem, 'aspect')
     fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
     zone += 0.5
