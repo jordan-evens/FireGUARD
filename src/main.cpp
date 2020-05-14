@@ -30,6 +30,7 @@ void WriteImage(TIFF* tif);
 #define HEIGHT 20L
 int main()
 {
+  TIFFSetWarningHandler(nullptr);
   PJ_CONTEXT* C;
   PJ* P;
   PJ_COORD a, b;
@@ -53,6 +54,7 @@ int main()
   proj_destroy(P);
   proj_context_destroy(C); /* may be omitted in the single threaded case */
   auto fname = "newgeo.tif";
+  auto from_file = "gis/grid/aspect_14_5.tif";
   TIFF* tif = nullptr;  /* TIFF-level descriptor */
   GTIF* gtif = nullptr; /* GeoKey-level descriptor */
   tif = XTIFFOpen(fname, "w");
@@ -73,11 +75,12 @@ int main()
   tif = (TIFF*)nullptr;  /* TIFF-level descriptor */
   gtif = (GTIF*)nullptr; /* GeoKey-level descriptor */
   int versions[3];
-  int cit_length;
+  int length;
   geocode_t model;    /* all key-codes are of this type */
   char* citation;
+  char* nodata;
   /* Open TIFF descriptor to read GeoTIFF tags */
-  tif = XTIFFOpen(fname, "r");
+  tif = XTIFFOpen(from_file, "r");
   if (!tif) goto failure;
   /* Open GTIF Key parser; keys will be read at this time. */
   gtif = GTIFNew(tif);
@@ -91,21 +94,23 @@ int main()
   }
   if (!GTIFKeyGet(gtif, GTModelTypeGeoKey, &model, 0, 1))
   {
-      printf("Yikes! no Model Type\n");
+    printf("Yikes! no Model Type\n");
     goto failure;
   }
   int size;
   uint32* width;
   tagtype_t type;
   /* ASCII keys are variable-length; compute size */
-  cit_length = GTIFKeyInfo(gtif, GTCitationGeoKey, &size, &type);
-  if (cit_length > 0)
+  length = GTIFKeyInfo(gtif, GTCitationGeoKey, &size, &type);
+  if (length > 0)
   {
-    citation = (char*)malloc(size * cit_length);
+    citation = (char*)malloc(size * length);
     if (!citation) goto failure;
-    GTIFKeyGet(gtif, GTCitationGeoKey, citation, 0, cit_length);
+    GTIFKeyGet(gtif, GTCitationGeoKey, citation, 0, length);
     printf("Citation:%s\n", citation);
   }
+  TIFFGetField(tif, TIFFTAG_GDAL_NODATA, &length, &nodata);
+  printf("NoData:%s\n", nodata);
   /* Get some TIFF info on this image */
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
   /* get rid of the key parser */
