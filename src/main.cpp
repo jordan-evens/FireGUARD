@@ -54,7 +54,7 @@ int main()
   proj_destroy(P);
   proj_context_destroy(C); /* may be omitted in the single threaded case */
   auto fname = "newgeo.tif";
-  auto from_file = "gis/grid/dem_14_5.tif";
+  auto from_file = "gis/grid/aspect_14_5.tif";
   TIFF* tif = nullptr;  /* TIFF-level descriptor */
   GTIF* gtif = nullptr; /* GeoKey-level descriptor */
   tif = XTIFFOpen(fname, "w");
@@ -127,6 +127,7 @@ int main()
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &imageLength);
     TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tileWidth);
     TIFFGetField(tif, TIFFTAG_TILELENGTH, &tileLength);
+    printf("%zux%zu", tileWidth, tileLength);
     buf = _TIFFmalloc(TIFFTileSize(tif));
     for (y = 0; y < imageLength; y += tileLength)
       for (x = 0; x < imageWidth; x += tileWidth)

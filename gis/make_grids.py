@@ -24,6 +24,7 @@ settings = Settings()
 
 CELL_SIZE = 100
 DIR = 'grid'
+CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
 
 def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
@@ -74,7 +75,7 @@ def clip_zone(fp, prefix, zone):
                    ds,
                    format='GTiff',
                    outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
-                   creationOptions=list(['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']),
+                   creationOptions=CREATION_OPTIONS,
                    xRes=CELL_SIZE,
                    yRes=CELL_SIZE,
                    srcSRS=srcWkt,
@@ -89,10 +90,10 @@ while zone <= ZONE_MAX:
     slope = dem.replace('dem_', 'slope_')
     if not os.path.exists(slope):
         print(slope)
-        gdal.DEMProcessing(slope, dem, 'slope')
+        gdal.DEMProcessing(slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
     aspect = dem.replace('dem_', 'aspect_')
     if not os.path.exists(aspect):
         print(aspect)
-        gdal.DEMProcessing(aspect, dem, 'aspect')
+        gdal.DEMProcessing(aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
     fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
     zone += 0.5
