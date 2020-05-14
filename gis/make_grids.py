@@ -22,6 +22,7 @@ from Settings import Settings
 
 settings = Settings()
 
+CELL_SIZE = 100
 DIR = 'grid'
 
 def getFeatures(gdf):
@@ -73,8 +74,8 @@ def clip_zone(fp, prefix, zone):
                    ds,
                    format='GTiff',
                    outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
-                   xRes=100,
-                   yRes=100,
+                   xRes=CELL_SIZE,
+                   yRes=CELL_SIZE,
                    srcSRS=srcWkt,
                    dstSRS=wkt)
     ds = None
