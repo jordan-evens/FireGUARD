@@ -74,6 +74,7 @@ def clip_zone(fp, prefix, zone):
                    ds,
                    format='GTiff',
                    outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
+                   creationOptions=list(['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']),
                    xRes=CELL_SIZE,
                    yRes=CELL_SIZE,
                    srcSRS=srcWkt,

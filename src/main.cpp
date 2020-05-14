@@ -54,7 +54,7 @@ int main()
   proj_destroy(P);
   proj_context_destroy(C); /* may be omitted in the single threaded case */
   auto fname = "newgeo.tif";
-  auto from_file = "gis/grid/aspect_14_5.tif";
+  auto from_file = "gis/grid/dem_14_5.tif";
   TIFF* tif = nullptr;  /* TIFF-level descriptor */
   GTIF* gtif = nullptr; /* GeoKey-level descriptor */
   tif = XTIFFOpen(fname, "w");
@@ -109,10 +109,30 @@ int main()
     GTIFKeyGet(gtif, GTCitationGeoKey, citation, 0, length);
     printf("Citation:%s\n", citation);
   }
-  TIFFGetField(tif, TIFFTAG_GDAL_NODATA, &length, &nodata);
-  printf("NoData:%s\n", nodata);
+  if (TIFFGetField(tif, TIFFTAG_GDAL_NODATA, &length, &nodata) && length > 0)
+  {
+    printf("NoData:%s\n", nodata);
+  }
   /* Get some TIFF info on this image */
   TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+  if (tif)
+  {
+    uint32 imageWidth, imageLength;
+    uint32 tileWidth, tileLength;
+    uint32 x, y;
+    tdata_t buf;
+    auto scanline_size = TIFFScanlineSize(tif);
+    auto strip_size = TIFFStripSize(tif);
+    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &imageWidth);
+    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &imageLength);
+    TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tileWidth);
+    TIFFGetField(tif, TIFFTAG_TILELENGTH, &tileLength);
+    buf = _TIFFmalloc(TIFFTileSize(tif));
+    for (y = 0; y < imageLength; y += tileLength)
+      for (x = 0; x < imageWidth; x += tileWidth)
+        TIFFReadTile(tif, buf, x, y, 0, 0);
+    _TIFFfree(buf);
+  }
   /* get rid of the key parser */
   GTIFFree(gtif);
   /* close the TIFF file descriptor */
