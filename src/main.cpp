@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include "geotiffio.h"
 #include "geo_normalize.h"
 #include "stdafx.h"
@@ -118,23 +119,35 @@ GridInfo readTiffHeader(const std::string& file)
   printf("\nCorner Coordinates:\n");
   GTIFDefn defn;
   GTIFGetDefn(gtif, &defn);
-  if (!GTIFReportACorner(gtif,
-                         &defn,
-                         "Upper Left",
-                         0.0,
-                         0.0))
+  double x = 0.0;
+  double y = image_height;
+  /* Try to transform the coordinate into PCS space */
+  if (!GTIFImageToPCS(gtif, &x, &y))
+    throw std::runtime_error("Error loading coordinates");
+  printf("%-13s ", "Lower Left");
+  if (defn.Model == ModelTypeGeographic)
   {
-    printf(" ... unable to transform points between pixel/line and PCS space\n");
-    throw std::runtime_error(
-      " ... unable to transform points between pixel/line and PCS space\n");
+    printf("(%s,", GTIFDecToDMS(x, "Long", 2));
+    printf("%s)\n", GTIFDecToDMS(y, "Lat", 2));
   }
-  GTIFReportACorner(gtif, &defn, "Lower Left", 0.0, image_height);
-  GTIFReportACorner(gtif, &defn, "Upper Right", image_width, 0.0);
-  GTIFReportACorner(gtif, &defn, "Lower Right", image_width, image_height);
-  GTIFReportACorner(gtif, &defn, "Center", image_width / 2.0, image_height / 2.0);
+  else
+  {
+    printf("(%11.3f,%11.3f)", x, y);
+    if (GTIFProj4ToLatLong(&defn, 1, &x, &y))
+    {
+      printf("  (%s,", GTIFDecToDMS(x, "Long", 2));
+      printf("%s)", GTIFDecToDMS(y, "Lat", 2));
+    }
+    printf("\n");
+  }
   GTIFFree(gtif);
   XTIFFClose(tif);
-  return GridInfo(image_width, image_height, 0, 0, cell_width, nodata);
+  return GridInfo(image_width,
+                  image_height,
+                  std::stod(GTIFDecToDMS(x, "Long", 2)),
+                  std::stod(GTIFDecToDMS(y, "Lat", 2)),
+                  cell_width,
+                  nodata);
 }
 int main()
 {
