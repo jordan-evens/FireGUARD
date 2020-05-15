@@ -6,6 +6,9 @@ vcpkg
 *.tif
 gis/data
 gis/download
+gis/extracted
+
+
 python-2.7.18.msi
 EarthEnv.tif*
 settings.ini
