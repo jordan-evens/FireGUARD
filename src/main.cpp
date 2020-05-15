@@ -38,13 +38,15 @@ public:
            const double xllcorner,
            const double yllcorner,
            const double cell_size,
-           std::string nodata)
+           std::string nodata,
+           std::string proj4)
     : columns_(columns),
       rows_(rows),
       xllcorner_(xllcorner),
       yllcorner_(yllcorner),
       cell_size_(cell_size),
-      nodata_(std::move(nodata))
+      nodata_(std::move(nodata)),
+      proj4_(std::move(proj4))
   {
   }
 private:
@@ -54,6 +56,7 @@ private:
   double yllcorner_;
   double cell_size_;
   std::string nodata_;
+  std::string proj4_;
 };
 static int GTIFReportACorner(GTIF* gtif,
                              GTIFDefn* defn,
@@ -140,6 +143,8 @@ GridInfo readTiffHeader(const std::string& file)
     }
     printf("\n");
   }
+  auto proj4 = GTIFGetProj4Defn(&defn);
+  printf("PROJ4: %s\n", proj4);
   GTIFFree(gtif);
   XTIFFClose(tif);
   return GridInfo(image_width,
@@ -147,7 +152,8 @@ GridInfo readTiffHeader(const std::string& file)
                   std::stod(GTIFDecToDMS(x, "Long", 2)),
                   std::stod(GTIFDecToDMS(y, "Lat", 2)),
                   cell_width,
-                  nodata);
+                  nodata,
+                  std::string(proj4));
 }
 int main()
 {
