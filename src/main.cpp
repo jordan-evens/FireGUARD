@@ -13,13 +13,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // 
-// Last Updated 2020-05-13 by Jordan Evens
+// Last Updated 2020-05-14 by Jordan Evens
 
 #include <proj.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "geotiffio.h"
+#include "geo_normalize.h"
 #include "stdafx.h"
 #include "xtiffio.h"
 enum { VERSION = 0, MAJOR, MINOR };
@@ -28,6 +29,113 @@ void SetUpGeoKeys(GTIF* gtif);
 void WriteImage(TIFF* tif);
 #define WIDTH 20L
 #define HEIGHT 20L
+class GridInfo
+{
+public:
+  GridInfo(const size_t columns,
+           const size_t rows,
+           const double xllcorner,
+           const double yllcorner,
+           const double cell_size,
+           std::string nodata)
+    : columns_(columns),
+      rows_(rows),
+      xllcorner_(xllcorner),
+      yllcorner_(yllcorner),
+      cell_size_(cell_size),
+      nodata_(std::move(nodata))
+  {
+  }
+private:
+  size_t columns_;
+  size_t rows_;
+  double xllcorner_;
+  double yllcorner_;
+  double cell_size_;
+  std::string nodata_;
+};
+static int GTIFReportACorner(GTIF* gtif,
+                             GTIFDefn* defn,
+                             const char* corner_name,
+                             double x,
+                             double y)
+{
+  /* Try to transform the coordinate into PCS space */
+  if (!GTIFImageToPCS(gtif, &x, &y))
+    return false;
+  printf("%-13s ", corner_name);
+  if (defn->Model == ModelTypeGeographic)
+  {
+    printf("(%s,", GTIFDecToDMS(x, "Long", 2));
+    printf("%s)\n", GTIFDecToDMS(y, "Lat", 2));
+    return true;
+  }
+  printf("(%11.3f,%11.3f)", x, y);
+  if (GTIFProj4ToLatLong(defn, 1, &x, &y))
+  {
+    printf("  (%s,", GTIFDecToDMS(x, "Long", 2));
+    printf("%s)", GTIFDecToDMS(y, "Lat", 2));
+  }
+  printf("\n");
+  return true;
+}
+GridInfo readTiffHeader(const std::string& file)
+{
+  uint32 image_width;
+  uint32 image_height;
+  TIFF* tif = nullptr;  /* TIFF-level descriptor */
+  GTIF* gtif = nullptr; /* GeoKey-level descriptor */
+  tif = XTIFFOpen(file.c_str(), "r");
+  if (!tif)
+  {
+    printf("Couldn't open tif");
+    throw std::runtime_error("Couldn't open tif");
+  }
+  gtif = GTIFNew(tif);
+  if (!gtif)
+  {
+    printf("Couldn't open gtif");
+    throw std::runtime_error("Couldn't open gtif");
+  }
+  TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &image_width);
+  TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &image_height);
+  int length = 0;
+  char* buffer = nullptr;
+  if (TIFFGetField(tif, TIFFTAG_GDAL_NODATA, &length, &buffer) && length > 0)
+  {
+    printf("NoData:%s\n", buffer);
+  }
+  auto nodata = (0 == length) ? std::string("") : std::string(buffer);
+  int cell_length;
+  TIFFGetField(tif, TIFFTAG_CELLLENGTH, &cell_length);
+  int cell_width;
+  TIFFGetField(tif, TIFFTAG_CELLWIDTH, &cell_width);
+  if (cell_length != cell_width)
+  {
+    printf("Only square cells are allowed");
+    throw std::runtime_error("Only square cells are allowed");
+  }
+  printf("\nCorner Coordinates:\n");
+  GTIFDefn defn;
+  GTIFGetDefn(gtif, &defn);
+  if (!GTIFReportACorner(gtif,
+                         &defn,
+                         "Upper Left",
+                         0.0,
+                         0.0))
+  {
+    printf(" ... unable to transform points between pixel/line and PCS space\n");
+    throw std::runtime_error(
+      " ... unable to transform points between pixel/line and PCS space\n");
+  }
+  GTIFReportACorner(gtif, &defn, "Lower Left", 0.0, image_height);
+  GTIFReportACorner(gtif, &defn, "Upper Right", image_width, 0.0);
+  GTIFReportACorner(gtif, &defn, "Lower Right", image_width, image_height);
+  GTIFReportACorner(gtif, &defn, "Center", image_width / 2.0, image_height / 2.0);
+  GTIFFree(gtif);
+  XTIFFClose(tif);
+  return GridInfo(image_width, image_height, 0, 0, cell_width, nodata);
+}
 int main()
 {
   TIFFSetWarningHandler(nullptr);
@@ -55,6 +163,7 @@ int main()
   proj_context_destroy(C); /* may be omitted in the single threaded case */
   auto fname = "newgeo.tif";
   auto from_file = "gis/grid/aspect_14_5.tif";
+  auto grid_info = readTiffHeader(std::string(from_file));
   TIFF* tif = nullptr;  /* TIFF-level descriptor */
   GTIF* gtif = nullptr; /* GeoKey-level descriptor */
   tif = XTIFFOpen(fname, "w");
@@ -127,7 +236,7 @@ int main()
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &imageLength);
     TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tileWidth);
     TIFFGetField(tif, TIFFTAG_TILELENGTH, &tileLength);
-    printf("%zux%zu", tileWidth, tileLength);
+    printf("%ux%u", tileWidth, tileLength);
     buf = _TIFFmalloc(TIFFTileSize(tif));
     for (y = 0; y < imageLength; y += tileLength)
       for (x = 0; x < imageWidth; x += tileWidth)
