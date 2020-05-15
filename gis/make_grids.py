@@ -17,6 +17,7 @@ import osr
 from pyproj import Proj
 import numpy as np
 import pandas as pd
+import gdalconst
 
 from Settings import Settings
 
@@ -24,6 +25,7 @@ settings = Settings()
 
 CELL_SIZE = 100
 DIR = 'grid'
+TMP = 'tmp'
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
 
 def getFeatures(gdf):
@@ -43,6 +45,8 @@ else:
     ZONE_MAX = round(ZONE_MAX, 0)
 if not os.path.exists(DIR):
     os.mkdir(DIR)
+if not os.path.exists(TMP):
+    os.mkdir(TMP)
 
 def clip_zone(fp, prefix, zone):
     out_tif = os.path.join(DIR, prefix + '_{}'.format(zone).replace('.', '_')) + '.tif'
@@ -90,10 +94,14 @@ while zone <= ZONE_MAX:
     slope = dem.replace('dem_', 'slope_')
     if not os.path.exists(slope):
         print(slope)
-        gdal.DEMProcessing(slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
+        tmp_slope = slope.replace(DIR, TMP)
+        gdal.DEMProcessing(tmp_slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
+        gdal.Translate(slope, tmp_slope, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
     aspect = dem.replace('dem_', 'aspect_')
     if not os.path.exists(aspect):
         print(aspect)
-        gdal.DEMProcessing(aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
+        tmp_aspect = aspect.replace(DIR, TMP)
+        gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
+        gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
     fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
     zone += 0.5
