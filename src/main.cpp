@@ -58,31 +58,6 @@ private:
   std::string nodata_;
   std::string proj4_;
 };
-static int GTIFReportACorner(GTIF* gtif,
-                             GTIFDefn* defn,
-                             const char* corner_name,
-                             double x,
-                             double y)
-{
-  /* Try to transform the coordinate into PCS space */
-  if (!GTIFImageToPCS(gtif, &x, &y))
-    return false;
-  printf("%-13s ", corner_name);
-  if (defn->Model == ModelTypeGeographic)
-  {
-    printf("(%s,", GTIFDecToDMS(x, "Long", 2));
-    printf("%s)\n", GTIFDecToDMS(y, "Lat", 2));
-    return true;
-  }
-  printf("(%11.3f,%11.3f)", x, y);
-  if (GTIFProj4ToLatLong(defn, 1, &x, &y))
-  {
-    printf("  (%s,", GTIFDecToDMS(x, "Long", 2));
-    printf("%s)", GTIFDecToDMS(y, "Lat", 2));
-  }
-  printf("\n");
-  return true;
-}
 GridInfo readTiffHeader(const std::string& file)
 {
   uint32 image_width;
