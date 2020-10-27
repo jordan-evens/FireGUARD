@@ -16,11 +16,3 @@ msbuild /p:Configuration=Release /t:Build /m /warnaserror || (set ERRORLEVEL=1 &
 rm -rf Data\output || goto :end
 mkdir Data\output || goto :end
 PowerShell Measure-Command {start-process Release\firestarr.exe %ARGS% -Wait -NoNewWindow}
-
-if exist .prj del .prj 2> nul
-if exist *.pyc del *.pyc 2> nul
-(hg status | grep -E "^[^C]") && set ERRORLEVEL=1 && goto :end
-set ERRORLEVEL=0
-
-:end
-%COMSPEC% /C exit %ERRORLEVEL% >nul
