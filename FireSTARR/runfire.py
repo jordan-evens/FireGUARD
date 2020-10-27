@@ -136,17 +136,6 @@ def doRun():
     try_copy(Settings.BINARY, os.path.join(out_dir, os.path.basename(Settings.BINARY)))
     shutil.copyfile("settings.ini", os.path.join(out_dir, "settings.ini"))
     shutil.copyfile("fuel.lut", os.path.join(out_dir, "fuel.lut"))
-    from mercurial import ui, hg, commands
-    u = ui.ui()
-    repo = hg.repository(u, ".")
-    u.pushbuffer()
-    commands.log(u, repo)
-    output = u.popbuffer()
-    write_file(out_dir, "ver.txt", output)
-    u.pushbuffer()
-    commands.diff(u, repo)
-    output = u.popbuffer()
-    write_file(out_dir, "cur.diff", output)
     #
     os.chdir(out_dir)
     #
