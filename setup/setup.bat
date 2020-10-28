@@ -250,10 +250,11 @@ pip install pyodbc-4.0.30-cp27-cp27m-win32.whl
 pip install python_dateutil-2.8.1-py2.py3-none-any.whl
 pip install six-1.15.0-py2.py3-none-any.whl
 pip install pytz-2020.1-py2.py3-none-any.whl
-pip install numpy-1.11.0+mkl-cp27-cp27m-win32.whl --ignore-installed
-easy_install numexpr-2.4.win32-py2.7.exe
-pip install pandas-0.17.1-cp27-none-win32.whl
-pip install netCDF4-1.2.3.1-cp27-cp27m-win32.whl
+pip install "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
+pip install numexpr-2.7.2-cp27-cp27m-win32.whl
+pip install pandas-0.24.2-cp27-cp27m-win32.whl
+pip install cftime-1.0.4-cp27-cp27m-win32.whl
+pip install netCDF4-1.5.3-cp27-cp27m-win32.whl
 pip install --upgrade urllib3-1.22-py2.py3-none-any.whl
 pip install pycparser-2.20-py2.py3-none-any.whl
 pip install cffi-1.14.2-cp27-cp27m-win32.whl
@@ -265,16 +266,17 @@ pip install certifi-2018.1.18-py2.py3-none-any.whl
 
 @rem firestarr section
 @rem relies on weathershield being installed previously
-easy_install Shapely-1.4.4.win32-py2.7.exe
-easy_install GDAL-1.11.1.win32-py2.7.exe
-pip install click-3.1-py2.py3-none-any.whl
-easy_install Fiona-1.4.8.win32-py2.7.exe
+pip install Shapely-1.6.4.post2-cp27-cp27m-win32.whl
+pip install GDAL-2.2.4-cp27-cp27m-win32.whl
+pip install click-6.7-py2.py3-none-any.whl
+pip install click_plugins-1.1.1-py2.py3-none-any.whl
+pip install Fiona-1.8.13-cp27-cp27m-win32.whl
 pip install Cython-0.21.2-cp27-none-win32.whl
-easy_install pyproj-1.9.4dev.win32-py2.7.exe
-pip install pyparsing-2.4.6-py2.py3-none-any.whl --ignore-installed
-easy_install matplotlib-1.4.2.win32-py2.7.exe
-pip install descartes-1.0-py2-none-any.whl
-pip install geopandas-0.1.1-py2-none-any.whl
+pip install pyproj-1.9.6-cp27-cp27m-win32.whl
+pip install pyparsing-2.4.6-py2.py3-none-any.whl
+pip install matplotlib-2.2.5-cp27-cp27m-win32.whl
+pip install descartes-1.1.0-py2.py3-none-any.whl
+pip install geopandas-0.6.2-py2.py3-none-any.whl
 pip install functools32-3.2.3.post2-py2-none-any.whl
 pip install urllib3-1.22-py2.py3-none-any.whl
 pip install selenium-3.141.0-py2.py3-none-any.whl
