@@ -282,6 +282,7 @@ pip install urllib3-1.22-py2.py3-none-any.whl
 pip install selenium-3.141.0-py2.py3-none-any.whl
 pip install PyPDF2-1.26.0-py2-none-any.whl
 pip install fpdf-1.7.2-py2.py3-none-any.whl
+pip install rasterio-1.1.2-cp27-cp27m-win32.whl
 popd
 
 @rem MAKE SURE ORACLE IS INSTALLED BEFORE PROCEEDING IF REQUIRED
