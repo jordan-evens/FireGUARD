@@ -18,7 +18,6 @@ import rasterio
 from rasterio.merge import merge
 from rasterio.plot import show
 import glob
-import georasters
 
 from Settings import Settings
 

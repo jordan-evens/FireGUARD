@@ -1,5 +1,5 @@
 import gc
-import shapefile
+#import shapefile
 import rasterio
 from rasterio.plot import show
 from rasterio.plot import show_hist
@@ -16,6 +16,7 @@ import rasterio.rio
 import osr
 from pyproj import Proj
 import numpy as np
+import math
 import pandas as pd
 import gdalconst
 
@@ -75,6 +76,9 @@ def clip_zone(fp, prefix, zone):
     srcSRS.ImportFromWkt(data.crs.wkt)
     dstSRS = osr.SpatialReference()
     dstSRS.ImportFromWkt(wkt)
+    rb = ds.GetRasterBand(1)
+    no_data = rb.GetNoDataValue()
+    rb = None
     ds = gdal.Warp(out_tif,
                    ds,
                    format='GTiff',
@@ -84,6 +88,14 @@ def clip_zone(fp, prefix, zone):
                    yRes=CELL_SIZE,
                    srcSRS=srcWkt,
                    dstSRS=wkt)
+    ds = None
+    # HACK: make sure nodata value is set because C code expects it even if nothing is nodata
+    ds = gdal.Open(out_tif, 1)
+    rb = ds.GetRasterBand(1)
+    # HACK: for some reason no_data is a double??
+    if no_data is None:
+        rb.SetNoDataValue(int(-math.pow(2, 15) - 1))
+    rb = None
     ds = None
     gc.collect()
     return out_tif
@@ -103,5 +115,5 @@ while zone <= ZONE_MAX:
         tmp_aspect = aspect.replace(DIR, TMP)
         gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
         gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-    fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fbp', zone)
+    fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fuel', zone)
     zone += 0.5
