@@ -52,6 +52,7 @@ void show_usage_and_exit(const char* name)
     << "   -i                        Save intensity maps for simulations" << endl
     << "   -s                        Run in synchronous mode" << endl
     << "   -f                        Full export of all weather" << endl
+    << "   --wx                      Use input weather file instead of querying database" << endl
     << "   --perim                   Start from perimeter" << endl
     << "   --size                    Start from size" << endl
     << "   --ffmc                    Override startup Fine Fuel Moisture Code" << endl
@@ -117,6 +118,7 @@ int main(const int argc, const char* const argv[])
       auto save_intensity = false;
       auto actuals_only = false;
       auto full_wx = false;
+      string wx_file_name;
       string perim;
       size_t size = 0;
       auto score = 0.0;
@@ -189,6 +191,14 @@ int main(const int argc, const char* const argv[])
               show_usage_and_exit(name);
             }
             actuals_only = true;
+          }
+          else if (0 == strcmp(argv[i], "--wx"))
+          {
+            if (!wx_file_name.empty())
+            {
+              show_usage_and_exit(name);
+            }
+            wx_file_name = get_arg("wx", &i, argc, argv);
           }
           else if (0 == strcmp(argv[i], "--perim"))
           {
@@ -357,26 +367,43 @@ int main(const int argc, const char* const argv[])
           show_usage_and_exit(name);
         }
       }
+      if (!wx_file_name.empty())
+      {
+        // if weather file is specified then we need startup indices
+          if (nullptr == ffmc ||
+              nullptr == dmc ||
+              nullptr == dc ||
+              nullptr == apcp_0800)
+          {
+              cout << "Must specify startup indices if specifying weather input file\n";
+              show_usage_and_exit(name);
+          }
+      }
       struct stat info{};
       if (stat(output_directory.c_str(), &info) != 0 || !(info.st_mode & S_IFDIR))
       {
         firestarr::util::make_directory_recursive(output_directory.c_str());
       }
-      auto wx_file = output_directory + Settings::weatherFile();
-      firestarr::wx::WxShield wx(start_date,
-                                 start_point,
-                                 num_days,
-                                 wx_file,
-                                 ffmc,
-                                 dmc,
-                                 dc,
-                                 apcp_0800,
-                                 full_wx);
+      unique_ptr<firestarr::wx::FwiWeather> y = nullptr;
+      if (wx_file_name.empty())
+      {
+          wx_file_name = output_directory + Settings::weatherFile();
+          firestarr::wx::WxShield wx(start_date,
+              start_point,
+              num_days,
+              wx_file_name,
+              ffmc,
+              dmc,
+              dc,
+              apcp_0800,
+              full_wx);
+          y = wx.readYesterday();
+
+      }
       if (is_wx_only)
       {
         return 0;
       }
-      const auto y = wx.readYesterday();
       auto yesterday{nullptr == y ? firestarr::wx::FwiWeather::Zero : *y};
       // replace any overridden indices
       const auto ffmc_fixed = nullptr == ffmc ? yesterday.ffmc() : *ffmc;
@@ -405,7 +432,7 @@ int main(const int argc, const char* const argv[])
       }
       cout << "\n";
       return firestarr::sim::Model::runScenarios(output_directory.c_str(),
-                                                 wx_file.c_str(),
+                                                 wx_file_name.c_str(),
                                                  Settings::fuelLookupTable(),
                                                  Settings::rasterRoot(),
                                                  yesterday,
