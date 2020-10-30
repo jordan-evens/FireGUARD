@@ -12,6 +12,9 @@ from dateutil.parser import parse
 from processflags import *
 from util import read_file
 
+sys.path.append(os.path.join(os.path.basename(__file__), r'..\..\util'))
+from common import CONFIG
+
 def getHomeDir():
     """!
     Get home directory to be used as root
@@ -68,7 +71,7 @@ def readCommon(name):
     @param name Name of setting file to read
     @return Contents of setting file
     """
-    return read_file(os.path.realpath(os.path.join(getHomeDir(), '..\\settings')), name)
+    return CONFIG.get('FireGUARD', name)
 
 class Settings:
     """Provides settings for running FireSTARR"""
