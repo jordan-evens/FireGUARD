@@ -1,6 +1,14 @@
+echo off
 echo ENSURE YOU ARE RUNNING IN AN ADMIN COMMAND PROMPT
 PAUSE
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+IF DEFINED ENV_IS_SET goto :build
+SET ENV_IS_SET=1
+set VSCMD_DEBUG=1
+SET VC_VARS=vcvars64.bat
+for /r "C:\Program Files (x86)\Microsoft Visual Studio" %%a in (*) do if "%%~nxa"=="%VC_VARS%" set p=%%~dpnxa
+call "%p%"
+
+:build
 pushd ..
 
 git clone https://github.com/Microsoft/vcpkg.git
@@ -47,10 +55,16 @@ git clone https://github.com/OSGeo/libgeotiff.git
 
 @rem ~ osgeo4w-setup-x86_64.exe -q -k -r -A -s http://download.osgeo.org/osgeo4w/ -a x86_64 -R c:\OSGeo4W -P proj,libtiff,libgeotiff
 pushd libtiff
+git checkout Release-v3-9-3
 nmake /f Makefile.vc
 popd
 
 pushd libgeotiff\libgeotiff
+git checkout 1.4.3
+sed -i "s/OSGEO4W =.*/OSGEO4W = \.\.\\\.\.\\\\libtiff\\\\libtiff/g" Makefile.vc
+sed -i "s/\(TIFF_INC = .*\)\\\\include/\1/g" Makefile.vc
+sed -i "s/\(TIFF_LIB_DLL = .*\)\\\\lib\\\\libtiff_i.lib/\1\\\\libtiff_i.lib/g" Makefile.vc
+sed -i "s/\(INCL\t= .*\)/\1 -I ..\\\\..\\\\PROJ\\\\src/g" Makefile.vc
 nmake /f Makefile.vc
 popd
 

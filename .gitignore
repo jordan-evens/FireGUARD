@@ -7,6 +7,10 @@ FireSTARR/chromedriver.exe
 FireSTARR/Debug
 FireSTARR/pdfsizeopt
 FireSTARR/Release
+FireSTARR/libtiff
+FireSTARR/libgeotiff
+FireSTARR/vcpkg
+FireSTARR/PROJ
 documentation/*.tag
 documentation/dia
 documentation/doxygen

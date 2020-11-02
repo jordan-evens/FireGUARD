@@ -281,9 +281,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="tiff-3.9.7\libtiff\libtiff.lib" />
-    <Library Include="tiff-3.9.7\libtiff\libtiff_i.lib" />
-    <Library Include="libgeotiff\geotiff.lib" />
-    <Library Include="libgeotiff\geotiff_i.lib" />
+    <Library Include="libgeotiff\libgeotiff\geotiff.lib" />
+    <Library Include="libgeotiff\libgeotiff\geotiff_i.lib" />
+    <Library Include="libtiff\libtiff\libtiff_i.lib" />
+    <Library Include="libtiff\libtiff\libtiff.lib" />
   </ItemGroup>
 </Project>

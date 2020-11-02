@@ -69,7 +69,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\libgeotiff\libxtiff;.\libgeotiff;.\tiff-3.9.7\libtiff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libgeotiff\libgeotiff\libxtiff;.\libgeotiff\libgeotiff;.\libtiff\libtiff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -101,7 +101,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\libgeotiff\libxtiff;.\libgeotiff;.\tiff-3.9.7\libtiff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libgeotiff\libgeotiff\libxtiff;.\libgeotiff\libgeotiff;.\libtiff\libtiff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -228,10 +228,10 @@
     <ClCompile Include="src\WxShield.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="libgeotiff\geotiff.lib" />
-    <Library Include="libgeotiff\geotiff_i.lib" />
-    <Library Include="tiff-3.9.7\libtiff\libtiff.lib" />
-    <Library Include="tiff-3.9.7\libtiff\libtiff_i.lib" />
+    <Library Include="libgeotiff\libgeotiff\geotiff.lib" />
+    <Library Include="libgeotiff\libgeotiff\geotiff_i.lib" />
+    <Library Include="libtiff\libtiff\libtiff.lib" />
+    <Library Include="libtiff\libtiff\libtiff_i.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
