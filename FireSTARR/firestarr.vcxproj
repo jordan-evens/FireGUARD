@@ -46,7 +46,8 @@
     <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>PreLinkEvent</CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -58,7 +59,8 @@
     <IntDir>$(Configuration)\</IntDir>
     <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CustomBuildAfterTargets>PreLinkEvent</CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -78,21 +80,39 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Doxygen documentation</Message>
+      <Message>
+      </Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>..\documentation\html\FireSTARR</Outputs>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <TreatOutputAsContent>
       </TreatOutputAsContent>
-      <Inputs>firestarr.conf</Inputs>
+      <Inputs>
+      </Inputs>
       <RootFolder>
       </RootFolder>
     </CustomBuildStep>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>
+      </Message>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Documentation</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -115,26 +135,32 @@
       <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
+      <Message>Documentation</Message>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>
       </Command>
+      <Message>
+      </Message>
     </PreLinkEvent>
     <CustomBuildStep>
-      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Doxygen documentation</Message>
+      <Message>
+      </Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>..\documentation\html\FireSTARR</Outputs>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <TreatOutputAsContent>
       </TreatOutputAsContent>
-      <Inputs>firestarr.conf</Inputs>
+      <Inputs>
+      </Inputs>
       <RootFolder>
       </RootFolder>
     </CustomBuildStep>
