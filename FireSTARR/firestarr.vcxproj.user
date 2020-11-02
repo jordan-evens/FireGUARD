@@ -8,6 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>.\Data\output 2017-08-27 52.01 -89.024 12:15 -s -a</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>.\Data\output 2017-08-27 52.01 -89.024 12:15 --wx Data\output\wx.csv --ffmc 90 --dmc 40 --dc 300 --apcp_0800 0</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
