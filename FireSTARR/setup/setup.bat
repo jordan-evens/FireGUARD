@@ -22,31 +22,8 @@ popd
 
 git clone https://github.com/OSGeo/PROJ.git
 pushd PROJ
-@rem ~ git checkout tags/6.3.1
 git checkout tags/5.2.0
-@rem ~ git checkout tags/6.2.1
-mkdir build
-cd build
-@rem ~ cmake -DCMAKE_TOOLCIN_FILE=..\..\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH=..\..\vcpkg\installed\x64-windows\ -DTIFF_INCLUDE_DIR=..\..\vcpkg\installed\x64-windows\include -DTIFF_LIBRARY_RELEASE=..\..\vcpkg\installed\x64-windows\lib\tiff.lib -DCURL_LIBRARY=..\..\vcpkg\installed\x64-windows\lib\libcurl.lib -DBUILD_SHARED_LIBS=ON ..
-SET CMAKE=cmake -G "Visual Studio 15 2017 Win64"
-SET CMAKE=%CMAKE% -DBUILD_TESTING=OFF
-SET CMAKE=%CMAKE% -DCMAKE_TOOLCHAIN_FILE=..\..\vcpkg\scripts\buildsystems\vcpkg.cmake
-SET CMAKE=%CMAKE% -DCMAKE_PREFIX_PATH=..\..\vcpkg\installed\x64-windows\
-SET CMAKE=%CMAKE% -DTIFF_INCLUDE_DIR=..\..\vcpkg\installed\x64-windows\include
-SET CMAKE=%CMAKE% -DTIFF_LIBRARY_RELEASE=..\..\vcpkg\installed\x64-windows\lib\tiff.lib
-SET CMAKE=%CMAKE% -DCURL_LIBRARY=..\..\vcpkg\installed\x64-windows\lib\libcurl.lib
-SET CMAKE=%CMAKE% -DBUILD_SHARED_LIBS=ON
-SET CMAKE=%CMAKE% -DCMAKE_BUILD_TYPE=Release
-SET CMAKE=%CMAKE% -DJPEG_INCLUDE_DIR=..\..\vcpkg\installed\x64-windows\include
-SET CMAKE=%CMAKE% -DJPEG_LIBRARY=..\..\vcpkg\installed\x64-windows\lib\jpeg.lib
-SET CMAKE=%CMAKE% -DLZMA_LIBRARY=..\..\vcpkg\installed\x64-windows\lib\lzma.lib
-SET CMAKE=%CMAKE% -DLibLZMA_DIR=..\..\vcpkg\installed\x64-windows\bin
-SET CMAKE=%CMAKE% -DCMAKE_PREFIX_PATH=..\..\vcpkg\installed\x64-windows\share\curl
-SET CMAKE=%CMAKE% ..
-
-%CMAKE%
-cmake --build . --config Debug
-cmake --build . --config Release
+nmake /f makefile.vc
 popd
 
 git clone https://gitlab.com/libtiff/libtiff.git
@@ -63,10 +40,10 @@ popd
 
 pushd libgeotiff\libgeotiff
 git checkout 1.4.3
-sed -i "s/OSGEO4W =.*/OSGEO4W = \.\.\\\.\.\\\\libtiff\\\\libtiff/g" Makefile.vc
-sed -i "s/\(TIFF_INC = .*\)\\\\include/\1/g" Makefile.vc
-sed -i "s/\(TIFF_LIB_DLL = .*\)\\\\lib\\\\libtiff_i.lib/\1\\\\libtiff_i.lib/g" Makefile.vc
-sed -i "s/\(INCL\t= .*\)/\1 -I ..\\\\..\\\\PROJ\\\\src/g" Makefile.vc
+sed -i "s/OSGEO4W =.*/OSGEO4W = \.\.\\\.\.\\libtiff\\libtiff/g" Makefile.vc
+sed -i "s/\(TIFF_INC = .*\)\\include/\1/g" Makefile.vc
+sed -i "s/\(TIFF_LIB_DLL = .*\)\\lib\\libtiff_i.lib/\1\\libtiff_i.lib/g" Makefile.vc
+sed -i "s/\(INCL\t= .*\)/\1 -I ..\\..\\PROJ\\src/g" Makefile.vc
 nmake /f Makefile.vc
 popd
 
