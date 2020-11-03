@@ -446,6 +446,10 @@ SCHTASKS /RUN /TN "WxSHIELD NAEFS"
 SCHTASKS /RUN /TN "WxSHIELD FPA"
 SCHTASKS /RUN /TN "FireSTARR"
 
+pushd %LOCAL_DIR%\..\FireSTARR\setup
+call setup.bat
+popd
+
 goto :end
 
 :ensure_file
