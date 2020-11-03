@@ -199,11 +199,13 @@ def get_year(year):
             # use time from 18z
             df['ForTime'] = jd[t]
             df['Year'] = jd[t].year
+            # HACK: for some reason Latitude's type is object, so fix that
+            df['Latitude'] = df['Latitude'].astype(float)
             df = df.set_index(index)
             stations.append(df)
     all = pandas.concat(stations)
     # all['lon'] = all['lon'].apply(lambda x: x if x <= 180 else x - 360)
-    all = all.reset_index().set_index(index).sort()
+    all = all.reset_index().set_index(index).sort_index()
     return all
 
 if __name__ == '__main__':

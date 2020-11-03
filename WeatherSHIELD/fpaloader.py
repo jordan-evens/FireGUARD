@@ -64,7 +64,7 @@ def load_data(data):
     df = pandas.read_csv(fake_file,
                           names=columns,
                           parse_dates=["ForDate", "Generated"],
-                          date_parser=lambda x: pandas.to_datetime(x, coerce=True))
+                          date_parser=lambda x: pandas.to_datetime(x, errors='coerce'))
     def make_date(x):
         # combine date with hours
         return datetime.datetime.combine(x['ForDate'].date(), datetime.time(hour=x['ForHour']))

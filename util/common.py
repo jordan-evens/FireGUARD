@@ -633,7 +633,7 @@ def read_grib(file, match):
                                                        'Value']),
                              parse_dates=['Generated', 'ForTime'],
                              encoding='utf8',
-                             date_parser=lambda x: pandas.to_datetime(x, coerce=True))
+                             date_parser=lambda x: pandas.to_datetime(x, errors='coerce'))
     variable = output[:1]['Field'][0]
     columns = ['Generated', 'ForTime', 'Longitude', 'Latitude']
     def parse_ensemble(x):
