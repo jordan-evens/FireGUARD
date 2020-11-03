@@ -1,6 +1,8 @@
 echo off
-echo ENSURE YOU ARE RUNNING IN AN ADMIN COMMAND PROMPT
-PAUSE
+
+net session >nul 2>&1
+IF NOT %ERRORLEVEL%==0 echo Must run as administrator in elevated command prompt && goto :end
+
 IF DEFINED ENV_IS_SET goto :build
 SET ENV_IS_SET=1
 set VSCMD_DEBUG=1
@@ -70,4 +72,5 @@ popd
 
 popd
 
+:end
 
