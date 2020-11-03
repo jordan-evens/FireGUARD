@@ -125,9 +125,6 @@ SET HAVEPROXY=1
 call :ensure_file "%SQLDOWNLOAD%/%SQLINSTALL%" "%SQLINSTALL%"
 call :ensure_file "https://www.python.org/ftp/python/2.7.18/python-2.7.18.msi" "python-2.7.18.msi"
 call :ensure_file "http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe" "dotNetFx40_Full_x86_x64.exe"
-SET PHP=php-7.4.11-nts-Win32-vc15-x64.zip
-set PHPDIR=c:\php
-call :ensure_file "https://windows.php.net/downloads/releases/%PHP%" "%PHP%"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120362" "SQLSRV58.EXE"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120137" "msodbcsql.msi"
 SET DOXYGEN_ZIP=doxygen-1.8.20.windows.x64.bin.zip
@@ -225,8 +222,16 @@ echo Checking for python
 echo %PATH% | findstr /R /C:"C:\\Python27\\ArcGIS10\..;C:\\Python27\\ArcGIS10\..\\Scripts;">nul && goto :havePath
 
 echo Installing python
-@rem default to ArcGIS10.3
-SET PYTHONHOME=C:\Python27\ArcGIS10.3
+@rem find ArcGIS directory
+set PYTHONHOME=
+for /r "C:\Python27" %%a in (*) do (
+	set DIR=%%~nxa
+	if "%DIR:~1,9""=="ArcGIS10." set PYTHONHOME=%%~dpnxa
+)
+IF NOT DEFINED PYTHONHOME  (
+	@rem default to where arcgis 10.3 would be if nothing was found
+	SET PYTHONHOME=C:\Python27\ArcGIS10.3\
+)
 msiexec /I %DOWNLOAD_DIR%\python-2.7.18.msi /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL
 
 @rem add to path
@@ -312,9 +317,27 @@ for /f "delims=" %%f in ('dir /b %%SystemRoot%%\servicing\Packages\Microsoft-Win
 endlocal
 DISM /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication
 
+echo Getting sed
+Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%SED_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
+Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%LIBINTL_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
+Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%LIBICONV_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
+
+pushd %LOCAL_DIR%\..\WeatherSHIELD\db\sed\bin
+SET PATH=%CD%;%PATH%
+popd
+pushd %DOWNLOAD_DIR%
+call :ensure_file "https://windows.php.net/downloads/releases/" phplist.html
+@rem need sed to parse the php list file and get the right version
+for /F "usebackq delims==" %%f in (`sed -n "/php-[0-9.]*-nts-Win32-vc15-x64.zip/{s/.*\(php-[0-9.]*-nts-Win32-vc15-x64.zip\).*/\1/g;p;}" phplist.html`) do (
+	SET PHP=%%f
+)
+popd
+
+set PHPDIR=c:\php
+call :ensure_file "https://windows.php.net/downloads/releases/%PHP%" "%PHP%"
+
 mkdir %PHPDIR%
 Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%PHP% %PHPDIR%
-
 
 %DOWNLOAD_DIR%\SQLSRV58.EXE /Q /T:%PHPDIR%\ext
 
@@ -407,12 +430,6 @@ pushd %DOWNLOAD_DIR%
 7za x -y %CYGWIN_TAR%
 copy /y usr\bin\cygwin1.dll %LOCAL_DIR%\..\WeatherSHIELD\wgrib2-v0.1.9.4\bin
 popd
-
-echo Getting sed
-Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%SED_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
-Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%LIBINTL_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
-Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%LIBICONV_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
-
 
 @rem need to add this manually for now since we didn't reopen prompt after install sql server
 SET PATH=%SQLBINPATH%;%PATH%
