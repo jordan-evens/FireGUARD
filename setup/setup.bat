@@ -278,7 +278,7 @@ pip install click_plugins-1.1.1-py2.py3-none-any.whl
 pip install Fiona-1.8.13-cp27-cp27m-win32.whl
 pip install Cython-0.21.2-cp27-none-win32.whl
 pip install pyproj-1.9.6-cp27-cp27m-win32.whl
-pip install pyparsing-2.4.6-py2.py3-none-any.whl
+pip install --ignore-installed pyparsing-2.4.6-py2.py3-none-any.whl
 pip install matplotlib-2.2.5-cp27-cp27m-win32.whl
 pip install descartes-1.1.0-py2.py3-none-any.whl
 pip install geopandas-0.6.2-py2.py3-none-any.whl
@@ -288,6 +288,7 @@ pip install selenium-3.141.0-py2.py3-none-any.whl
 pip install PyPDF2-1.26.0-py2-none-any.whl
 pip install fpdf-1.7.2-py2.py3-none-any.whl
 pip install rasterio-1.1.2-cp27-cp27m-win32.whl
+pip install pycrs==1.0.2
 popd
 
 @rem MAKE SURE ORACLE IS INSTALLED BEFORE PROCEEDING IF REQUIRED
