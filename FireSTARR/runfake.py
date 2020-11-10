@@ -56,6 +56,7 @@ class FakeSettings:
         parser.add_argument("longitude", help="longitude of start point")
         parser.add_argument("folder", help="location to save output")
         parser.add_argument("--check-maps", action="store_true", help="check for missing maps")
+        parser.add_argument("--wx", help="use weather input file")
         parser.add_argument("--ffmc", help="override FFMC")
         parser.add_argument("--dmc", help="override DMC")
         parser.add_argument("--dc", help="override DC")
@@ -107,6 +108,8 @@ class FakeSettings:
         self.low_priority = not args.p
         ## Whether or not to run everything sequentially instead of async where possible
         self.no_async = args.s
+        ## Input weather file to use instead of database
+        self.wx = os.path.abspath(args.wx)
         ## Fine Fuel Moisture Code to override startup values with
         self.ffmc = args.ffmc
         ## Duff Moisture Code to override startup values with

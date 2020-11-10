@@ -398,7 +398,11 @@ int main(const int argc, const char* const argv[])
               apcp_0800,
               full_wx);
           y = wx.readYesterday();
-
+      }
+      else
+      {
+        // HACK: just use the date that was passed on the command line
+        firestarr::logging::note("Initialized WxShield with date %s", date.c_str());
       }
       if (is_wx_only)
       {

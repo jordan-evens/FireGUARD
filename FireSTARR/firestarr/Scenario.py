@@ -55,6 +55,8 @@ class Scenario:
         self.for_time = os.path.basename(self.run_output)
         ## File to use as an indicator that the maps are being made for this simulation
         self.mapflag = os.path.join(self.out_dir, self.fire + "_" + self.for_time + "_mapsinprogress")
+        ## Input weather file to use instead of database
+        self.wx = args.wx
         ## Overridden Fine Fuel Moisture Code for startup
         self.ffmc = opt('ffmc')
         ## Overridden Duff Moisture Code for startup
@@ -145,7 +147,7 @@ def write_config(fire, day, lat, lon, start_time, out_dir, current_size, setting
                 logging.info("Using perimeter time of {}".format(start_time))
         add('perimeter', perim)
     add('start_time', start_time)
-    add('run_output', shrinkPath(run_output))
+    add('run_output', shrinkPath(os.path.realpath(run_output).replace(os.path.realpath(out_dir) + '\\', '')))
     add('outbase', shrinkPath(settings.outbase))
     add('year', settings.year)
     add('ffmc', settings.ffmc)

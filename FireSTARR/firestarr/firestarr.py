@@ -75,6 +75,8 @@ def runFire(scenario):
         args += " --size " + str(int(scenario.current_size))
     if raster:
         args = args + ' --perim "' + raster + '"'
+    if scenario.wx:
+        args += " --wx " + scenario.wx
     if scenario.ffmc:
         args += " --ffmc " + scenario.ffmc
     if scenario.dmc:
