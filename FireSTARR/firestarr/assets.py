@@ -23,7 +23,7 @@ from util import ensure_dir
 from Settings import Settings
 
 ## Base folder to use for RamPART feature classes for assets list
-RAMPART_BASE = os.path.join(Settings.HOME_DIR, r'..\data\GIS\generated\rampart')
+RAMPART_BASE = os.path.join(Settings.HOME_DIR, r'..\GIS\generated\rampart')
 
 def getZone(spatialReference):
     """!
@@ -163,7 +163,12 @@ def summarize(run_output, extent, spatialReference):
     def do_summarize(gdb, fire_shape):
         env_push()
         arcpy.env.workspace = gdb
-        features = map(lambda x: os.path.join(gdb, x), arcpy.ListFeatureClasses('*_proj'))
+        summary2 = None
+        try:
+            features = map(lambda x: os.path.join(gdb, x), arcpy.ListFeatureClasses('*_proj'))
+        except:
+            # no features to summarize
+            features = []
         env_pop()
         env_push()
         for input in features:
@@ -286,6 +291,7 @@ def summarize(run_output, extent, spatialReference):
             arcpy.Delete_management("in_memory\\probpts")
         env_pop()
         return fire_shape
+    summary2 = None
     p = polygonFromExtent(extent, arcpy.Describe(prob).spatialReference)
     arcpy.MakeFeatureLayer_management(p, "in_memory\\extent")
     cursor = arcpy.da.InsertCursor("in_memory\\extent", ['SHAPE@'])

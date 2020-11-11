@@ -51,7 +51,8 @@ def getFuelMXD(fire_prefix, run_output, fire, extent, perim):
                         "Features under 1ha in size may not be accurately reflected.\n" +
                         "Fuels substituted in the following manner:\n" +
                         '\n'.join(find_lines(sim_output, 'is treated like', 'Fuel')))
-    fbp = setDataSource(theMXD, "*FBP*", findFuelRaster(sim_output))
+    fbp_raster = findFuelRaster(sim_output)
+    fbp = setDataSource(theMXD, "*FBP*", fbp_raster)
     setCommon(theMXD,
               fire,
               txtAssumptions,
@@ -60,7 +61,7 @@ def getFuelMXD(fire_prefix, run_output, fire, extent, perim):
               fire,
               perim,
               extent,
-              fbp)
+              fbp_raster)
     arcpy.RefreshActiveView()
     theMXD.save()
     return copyMXD, theMXD

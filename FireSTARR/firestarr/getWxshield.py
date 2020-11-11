@@ -98,12 +98,13 @@ def getWxSHIELD(lat, lon, startDate, days, fire, dirname, apcp=None, ffmc=None, 
     driver.close()
     driver.quit()
     del driver
-    if not os.path.exists(path):
-        # didn't work
-        raise Exception("Error retrieving {}".format(url))
     to_file = getWxSHIELDFile(startDate, fire, dirname)
     print to_file
-    copyfile(path, to_file)
+    if not os.path.exists(path):
+        # didn't work
+        return None
+    else:
+        copyfile(path, to_file)
     return to_file
 
 def doRun():
@@ -150,7 +151,8 @@ def doRun():
     try:
         getWxSHIELD(lat, lon, startDate, days, fire, dirname, apcp_0800, ffmc, dmc, dc)
     except:
-        sys.exit(-1)
+        print "WeatherSHIELD output failed"
+        #~ sys.exit(-1)
 
 if __name__ == '__main__':
     doRun()

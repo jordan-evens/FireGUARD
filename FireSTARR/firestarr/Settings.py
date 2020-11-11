@@ -82,7 +82,7 @@ class Settings:
     ## Root directory for raster inputs
     RASTER_DIR = expandPath(getRasterRoot())
     ## Directory with RamPART inputs
-    RAMPART_DIR = os.path.join(RASTER_DIR, 'rampart')
+    RAMPART_DIR = os.path.realpath(os.path.join(RASTER_DIR, r'..\data\GIS\generated\rampart'))
     ## File mask to use for RamPART inputs
     RAMPART_MASK = os.path.join(RAMPART_DIR, r'weighted_{}{}.tif')
     ## Directory that GIS input data resides in

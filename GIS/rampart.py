@@ -303,7 +303,10 @@ def makeRampart(zone_tif, grid, scores):
                  workspace=gdb_line,
                  snapAndExtent=zone_tif)
     arcpy.env.cellSize = zone_tif
-    cellSize = int(arcpy.env.cellSize)
+    try:
+        cellSize = int(arcpy.env.cellSize)
+    except:
+        cellSize = CELLSIZE_M
     area = cellSize * cellSize
     ref = arcpy.Describe(zone_tif).spatialReference
     ext = arcpy.Describe(zone_tif).extent
@@ -469,7 +472,7 @@ if len(sys.argv) > 1:
 
 ZONE_STRING = str(ZONE).replace('.', '_')
 
-zone_tif = os.path.join(GIS_BASE, r'generated\fuels\out_100m\aspect_100m_{}.TIF'.format(ZONE_STRING))
+zone_tif = os.path.join(HOME_DIR, r'grids\grid\aspect_{}.tif'.format(ZONE_STRING))
 grid = os.path.join(GIS_BASE, r'intermediate\fuels\01_bounds\zone_{}\grids_100m.gdb\ZoneGrid'.format(ZONE_STRING))
 gdb = makeRampart(zone_tif, grid, scores)
 #~ FROM_FOLDER = os.path.join(GIS_BASE, r'generated\fuels\out_100m')
