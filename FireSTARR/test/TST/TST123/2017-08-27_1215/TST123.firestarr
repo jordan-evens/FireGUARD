@@ -1,0 +1,16 @@
+[Simulation]
+fire = TST123
+day = 2017-08-27
+latitude = 52.01
+longitude = -89.024
+output_directory = test
+current_size = 1
+start_time = 12:15
+run_output = TST\TST123\2017-08-27_1215
+outbase = test
+year = 2017
+ffmc = 90
+dmc = 40
+dc = 300
+apcp_0800 = 0
+

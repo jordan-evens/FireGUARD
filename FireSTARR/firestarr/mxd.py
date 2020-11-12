@@ -235,14 +235,17 @@ def makeMaps(scenario, run_output, force_maps, hide):
     logging.debug(mxd_names + [wxshield] + risk_names)
     makePDF(scenario.fire, days, dates, mxd_names, wxshield, risk_names, sim_output, pdf_output, scores)
     try_copy(pdf_output, copied)
+    fix_what = [pdf_output, copied]
     # HACK: use known file name for assets
     csv_orig = os.path.abspath(os.path.join(run_output, fire_prefix + for_time + "_assets.csv"))
     csv_output = os.path.abspath(os.path.join(out_dir, os.path.basename(csv_orig)))
     csv_copied = os.path.join(scenario.outbase, os.path.basename(csv_orig))
     try_copy(csv_orig, csv_output)
     try_copy(csv_orig, csv_copied)
+    if os.path.exists(csv_orig):
+        fix_what = fix_what + [csv_orig, csv_copied]
     fixtime(scenario.fire, parse(for_time.replace('_', ' ')),
-                                 [pdf_output, copied, csv_orig, csv_copied])
+                                 fix_what)
     try:
         tryForceRemove(mapflag)
     except:

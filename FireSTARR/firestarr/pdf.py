@@ -377,7 +377,8 @@ def makePDF(fire, days, dates, mxd_names, wxshield, risk_maps, sim_output, out_f
     merger.append(cover, 'rb')
     for pdf in pdfs:
         merger.append(pdf, 'rb')
-    merger.append(wxshield, 'rb')
+    if wxshield is not None and os.path.exists(wxshield):
+        merger.append(wxshield, 'rb')
     merger.append(rampart, 'rb')
     risk_pdfs = map(lambda _: os.path.splitext(_)[0] + ".pdf", risk_maps)
     risk_pdfs = [x for x in risk_pdfs if os.path.exists(x)]

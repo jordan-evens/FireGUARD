@@ -135,6 +135,8 @@ SET GV_ZIP=graphviz-2.44.1-win32.zip
 call :ensure_file https://www2.graphviz.org/Packages/stable/windows/10/msbuild/Release/Win32/%GV_ZIP% %GV_ZIP%
 SET PDFSIZEOPT_ZIP=pdfsizeopt_win32exec-v6.zip
 call :ensure_file https://github.com/pts/pdfsizeopt/releases/download/2017-09-02w/%PDFSIZEOPT_ZIP% %PDFSIZEOPT_ZIP%
+SET PDFSIZEOPT_SINGLE=pdfsizeopt.single
+call :ensure_file https://raw.githubusercontent.com/pts/pdfsizeopt/master/%PDFSIZEOPT_SINGLE% %PDFSIZEOPT_SINGLE%
 SET CHROME_ZIP=chromedriver_win32.zip
 call :ensure_file https://chromedriver.storage.googleapis.com/86.0.4240.22/%CHROME_ZIP% %CHROME_ZIP%
 SET WGRIB_ZIP=wgrib2-v0.1.9.4-bin-i686-pc-cygwin.zip
@@ -416,6 +418,7 @@ popd
 
 echo Getting pdfsizeopt
 Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%PDFSIZEOPT_ZIP% %LOCAL_DIR%\..\FireSTARR\pdfsizeopt
+copy /y %DOWNLOAD_DIR%\%PDFSIZEOPT_SINGLE% %LOCAL_DIR%\..\FireSTARR\pdfsizeopt
 
 echo Getting chromedriver
 Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%CHROME_ZIP% %LOCAL_DIR%\..\FireSTARR
