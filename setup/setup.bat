@@ -1,5 +1,5 @@
 @echo off
-setlocal enableextensions
+setlocal enableextensions enabledelayedexpansion
 pushd %~dp0
 SET LOCAL_DIR=%CD%
 SET DOWNLOAD_DIR=%LOCAL_DIR%\download
@@ -226,9 +226,9 @@ echo %PATH% | findstr /R /C:"C:\\Python27\\ArcGIS10\..;C:\\Python27\\ArcGIS10\..
 echo Installing python
 @rem find ArcGIS directory
 set PYTHONHOME=
-for /r "C:\Python27" %%a in (*) do (
+for /D %%a in ("C:\Python27\*") do (
 	set DIR=%%~nxa
-	if "%DIR:~1,9""=="ArcGIS10." set PYTHONHOME=%%~dpnxa
+	if "%DIR:~0,9%"=="ArcGIS10." set PYTHONHOME=%%a
 )
 IF NOT DEFINED PYTHONHOME  (
 	@rem default to where arcgis 10.3 would be if nothing was found
