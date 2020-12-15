@@ -209,13 +209,14 @@ setx /M PATH "%PATH%
 @rem )
 
 echo Setting up ODBC connection
-@rem why is this 11.0 on some machines?
-odbcconf.exe /a {CONFIGSYSDSN "SQL Server Native Client 10.0" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
-odbcconf.exe /a {CONFIGSYSDSN "SQL Server Native Client 10.0" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
+@rem why is this different on some machines?
+SET SQLDRIVER=SQL Server
+odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
+odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
 IF DEFINED ProgramFiles(x86) (
     pushd %SYSTEMROOT%\SysWOW64
-    odbcconf.exe /a {CONFIGSYSDSN "SQL Server Native Client 10.0" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
-    odbcconf.exe /a {CONFIGSYSDSN "SQL Server Native Client 10.0" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
+    odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
+    odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
     popd
 )
 
