@@ -229,7 +229,7 @@ echo Installing python
 set PYTHONHOME=
 for /D %%a in ("C:\Python27\*") do (
 	set DIR=%%~nxa
-	if "%DIR:~0,9%"=="ArcGIS10." set PYTHONHOME=%%a
+	if "!DIR:~0,9!"=="ArcGIS10." set PYTHONHOME=%%a
 )
 IF NOT DEFINED PYTHONHOME  (
 	@rem default to where arcgis 10.3 would be if nothing was found
@@ -258,6 +258,8 @@ pip install pyodbc-4.0.30-cp27-cp27m-win32.whl
 pip install python_dateutil-2.8.1-py2.py3-none-any.whl
 pip install six-1.15.0-py2.py3-none-any.whl
 pip install pytz-2020.1-py2.py3-none-any.whl
+pip uninstall numpy
+del /s /q c:\Python27\ArcGIS10.4\Lib\site-packages\numpy
 pip install "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
 pip install numexpr-2.7.2-cp27-cp27m-win32.whl
 pip install pandas-0.24.2-cp27-cp27m-win32.whl
