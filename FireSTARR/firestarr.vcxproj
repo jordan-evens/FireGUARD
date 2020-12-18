@@ -46,10 +46,10 @@
     <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -59,10 +59,10 @@
     <IntDir>$(Configuration)\</IntDir>
     <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -80,22 +80,18 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>(xcopy /L /D /Y Debug\firestarr.exe ..\documentation\firestarr.tag|findstr /B /C:"1 " &amp;&amp; ..\documentation\doxygen\doxygen.exe firestarr.conf) || exit 0</Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>
-      </Message>
+      <Message>Documentation</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>
-      </Outputs>
+      <Outputs>..\documentation\firestarr.tag</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <TreatOutputAsContent>
       </TreatOutputAsContent>
-      <Inputs>
-      </Inputs>
+      <Inputs>Debug\firestarr.exe</Inputs>
       <RootFolder>
       </RootFolder>
     </CustomBuildStep>
@@ -108,10 +104,12 @@
       </Message>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Documentation</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,8 +133,10 @@
       <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
-      <Command>..\documentation\doxygen\doxygen.exe firestarr.conf</Command>
-      <Message>Documentation</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -145,22 +145,18 @@
       </Message>
     </PreLinkEvent>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>(xcopy /L /D /Y Release\firestarr.exe ..\documentation\firestarr.tag|findstr /B /C:"1 " &amp;&amp; ..\documentation\doxygen\doxygen.exe firestarr.conf) || exit 0</Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>
-      </Message>
+      <Message>Documentation</Message>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>
-      </Outputs>
+      <Outputs>..\documentation\firestarr.tag</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
       <TreatOutputAsContent>
       </TreatOutputAsContent>
-      <Inputs>
-      </Inputs>
+      <Inputs>Debug\firestarr.exe</Inputs>
       <RootFolder>
       </RootFolder>
     </CustomBuildStep>
