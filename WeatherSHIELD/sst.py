@@ -14,7 +14,7 @@ import math
 import logging
 
 ## directory to use for data save/load
-DIR_DATA = 'data/sst'
+DIR_DATA = '../data/wx/sst'
 
 ## Nino 1+2
 url_nino1_2 = r'http://www.cpc.ncep.noaa.gov/products/people/wwang/cfsv2fcst/dataInd3/nino12Mon.nc'

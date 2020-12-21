@@ -9,9 +9,7 @@ import os
 class WeatherLoader(object):
     """ Loads weather data """
     ## directory to save data
-    DIR_DATA = r'data'
-    ## directory to save output
-    DIR_OUTPUT = r'output'
+    DIR_DATA = r'..\data\wx'
     def check_exists(self, for_run, dbname=None):
         """!
         Check if data for given Generated time already exists
@@ -61,6 +59,5 @@ class WeatherLoader(object):
         ## Folder to save downloaded weather to
         self.DIR_DATA = os.path.join(self.DIR_DATA, self.name)
         common.ensure_dir(self.DIR_DATA)
-        common.ensure_dir(self.DIR_OUTPUT)
         ## Whether or not to download files
         self.no_download = no_download

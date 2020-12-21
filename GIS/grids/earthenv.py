@@ -42,11 +42,12 @@ RANGE_EAST = map(lambda _: 'E{:03d}'.format(_),
                  [x for x in [5 * x for x in list(xrange(36))] if x >= MIN_LON and x <= MAX_LON])
 RANGE_LATITUDE = RANGE_NORTH + RANGE_SOUTH 
 RANGE_LONGITUDE = RANGE_WEST + RANGE_EAST
-OUT_DIR = 'data'
+DATA_DIR = os.path.realpath('/FireGUARD/data')
+OUT_DIR = os.path.join(DATA_DIR, 'extracted/EarthEnv')
 
 
 def to_download(url):
-    return download(url, 'download')
+    return download(url, os.path.join(DATA_DIR, 'download/EarthEnv'))
 
 if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=4)
@@ -56,13 +57,15 @@ if __name__ == '__main__':
             urls.append(MASK.format(lat, lon))
     files = pool.map(to_download, urls)
     if not os.path.exists(OUT_DIR):
-        os.mkdir(OUT_DIR)
+        os.makedirs(OUT_DIR)
         for f in files:
             print(f)
             tar = tarfile.open(f)
             tar.extractall(OUT_DIR)
             tar.close()
-    out_fp = 'EarthEnv.tif'
+    out_fp = os.path.join(DATA_DIR, 'generated', 'EarthEnv.tif')
+    if not os.path.exists(os.path.dirname(out_fp)):
+        os.makedirs(os.path.dirname(out_fp))
     if not os.path.exists(out_fp):
         search_criteria = "EarthEnv-DEM90_*.bil"
         q = os.path.join(OUT_DIR, search_criteria)

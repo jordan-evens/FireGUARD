@@ -28,7 +28,7 @@ file_masks = {
 MODEL_NAME = 'Reanalysis1v05'
 
 ## directory to use for data save/load
-DIR_DATA = 'data/reanalysis1'
+DIR_DATA = '../data/wx/reanalysis1'
 common.ensure_dir(DIR_DATA)
 
 def save_file(filename):

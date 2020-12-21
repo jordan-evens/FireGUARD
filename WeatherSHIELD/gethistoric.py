@@ -13,7 +13,7 @@ import os
 import logging
 
 ## Folder to save to
-DIR_DATA = r'data/longrange'
+DIR_DATA = r'../data/wx/longrange'
 ## Columns to use
 COLUMNS = ['Name','Year','Month','Value']
 ## Index columns

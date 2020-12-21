@@ -25,9 +25,14 @@ from Settings import Settings
 settings = Settings()
 
 CELL_SIZE = 100
-DIR = 'grid'
-TMP = 'tmp'
+DATA_DIR = os.path.realpath('/FireGUARD/data')
+EXTRACTED_DIR = os.path.join(DATA_DIR, 'extracted')
+DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download')
+GENERATED_DIR = os.path.join(DATA_DIR, 'generated')
+DIR = os.path.join(GENERATED_DIR, 'grid')
+TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
+EARTHENV = os.path.join(GENERATED_DIR, 'EarthEnv.tif')
 
 def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
@@ -45,9 +50,9 @@ if round(ZONE_MAX, 0) < ZONE_MAX:
 else:
     ZONE_MAX = round(ZONE_MAX, 0)
 if not os.path.exists(DIR):
-    os.mkdir(DIR)
+    os.makedirs(DIR)
 if not os.path.exists(TMP):
-    os.mkdir(TMP)
+    os.makedirs(TMP)
 
 def clip_zone(fp, prefix, zone):
     out_tif = os.path.join(DIR, prefix + '_{}'.format(zone).replace('.', '_')) + '.tif'
@@ -102,7 +107,7 @@ def clip_zone(fp, prefix, zone):
 
 zone = ZONE_MIN
 while zone <= ZONE_MAX:
-    dem = clip_zone('EarthEnv.tif', 'dem', zone)
+    dem = clip_zone(EARTHENV, 'dem', zone)
     slope = dem.replace('dem_', 'slope_')
     if not os.path.exists(slope):
         print(slope)
@@ -115,5 +120,5 @@ while zone <= ZONE_MAX:
         tmp_aspect = aspect.replace(DIR, TMP)
         gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
         gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-    fbp = clip_zone(r'extracted\fbp\fuel_layer\FBP_FuelLayer.tif', 'fuel', zone)
+    fbp = clip_zone(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), 'fuel', zone)
     zone += 0.5
