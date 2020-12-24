@@ -175,11 +175,9 @@ def clip_fuel(fp, prefix, zone):
     print('Adding water from polygons')
     # FIX: need to add USA water
     # FIX: check bounds for provinces and don't add if not near raster
-    for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
-        print('Adding {}'.format(prov))
-        path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
+    def checkAddLakes(path_gdb, layer):
         gdb = gdb_driver.Open(path_gdb, 0)
-        lakes = gdb.GetLayer('waterbody_2')
+        lakes = gdb.GetLayerByName(layer)
         lakes_ref = lakes.GetSpatialRef()
         ds = gdal.Open(out_tif, 1)
         transform = ds.GetGeoTransform()
@@ -226,7 +224,7 @@ def clip_fuel(fp, prefix, zone):
         # if (e1[0] >= e2[0] and e1[0] <= e2[1])
         # keep = []
         if vectorGeometry.Intersect(rasterGeometry):
-            print('Province {} intersects zone'.format(prov))
+            print('Intersects zone - clipping...')
             # source=outdriver.CreateDataSource('memData')
             raster_path = os.path.realpath('./raster.shp')
             # Remove output shapefile if it already exists
@@ -248,6 +246,7 @@ def clip_fuel(fp, prefix, zone):
             tmpLayer = source.CreateLayer('tmp', lakes_ref, geom_type=ogr.wkbMultiPolygon)
             ogr.Layer.Clip(lakes, rasterLayer, tmpLayer)
             coordTrans = osr.CoordinateTransformation(lakes_ref, raster_ref)
+            print('Reprojecting...')
             outputShapefile = os.path.realpath('./projected.shp')
             if os.path.exists(outputShapefile):
                 outdriver.DeleteDataSource(outputShapefile)
@@ -286,6 +285,7 @@ def clip_fuel(fp, prefix, zone):
                     # keep.append(f)
             # shapes = ((geom,value) for geom, value in zip(keep, [102]*len(keep)))
             # burned = features.rasterize(shapes=keep, transform=transform)
+            print('Rasterizing...')
             gdal.RasterizeLayer(ds, [1], outLayer, burn_values=[102])
             # Save and close the shapefiles
             inDataSet = None
@@ -296,6 +296,12 @@ def clip_fuel(fp, prefix, zone):
         ds = None
         lakes = None
         gdb = None
+    print('Adding USA')
+    checkAddLakes(r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')
+    for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
+        print('Adding {}'.format(prov))
+        path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
+        checkAddLakes(path_gdb, 'waterbody_2')
     # now need to fill in the nodata values that are left
     return out_tif
 
