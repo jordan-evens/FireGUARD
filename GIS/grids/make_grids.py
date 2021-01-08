@@ -21,8 +21,38 @@ import math
 import pandas as pd
 import gdalconst
 from osgeo import ogr
+import osgeo
 
 from Settings import Settings
+
+##########################
+# https://stackoverflow.com/questions/3662361/fill-in-missing-values-with-nearest-neighbour-in-python-numpy-masked-arrays
+
+from scipy import ndimage as nd
+
+def fill(data, invalid=None):
+    """
+    Replace the value of invalid 'data' cells (indicated by 'invalid') 
+    by the value of the nearest valid data cell
+
+    Input:
+        data:    numpy array of any dimension
+        invalid: a binary array of same shape as 'data'. True cells set where data
+                 value should be replaced.
+                 If None (default), use: invalid  = np.isnan(data)
+
+    Output: 
+        Return a filled array. 
+    """
+    #import numpy as np
+    #import scipy.ndimage as nd
+
+    if invalid is None: invalid = np.isnan(data)
+
+    ind = nd.distance_transform_edt(invalid, return_distances=False, return_indices=True)
+    return data[tuple(ind)]
+###########################
+
 
 settings = Settings()
 
@@ -31,6 +61,7 @@ DATA_DIR = os.path.realpath('/FireGUARD/data')
 EXTRACTED_DIR = os.path.join(DATA_DIR, 'extracted')
 DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download')
 GENERATED_DIR = os.path.join(DATA_DIR, 'generated')
+INTERMEDIATE_DIR = os.path.join(DATA_DIR, 'intermediate')
 DIR = os.path.join(GENERATED_DIR, 'grid')
 TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
@@ -108,14 +139,24 @@ def clip_zone(fp, prefix, zone):
     gc.collect()
     return out_tif
 
-def clip_fuel(fp, prefix, zone):
+def clip_fuel(fp, zone):
     # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
-    # prefix = 'fuel'
-    # zone = 15.0
-    out_tif = os.path.join(DIR, prefix + '_{}'.format(zone).replace('.', '_')) + '.tif'
+    # zone = 14.5
+    out_tif = os.path.join(DIR, 'fuel_{}'.format(zone).replace('.', '_')) + '.tif'
     if os.path.exists(out_tif):
         return out_tif
     print(out_tif)
+    int_dir = os.path.join(INTERMEDIATE_DIR, 'fuel')
+    if not os.path.exists(int_dir):
+        os.makedirs(int_dir)
+    base_tif = os.path.join(int_dir, 'base_{}'.format(zone).replace('.', '_')) + '.tif'
+    tmp_tif = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
+    nowater_tif = os.path.join(int_dir, 'nowater_{}'.format(zone).replace('.', '_')) + '.tif'
+    polywater_tif = os.path.join(int_dir, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
+    filled_tif = os.path.join(int_dir, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
+    driver_tif = gdal.GetDriverByName('GTiff')
+    driver_gdb = ogr.GetDriverByName("OpenFileGDB")
+    driver_shp = ogr.GetDriverByName('ESRI Shapefile')
     meridian = (zone - 15.0) * 6.0 - 93.0
     wkt = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, meridian)
     proj_srs = osr.SpatialReference(wkt=wkt)
@@ -128,181 +169,257 @@ def clip_fuel(fp, prefix, zone):
     MAX_EASTING = 700000
     MIN_NORTHING = int(y[0] / 100000) * 100000
     MAX_NORTHING = (int(y[1] / 100000) + 1) * 100000
-    ds = gdal.Open(fp)
-    out_image = None
-    out_transform = None
-    data = rasterio.open(fp)
-    srcWkt = data.crs.wkt
-    data.close()
-    srcSRS = osr.SpatialReference()
-    srcSRS.ImportFromWkt(data.crs.wkt)
-    dstSRS = osr.SpatialReference()
-    dstSRS.ImportFromWkt(wkt)
-    rb = ds.GetRasterBand(1)
-    no_data = rb.GetNoDataValue()
-    rb = None
-    ds = gdal.Warp(out_tif,
-                   ds,
-                   format='GTiff',
-                   outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
-                   creationOptions=CREATION_OPTIONS,
-                   xRes=CELL_SIZE,
-                   yRes=CELL_SIZE,
-                   srcSRS=srcWkt,
-                   dstSRS=wkt)
-    ds = None
-    # HACK: make sure nodata value is set because C code expects it even if nothing is nodata
-    ds = gdal.Open(out_tif, 1)
-    rb = ds.GetRasterBand(1)
-    # HACK: for some reason no_data is a double??
-    if no_data is None:
-        no_data = int(-math.pow(2, 15) - 1)
-        rb.SetNoDataValue(no_data)
-    print('Removing water')
+    if not os.path.exists(base_tif):
+        ds = gdal.Open(fp)
+        out_image = None
+        out_transform = None
+        data = rasterio.open(fp)
+        srcWkt = data.crs.wkt
+        data.close()
+        srcSRS = osr.SpatialReference()
+        srcSRS.ImportFromWkt(data.crs.wkt)
+        dstSRS = osr.SpatialReference()
+        dstSRS.ImportFromWkt(wkt)
+        rb = ds.GetRasterBand(1)
+        no_data = rb.GetNoDataValue()
+        rb = None
+        ds = gdal.Warp(base_tif,
+                       ds,
+                       format='GTiff',
+                       outputBounds=[MIN_EASTING, MIN_NORTHING, MAX_EASTING, MAX_NORTHING],
+                       creationOptions=CREATION_OPTIONS,
+                       xRes=CELL_SIZE,
+                       yRes=CELL_SIZE,
+                       srcSRS=srcWkt,
+                       dstSRS=wkt)
+        ds = None
+        # HACK: make sure nodata value is set because C code expects it even if nothing is nodata
+        ds = gdal.Open(base_tif, 1)
+        rb = ds.GetRasterBand(1)
+        # HACK: for some reason no_data is a double??
+        if no_data is None:
+            no_data = int(-math.pow(2, 15) - 1)
+            rb.SetNoDataValue(no_data)
+            rb.FlushCache()
+        rb = None
+        ds = None
+    ds = gdal.Open(base_tif, 1)
     rows = ds.RasterYSize
     cols = ds.RasterXSize
-    vals = rb.ReadAsArray(0, 0, cols, rows)
-    # get rid of water (102)
-    vals[vals == 102] = no_data
-    rb.WriteArray(vals, 0, 0)
-    rb.FlushCache()
-    rb = None
+    # close even though we're opening it in if statement so we know it's closed if we don't enter if
     ds = None
-    gc.collect()
-    gdb_driver = ogr.GetDriverByName("OpenFileGDB")
-    # outdriver=ogr.GetDriverByName('MEMORY')
-    outdriver=ogr.GetDriverByName('ESRI Shapefile')
-    print('Adding water from polygons')
-    # FIX: need to add USA water
-    # FIX: check bounds for provinces and don't add if not near raster
-    def checkAddLakes(path_gdb, layer):
-        gdb = gdb_driver.Open(path_gdb, 0)
-        lakes = gdb.GetLayerByName(layer)
-        lakes_ref = lakes.GetSpatialRef()
-        ds = gdal.Open(out_tif, 1)
-        transform = ds.GetGeoTransform()
-        pixelWidth = transform[1]
-        pixelHeight = transform[5]
-        cols = ds.RasterXSize
-        rows = ds.RasterYSize
-        xLeft = transform[0]
-        yTop = transform[3]
-        xRight = xLeft+cols*pixelWidth
-        yBottom = yTop+rows*pixelHeight
-        raster_ref = osr.SpatialReference(wkt=ds.GetProjection())
-        ring = ogr.Geometry(ogr.wkbLinearRing)
-        ring.AddPoint(xLeft, yTop)
-        ring.AddPoint(xLeft, yBottom)
-        ring.AddPoint(xRight, yBottom)
-        ring.AddPoint(xRight, yTop)
-        ring.AddPoint(xLeft, yTop)
-        rasterGeometry = ogr.Geometry(ogr.wkbPolygon)
-        rasterGeometry.AddGeometry(ring)
-        rasterGeometry.AssignSpatialReference(raster_ref)
-        coordTrans = osr.CoordinateTransformation(raster_ref, lakes_ref)
-        rasterGeometry.Transform(coordTrans)
-        e1 = rasterGeometry.GetEnvelope()
-        e2 = lakes.GetExtent()
-        r = ogr.Geometry(ogr.wkbLinearRing)
-        r.AddPoint(e2[0], e2[3])
-        r.AddPoint(e2[0], e2[2])
-        r.AddPoint(e2[1], e2[2])
-        r.AddPoint(e2[1], e2[3])
-        r.AddPoint(e2[0], e2[3])
-        vectorGeometry = ogr.Geometry(ogr.wkbPolygon)
-        vectorGeometry.AddGeometry(r)
-        vectorGeometry.AssignSpatialReference(lakes_ref)
-        # FIX: just check full extent once and not every feature
-        # intersects = False
-        # for f in lakes:
-            # vectorGeometry = f.GetGeometryRef()
-            # intersects = rasterGeometry.Intersect(vectorGeometry)
-            # if intersects:
-                # break
-        # just expecting RasterizeLayer to handle projection and everything
-        # just do basic math for now
-        # if (e1[0] >= e2[0] and e1[0] <= e2[1])
-        # keep = []
-        if vectorGeometry.Intersect(rasterGeometry):
-            print('Intersects zone - clipping...')
-            # source=outdriver.CreateDataSource('memData')
-            raster_path = os.path.realpath('./raster.shp')
-            # Remove output shapefile if it already exists
-            if os.path.exists(raster_path):
-                outdriver.DeleteDataSource(raster_path)
-            # Create the output shapefile
-            rasterSource = outdriver.CreateDataSource(raster_path)
-            rasterLayer = rasterSource.CreateLayer('raster', lakes_ref, geom_type=ogr.wkbPolygon)
-            featureDefn = rasterLayer.GetLayerDefn()
-            feature = ogr.Feature(featureDefn)
-            feature.SetGeometry(rasterGeometry)
-            rasterLayer.CreateFeature(feature)
-            feature = None
-            tmp_path = os.path.realpath('./tmp.shp')
-            if os.path.exists(tmp_path):
-                outdriver.DeleteDataSource(tmp_path)
-            source = outdriver.CreateDataSource(tmp_path)
-            # tmpLayer = source.CreateLayer('FINAL', lakes_ref, geom_type=ogr.wkbMultiPolygon)
-            tmpLayer = source.CreateLayer('tmp', lakes_ref, geom_type=ogr.wkbMultiPolygon)
-            ogr.Layer.Clip(lakes, rasterLayer, tmpLayer)
-            coordTrans = osr.CoordinateTransformation(lakes_ref, raster_ref)
-            print('Reprojecting...')
-            outputShapefile = os.path.realpath('./projected.shp')
-            if os.path.exists(outputShapefile):
-                outdriver.DeleteDataSource(outputShapefile)
-            outDataSet = outdriver.CreateDataSource(outputShapefile)
-            outLayer = outDataSet.CreateLayer("lakes", raster_ref, geom_type=ogr.wkbMultiPolygon)
-            # add fields
-            inLayerDefn = tmpLayer.GetLayerDefn()
-            for i in range(0, inLayerDefn.GetFieldCount()):
-                fieldDefn = inLayerDefn.GetFieldDefn(i)
-                outLayer.CreateField(fieldDefn)
-            # get the output layer's feature definition
-            outLayerDefn = outLayer.GetLayerDefn()
-            # loop through the input features
-            inFeature = tmpLayer.GetNextFeature()
-            while inFeature:
-                # get the input geometry
-                geom = inFeature.GetGeometryRef()
-                # reproject the geometry
-                geom.Transform(coordTrans)
-                # create a new feature
-                outFeature = ogr.Feature(outLayerDefn)
-                # set the geometry and attribute
-                outFeature.SetGeometry(geom)
-                for i in range(0, outLayerDefn.GetFieldCount()):
-                    outFeature.SetField(outLayerDefn.GetFieldDefn(i).GetNameRef(), inFeature.GetField(i))
-                # add the feature to the shapefile
-                outLayer.CreateFeature(outFeature)
-                # dereference the features and get the next input feature
-                outFeature = None
-                inFeature = tmpLayer.GetNextFeature()
-            # check each feature
-            # for f in lakes:
-                # lakeGeometry = f.GetGeometryRef()
-                # intersects = rasterGeometry.Intersect(lakeGeometry)
-                # if intersects:
-                    # keep.append(f)
-            # shapes = ((geom,value) for geom, value in zip(keep, [102]*len(keep)))
-            # burned = features.rasterize(shapes=keep, transform=transform)
-            print('Rasterizing...')
-            gdal.RasterizeLayer(ds, [1], outLayer, burn_values=[102])
-            # Save and close the shapefiles
-            inDataSet = None
-            outDataSet = None
-            rasterSource = None
-            source = None
-            # gdal.RasterizeLayer(ds, [1], lakes, burn_values=[102])
+    if not os.path.exists(nowater_tif):
+        ds = gdal.Open(base_tif, 1)
+        dst_ds = driver_tif.CreateCopy(tmp_tif, ds, 0)
+        dst_ds = None
         ds = None
-        lakes = None
-        gdb = None
-    print('Adding USA')
-    checkAddLakes(r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')
-    for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
-        print('Adding {}'.format(prov))
-        path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
-        checkAddLakes(path_gdb, 'waterbody_2')
-    # now need to fill in the nodata values that are left
+        ds = gdal.Open(tmp_tif, 1)
+        print('Removing water')
+        rb = ds.GetRasterBand(1)
+        vals = rb.ReadAsArray(0, 0, cols, rows)
+        # get rid of water (102)
+        vals[vals == 102] = no_data
+        rb.WriteArray(vals, 0, 0)
+        rb.FlushCache()
+        # want a copy of this before we add the water back in so we can fill from non-water
+        dst_ds = driver_tif.CreateCopy(nowater_tif, ds, 0)
+        dst_ds = None
+    if not os.path.exists(filled_tif):
+        # now fill in blanks with surrounding fuels
+        print('Filling spaces')
+        # only fill area of original raster
+        ds = gdal.Open(base_tif, 1)
+        rb = ds.GetRasterBand(1)
+        vals = rb.ReadAsArray(0, 0, cols, rows)
+        no_data = rb.GetNoDataValue()
+        mask = vals != no_data
+        vals = None
+        rb = None
+        ds = None
+        # get the raster with no water to start with
+        ds_nowater = gdal.Open(nowater_tif, 1)
+        rb_nowater = ds_nowater.GetRasterBand(1)
+        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
+        # need a 1 where we want to fill in the blanks, so make that cover all nodata cells
+        nodata_nowater = vals_nowater == no_data
+        # fill the nodata values that had a value in the base but not when there's no water
+        fill_what = np.logical_and(nodata_nowater, mask)
+        rb_nowater = None
+        ds_nowater = None
+        # close this for now because of memory issues
+        vals_nowater = None
+        nodata_nowater = None
+        mask = None
+        gc.collect()
+        # ind = nd.distance_transform_edt(input, return_distances=False, return_indices=True)
+        sampling=None
+        return_distances=False
+        return_indices=True
+        distances=None
+        indices=None
+        gc.collect()
+        input = np.atleast_1d(np.where(fill_what, 1, 0).astype(np.int8))
+        fill_what = None
+        gc.collect()
+        from scipy.ndimage import _nd_image
+        # should be able to just use int16 for indices, but it must rely on it being int32 because it's wrong if it isn't
+        ft = np.zeros((input.ndim,) + input.shape,
+                                dtype=np.int32)
+        # ft = np.zeros((input.ndim,) + input.shape,
+                                # dtype=np.uint16)
+        _nd_image.euclidean_feature_transform(input, sampling, ft)
+        input = None
+        gc.collect()
+        ds_nowater = gdal.Open(nowater_tif, 1)
+        rb_nowater = ds_nowater.GetRasterBand(1)
+        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
+        filled = vals_nowater[tuple(ft)]
+        vals_nowater = None
+        rb_nowater = None
+        ds_nowater = None
+        ds = gdal.Open(base_tif, 1)
+        dst_ds = driver_tif.CreateCopy(filled_tif, ds, 0)
+        dst_ds = None
+        ds = gdal.Open(filled_tif, 1)
+        rb = ds.GetRasterBand(1)
+        rb.WriteArray(filled, 0, 0)
+        # rb.WriteArray(vals_nowater[tuple(ft)], 0, 0)
+        rb.FlushCache()
+        rb = None
+        ds = None
+    # now the nodata values should all be filled, so apply the water from the polygons
+    if not os.path.exists(polywater_tif):
+        ds_filled = gdal.Open(filled_tif, 1)
+        dst_ds = driver_tif.CreateCopy(polywater_tif, ds_filled, 0)
+        dst_ds = None
+        ds_filled = None
+        gc.collect()
+        print('Adding water from polygons')
+        # FIX: need to add USA water
+        # FIX: check bounds for provinces and don't add if not near raster
+        def checkAddLakes(for_what, path_gdb, layer):
+            # for_what = 'USA'
+            # path_gdb = r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb'
+            # layer = r'NHDWaterbody'
+            print('Adding {}'.format(for_what))
+            outputShapefile = os.path.join(int_dir, 'projected_{}_{}'.format(for_what, zone).replace('.', '_') + '.shp')
+            if not os.path.exists(outputShapefile):
+                gdb = driver_gdb.Open(path_gdb, 0)
+                lakes = gdb.GetLayerByName(layer)
+                lakes_ref = lakes.GetSpatialRef()
+                ds = gdal.Open(polywater_tif, 1)
+                transform = ds.GetGeoTransform()
+                pixelWidth = transform[1]
+                pixelHeight = transform[5]
+                cols = ds.RasterXSize
+                rows = ds.RasterYSize
+                xLeft = transform[0]
+                yTop = transform[3]
+                xRight = xLeft+cols*pixelWidth
+                yBottom = yTop+rows*pixelHeight
+                raster_ref = osr.SpatialReference(wkt=ds.GetProjection())
+                ring = ogr.Geometry(ogr.wkbLinearRing)
+                ring.AddPoint(xLeft, yTop)
+                ring.AddPoint(xLeft, yBottom)
+                ring.AddPoint(xRight, yBottom)
+                ring.AddPoint(xRight, yTop)
+                ring.AddPoint(xLeft, yTop)
+                rasterGeometry = ogr.Geometry(ogr.wkbPolygon)
+                rasterGeometry.AddGeometry(ring)
+                rasterGeometry.AssignSpatialReference(raster_ref)
+                coordTrans = osr.CoordinateTransformation(raster_ref, lakes_ref)
+                rasterGeometry.Transform(coordTrans)
+                e1 = rasterGeometry.GetEnvelope()
+                e2 = lakes.GetExtent()
+                r = ogr.Geometry(ogr.wkbLinearRing)
+                r.AddPoint(e2[0], e2[3])
+                r.AddPoint(e2[0], e2[2])
+                r.AddPoint(e2[1], e2[2])
+                r.AddPoint(e2[1], e2[3])
+                r.AddPoint(e2[0], e2[3])
+                vectorGeometry = ogr.Geometry(ogr.wkbPolygon)
+                vectorGeometry.AddGeometry(r)
+                vectorGeometry.AssignSpatialReference(lakes_ref)
+                if vectorGeometry.Intersect(rasterGeometry):
+                    print('Intersects zone - clipping...')
+                    raster_path = os.path.join(int_dir, 'raster_{}'.format(zone).replace('.', '_') + '.shp')
+                    # Remove output shapefile if it already exists
+                    if os.path.exists(raster_path):
+                        driver_shp.DeleteDataSource(raster_path)
+                    # Create the output shapefile
+                    rasterSource = driver_shp.CreateDataSource(raster_path)
+                    rasterLayer = rasterSource.CreateLayer('raster', lakes_ref, geom_type=ogr.wkbPolygon)
+                    featureDefn = rasterLayer.GetLayerDefn()
+                    feature = ogr.Feature(featureDefn)
+                    feature.SetGeometry(rasterGeometry)
+                    rasterLayer.CreateFeature(feature)
+                    feature = None
+                    tmp_path = os.path.join(int_dir, 'bounds_{}'.format(zone).replace('.', '_') + '.shp')
+                    # delete for now but name nicely in case we want to reuse existing
+                    if os.path.exists(tmp_path):
+                        driver_shp.DeleteDataSource(tmp_path)
+                    source = driver_shp.CreateDataSource(tmp_path)
+                    # tmpLayer = source.CreateLayer('FINAL', lakes_ref, geom_type=ogr.wkbMultiPolygon)
+                    tmpLayer = source.CreateLayer('tmp', lakes_ref, geom_type=ogr.wkbMultiPolygon)
+                    ogr.Layer.Clip(lakes, rasterLayer, tmpLayer)
+                    coordTrans = osr.CoordinateTransformation(lakes_ref, raster_ref)
+                    print('Reprojecting...')
+                    # if os.path.exists(outputShapefile):
+                        # driver_shp.DeleteDataSource(outputShapefile)
+                    outDataSet = driver_shp.CreateDataSource(outputShapefile)
+                    outLayer = outDataSet.CreateLayer("lakes", raster_ref, geom_type=ogr.wkbMultiPolygon)
+                    # add fields
+                    inLayerDefn = tmpLayer.GetLayerDefn()
+                    for i in range(0, inLayerDefn.GetFieldCount()):
+                        fieldDefn = inLayerDefn.GetFieldDefn(i)
+                        outLayer.CreateField(fieldDefn)
+                    # get the output layer's feature definition
+                    outLayerDefn = outLayer.GetLayerDefn()
+                    # loop through the input features
+                    inFeature = tmpLayer.GetNextFeature()
+                    while inFeature:
+                        # get the input geometry
+                        geom = inFeature.GetGeometryRef()
+                        # reproject the geometry
+                        geom.Transform(coordTrans)
+                        # create a new feature
+                        outFeature = ogr.Feature(outLayerDefn)
+                        # set the geometry and attribute
+                        outFeature.SetGeometry(geom)
+                        for i in range(0, outLayerDefn.GetFieldCount()):
+                            outFeature.SetField(outLayerDefn.GetFieldDefn(i).GetNameRef(), inFeature.GetField(i))
+                        # add the feature to the shapefile
+                        outLayer.CreateFeature(outFeature)
+                        # dereference the features and get the next input feature
+                        outFeature = None
+                        inFeature = tmpLayer.GetNextFeature()
+                ds = None
+            # check again to see if we made it or had it already
+            if os.path.exists(outputShapefile):
+                outDataSet = driver_shp.Open(outputShapefile)
+                outLayer = outDataSet.GetLayer()
+                ds = gdal.Open(polywater_tif, osgeo.gdalconst.GA_Update)
+                print('Rasterizing...')
+                gdal.RasterizeLayer(ds, [1], outLayer, burn_values=[102], options=['ALL_TOUCHED=TRUE'])
+                ds.FlushCache()
+                # Save and close the shapefiles
+                inDataSet = None
+                outDataSet = None
+                rasterSource = None
+                source = None
+                ds = None
+            lakes = None
+            gdb = None
+        checkAddLakes('USA', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')
+        for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
+            path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
+            checkAddLakes(prov, path_gdb, 'waterbody_2')
+        # lakes should have been burned into polywater_tif
+    # finally, copy result to output location
+    ds = gdal.Open(polywater_tif, 1)
+    dst_ds = driver_tif.CreateCopy(out_tif, ds, 0)
+    dst_ds = None
+    ds = None
     return out_tif
 
 zone = ZONE_MIN
@@ -320,5 +437,5 @@ while zone <= ZONE_MAX:
         tmp_aspect = aspect.replace(DIR, TMP)
         gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
         gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-    fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), 'fuel', zone)
+    fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), zone)
     zone += 0.5
