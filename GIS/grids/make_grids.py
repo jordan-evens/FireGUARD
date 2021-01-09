@@ -232,7 +232,6 @@ def clip_fuel(fp, zone):
         rb = ds.GetRasterBand(1)
         vals = rb.ReadAsArray(0, 0, cols, rows)
         no_data = rb.GetNoDataValue()
-        mask = vals != no_data
         vals = None
         rb = None
         ds = None
@@ -241,14 +240,12 @@ def clip_fuel(fp, zone):
         rb_nowater = ds_nowater.GetRasterBand(1)
         vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
         # need a 1 where we want to fill in the blanks, so make that cover all nodata cells
-        nodata_nowater = vals_nowater == no_data
+        fill_what = vals_nowater == no_data
         # fill the nodata values that had a value in the base but not when there's no water
-        fill_what = np.logical_and(nodata_nowater, mask)
         rb_nowater = None
         ds_nowater = None
         # close this for now because of memory issues
         vals_nowater = None
-        nodata_nowater = None
         mask = None
         gc.collect()
         # ind = nd.distance_transform_edt(input, return_distances=False, return_indices=True)
@@ -438,4 +435,5 @@ while zone <= ZONE_MAX:
         gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
         gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
     fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), zone)
+    gc.collect()
     zone += 0.5
