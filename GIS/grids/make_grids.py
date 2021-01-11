@@ -210,7 +210,7 @@ def clip_fuel(fp, zone):
     ds = None
     if not os.path.exists(nowater_tif):
         ds = gdal.Open(base_tif, 1)
-        dst_ds = driver_tif.CreateCopy(tmp_tif, ds, 0)
+        dst_ds = driver_tif.CreateCopy(tmp_tif, ds, 0, options=CREATION_OPTIONS)
         dst_ds = None
         ds = None
         ds = gdal.Open(tmp_tif, 1)
@@ -222,7 +222,7 @@ def clip_fuel(fp, zone):
         rb.WriteArray(vals, 0, 0)
         rb.FlushCache()
         # want a copy of this before we add the water back in so we can fill from non-water
-        dst_ds = driver_tif.CreateCopy(nowater_tif, ds, 0)
+        dst_ds = driver_tif.CreateCopy(nowater_tif, ds, 0, options=CREATION_OPTIONS)
         dst_ds = None
     if not os.path.exists(filled_tif):
         # now fill in blanks with surrounding fuels
@@ -275,7 +275,7 @@ def clip_fuel(fp, zone):
         rb_nowater = None
         ds_nowater = None
         ds = gdal.Open(base_tif, 1)
-        dst_ds = driver_tif.CreateCopy(filled_tif, ds, 0)
+        dst_ds = driver_tif.CreateCopy(filled_tif, ds, 0, options=CREATION_OPTIONS)
         dst_ds = None
         ds = gdal.Open(filled_tif, 1)
         rb = ds.GetRasterBand(1)
@@ -287,7 +287,7 @@ def clip_fuel(fp, zone):
     # now the nodata values should all be filled, so apply the water from the polygons
     if not os.path.exists(polywater_tif):
         ds_filled = gdal.Open(filled_tif, 1)
-        dst_ds = driver_tif.CreateCopy(polywater_tif, ds_filled, 0)
+        dst_ds = driver_tif.CreateCopy(polywater_tif, ds_filled, 0, options=CREATION_OPTIONS)
         dst_ds = None
         ds_filled = None
         gc.collect()
@@ -414,7 +414,7 @@ def clip_fuel(fp, zone):
         # lakes should have been burned into polywater_tif
     # finally, copy result to output location
     ds = gdal.Open(polywater_tif, 1)
-    dst_ds = driver_tif.CreateCopy(out_tif, ds, 0)
+    dst_ds = driver_tif.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
     dst_ds = None
     ds = None
     return out_tif
