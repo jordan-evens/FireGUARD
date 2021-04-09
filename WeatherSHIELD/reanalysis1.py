@@ -15,13 +15,13 @@ import logging
 
 ## Provides mapping between fields we're looking for and the file names that contain them
 file_masks = {
-    r'TMIN': r'Datasets/ncep.reanalysis/surface_gauss/tmin.2m.gauss.{}.nc',
-    r'TMAX': r'Datasets/ncep.reanalysis/surface_gauss/tmax.2m.gauss.{}.nc',
-    r'TMP': r'Datasets/ncep.reanalysis/surface_gauss/air.2m.gauss.{}.nc',
-    r'UGRD' : r'Datasets/ncep.reanalysis/surface_gauss/uwnd.10m.gauss.{}.nc',
-    r'VGRD': r'Datasets/ncep.reanalysis/surface_gauss/vwnd.10m.gauss.{}.nc',
-    r'SHUM': r'Datasets/ncep.reanalysis/surface_gauss/shum.2m.gauss.{}.nc',
-    r'PRATE': r'Datasets/ncep.reanalysis/surface_gauss/prate.sfc.gauss.{}.nc'
+    r'TMIN': r'surface_gauss/tmin.2m.gauss.{}.nc',
+    r'TMAX': r'surface_gauss/tmax.2m.gauss.{}.nc',
+    r'TMP': r'surface_gauss/air.2m.gauss.{}.nc',
+    r'UGRD' : r'surface_gauss/uwnd.10m.gauss.{}.nc',
+    r'VGRD': r'surface_gauss/vwnd.10m.gauss.{}.nc',
+    r'SHUM': r'surface_gauss/shum.2m.gauss.{}.nc',
+    r'PRATE': r'surface_gauss/prate.sfc.gauss.{}.nc'
 }
 
 ## Name to use for model data
@@ -38,12 +38,17 @@ def save_file(filename):
     @return Path that file was saved to
     """
     print filename
-    return common.save_ftp(DIR_DATA,
-                               '/'.join([common.CONFIG.get('FireGUARD', 'reanalysis_server'), filename]),
-                               user=common.CONFIG.get('FireGUARD', 'reanalysis_server_user'),
-                               password=common.CONFIG.get('FireGUARD', 'reanalysis_server_password'),
-                               ignore_existing=True)
-
+    url = '/'.join([common.CONFIG.get('FireGUARD', 'reanalysis_server'), filename])
+    if url.startswith('ftp'):
+        return common.save_ftp(DIR_DATA,
+                                   url,
+                                   user=common.CONFIG.get('FireGUARD', 'reanalysis_server_user'),
+                                   password=common.CONFIG.get('FireGUARD', 'reanalysis_server_password'),
+                                   ignore_existing=True)
+    else:
+        return common.save_http(DIR_DATA,
+                                   url,
+                                   ignore_existing=True)
 
 def get_valid_locs(lats, lons):
     """!
@@ -72,16 +77,7 @@ def get_Dataset(year, colname):
     """
     print year, colname
     file = file_masks[colname].format(year)
-    filename = None
-    if 1981 == year and 'TMP' == colname:
-        logging.debug("Using workaround for 1981 temperature download issue")
-        # HACK to use file from alternate source since other won't download
-        other_url = r'http://database.rish.kyoto-u.ac.jp/arch/ncep/data/ncep.reanalysis/surface_gauss/air.2m.gauss.1981.nc'
-        def save_other(url):
-            return common.save_http(DIR_DATA, url)
-        filename = common.try_save(save_other, other_url)
-    else:
-        filename = common.try_save(save_file, file)
+    filename = common.try_save(save_file, file)
     #~ filename = os.path.join(DIR_DATA, os.path.basename(file))
     return netCDF4.Dataset(filename)
 
