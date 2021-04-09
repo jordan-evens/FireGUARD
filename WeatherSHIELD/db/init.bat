@@ -1,4 +1,10 @@
 @echo off
+
+SET SERVER=.\SQLEXPRESS
+
+sqlcmd -S %SERVER% -E -Q "DROP LOGIN [wx_readwrite]"
+sqlcmd -S %SERVER% -E -Q "DROP LOGIN [wx_readonly]"
+
 call loaddb.bat WXSHIELD.sql
 call loaddb.bat HINDCAST.sql
 
