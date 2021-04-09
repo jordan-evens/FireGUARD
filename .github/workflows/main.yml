@@ -29,6 +29,22 @@ jobs:
         doxyfile-path: "firestarr.conf"
         # Working directory
         working-directory: "FireSTARR"
+        
+    - name: Doxygen GIS
+      uses: mattnotmitt/doxygen-action@v1.1.0
+      with:
+        # Path to Doxyfile
+        doxyfile-path: "gis.conf"
+        # Working directory
+        working-directory: "GIS"
+        
+    - name: Doxygen WeatherSHIELD
+      uses: mattnotmitt/doxygen-action@v1.1.0
+      with:
+        # Path to Doxyfile
+        doxyfile-path: "weathershield.conf"
+        # Working directory
+        working-directory: "WeatherSHIELD"
     
     - name: Doxygen FireGUARD
       uses: mattnotmitt/doxygen-action@v1.1.0
