@@ -28,10 +28,10 @@ FireGUARD is the overall suite of products for creating probabilistic fire growt
 
 Subcomponents include:
 
-[FireSTARR](FireSTARR)
+[FireSTARR](FireSTARR/)
 
-[GIS](GIS)
+[GIS](GIS/)
 
-[WeatherSHIELD](WeatherSHIELD)
+[WeatherSHIELD](WeatherSHIELD/)
 
 <!-- @diafile DataFlow.dia -->
