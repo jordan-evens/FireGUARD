@@ -26,9 +26,9 @@ jobs:
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
         # Path to Doxyfile
-        doxyfile-path: "/documentation/fireguard.conf"
+        doxyfile-path: "documentation/fireguard.conf"
         # Working directory
-        working-directory: "/documentation" # default is .
+        working-directory: "documentation" # default is .
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
