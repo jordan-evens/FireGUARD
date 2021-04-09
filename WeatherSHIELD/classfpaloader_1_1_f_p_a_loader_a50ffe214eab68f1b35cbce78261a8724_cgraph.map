@@ -1,0 +1,5 @@
+<map id="fpaloader.FPALoader.save_if_required" name="fpaloader.FPALoader.save_if_required">
+<area shape="rect" id="node1" title="Save data if not in database already, unless forced." alt="" coords="5,35,180,76"/>
+<area shape="rect" id="node2" href="$classweatherloader_1_1_weather_loader.html#aeea169c6ab6432f70add8335c4480c60" title="Check if data for given Generated time already exists." alt="" coords="241,5,473,47"/>
+<area shape="rect" id="node3" href="$classweatherloader_1_1_weather_loader.html#a8f0107b9ac5417435a5edef9ce7e8e0b" title="Save data into database." alt="" coords="228,71,485,98"/>
+</map>

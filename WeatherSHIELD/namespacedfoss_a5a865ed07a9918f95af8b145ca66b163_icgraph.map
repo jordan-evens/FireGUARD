@@ -1,0 +1,10 @@
+<map id="dfoss.read_remote" name="dfoss.read_remote">
+<area shape="rect" id="node1" title="Execute statement and return DataFrame with results." alt="" coords="708,56,837,83"/>
+<area shape="rect" id="node2" href="$namespacedfoss.html#aedbb307cf1f09b861d6e98a7dd370f9d" title="Copy CT_WSTN (code table for weather stations)" alt="" coords="351,5,488,32"/>
+<area shape="rect" id="node5" href="$namespacedfoss.html#acc4bf449cdd041a5e92ee738a3d9a019" title="Copy contents of remote table to local database." alt="" coords="541,107,660,133"/>
+<area shape="rect" id="node8" href="$namespacedfoss.html#a24692d2046460102e83b108b544c5491" title="Load fire data." alt="" coords="547,56,654,83"/>
+<area shape="rect" id="node3" href="$namespacedfoss.html#af86959fdffee86e108c0cddeced9d4b0" title="Load data for all tables." alt="" coords="216,56,297,83"/>
+<area shape="rect" id="node4" href="$namespacedfoss.html#a3bf75db4c23cfa58798c3a63500a97a2" title="Load all data for current year." alt="" coords="5,81,168,108"/>
+<area shape="rect" id="node6" href="$namespacedfoss.html#ab7717271fa5089363bd42ffe5415dad4" title="Load forecast weather data." alt="" coords="345,107,493,133"/>
+<area shape="rect" id="node7" href="$namespacedfoss.html#abacedb8b7cf1511893d95a4f91b22129" title="Load observed weather data." alt="" coords="349,157,489,184"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="fpaloader.FPALoader.save_and_read" name="fpaloader.FPALoader.save_and_read">
+<area shape="rect" id="node1" title="Save a URL and then return the contents of the saved file." alt="" coords="5,5,180,47"/>
+<area shape="rect" id="node2" href="$classfpaloader_1_1_f_p_a_loader.html#a71f710a0e8b26f4a8402a75613151c2a" title="Read entire contents of file into string." alt="" coords="228,13,423,39"/>
+</map>

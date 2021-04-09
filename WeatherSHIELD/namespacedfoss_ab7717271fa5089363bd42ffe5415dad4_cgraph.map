@@ -1,0 +1,6 @@
+<map id="dfoss.copy_wforecast" name="dfoss.copy_wforecast">
+<area shape="rect" id="node1" title="Load forecast weather data." alt="" coords="5,5,153,32"/>
+<area shape="rect" id="node2" href="$namespacedfoss.html#acc4bf449cdd041a5e92ee738a3d9a019" title="Copy contents of remote table to local database." alt="" coords="201,5,320,32"/>
+<area shape="rect" id="node3" href="$namespacedfoss.html#a5a865ed07a9918f95af8b145ca66b163" title="Execute statement and return DataFrame with results." alt="" coords="368,5,497,32"/>
+<area shape="rect" id="node4" href="$namespacedfoss.html#a2460847095e3c26423b44c12ba0ed51c" title="Return connection to DFOSS database." alt="" coords="545,5,729,32"/>
+</map>

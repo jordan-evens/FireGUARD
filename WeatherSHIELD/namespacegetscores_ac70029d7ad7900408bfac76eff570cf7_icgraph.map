@@ -1,0 +1,4 @@
+<map id="getscores.read_AMO" name="getscores.read_AMO">
+<area shape="rect" id="node1" title="Read AMO data from URL." alt="" coords="211,5,355,32"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,5,163,32"/>
+</map>

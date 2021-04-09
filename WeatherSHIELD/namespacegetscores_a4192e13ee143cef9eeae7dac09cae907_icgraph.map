@@ -1,0 +1,5 @@
+<map id="getscores.finalize" name="getscores.finalize">
+<area shape="rect" id="node1" title="Clean up and reindex data for final output." alt="" coords="403,5,524,32"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#ac70029d7ad7900408bfac76eff570cf7" title="Read AMO data from URL." alt="" coords="211,5,355,32"/>
+<area shape="rect" id="node3" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,5,163,32"/>
+</map>

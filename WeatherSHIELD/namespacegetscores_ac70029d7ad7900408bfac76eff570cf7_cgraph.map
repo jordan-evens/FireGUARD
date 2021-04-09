@@ -1,0 +1,6 @@
+<map id="getscores.read_AMO" name="getscores.read_AMO">
+<area shape="rect" id="node1" title="Read AMO data from URL." alt="" coords="5,56,149,83"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#a4192e13ee143cef9eeae7dac09cae907" title="Clean up and reindex data for final output." alt="" coords="209,5,331,32"/>
+<area shape="rect" id="node3" href="$namespacegetscores.html#a3fb5d14f02eb254919b45b699f3f5a40" title="Read data for given years." alt="" coords="197,56,343,83"/>
+<area shape="rect" id="node4" href="$namespacegetscores.html#abb2a772a11ea64c9de315e68ccde5708" title="Save the given url." alt="" coords="203,107,337,133"/>
+</map>

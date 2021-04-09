@@ -1,0 +1,7 @@
+<map id="getscores.save_file" name="getscores.save_file">
+<area shape="rect" id="node1" title="Save the given url." alt="" coords="409,56,543,83"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#ac70029d7ad7900408bfac76eff570cf7" title="Read AMO data from URL." alt="" coords="214,5,358,32"/>
+<area shape="rect" id="node4" href="$namespacegetscores.html#a276359751228882ea6d13459b956fbe5" title="Read ENSO data from URL." alt="" coords="211,56,361,83"/>
+<area shape="rect" id="node5" href="$namespacegetscores.html#ac929e07af8cd85c6e4fe568be064b0f5" title="Read PDO data from URL." alt="" coords="215,107,357,133"/>
+<area shape="rect" id="node3" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,56,163,83"/>
+</map>

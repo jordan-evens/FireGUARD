@@ -1,0 +1,6 @@
+<map id="sst.save_file" name="sst.save_file">
+<area shape="rect" id="node1" title="Save the given url." alt="" coords="475,5,569,32"/>
+<area shape="rect" id="node2" href="$namespacesst.html#ae66e88607c089d3794107a093afcea33" title="Get values for given name and url." alt="" coords="325,5,427,32"/>
+<area shape="rect" id="node3" href="$namespacesst.html#a98c1d392de18e73c8bea56ee6a59dccd" title="Load data for all indices." alt="" coords="211,5,277,32"/>
+<area shape="rect" id="node4" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,5,163,32"/>
+</map>

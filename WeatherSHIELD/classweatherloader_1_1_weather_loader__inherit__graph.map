@@ -1,0 +1,8 @@
+<map id="weatherloader.WeatherLoader" name="weatherloader.WeatherLoader">
+<area shape="rect" id="node1" title=" " alt="" coords="88,131,283,311"/>
+<area shape="rect" id="node3" href="$classfpaloader_1_1_f_p_a_loader.html" title=" " alt="" coords="5,417,173,641"/>
+<area shape="rect" id="node4" href="$classgribloader_1_1_grib_loader.html" title=" " alt="" coords="198,359,365,700"/>
+<area shape="rect" id="node2" href="$classobject.html" title=" " alt="" coords="157,5,214,83"/>
+<area shape="rect" id="node5" href="$classgefsloader_1_1_gefs_loader.html" title=" " alt="" coords="115,748,269,825"/>
+<area shape="rect" id="node6" href="$classgepsloader_1_1_geps_loader.html" title=" " alt="" coords="293,748,451,825"/>
+</map>

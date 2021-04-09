@@ -1,0 +1,12 @@
+<map id="getscores.get_standard" name="getscores.get_standard">
+<area shape="rect" id="node1" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,107,163,133"/>
+<area shape="rect" id="node2" href="$namespacesst.html#a98c1d392de18e73c8bea56ee6a59dccd" title="Load data for all indices." alt="" coords="253,17,319,44"/>
+<area shape="rect" id="node5" href="$namespacegetscores.html#ac70029d7ad7900408bfac76eff570cf7" title="Read AMO data from URL." alt="" coords="214,81,358,108"/>
+<area shape="rect" id="node9" href="$namespacegetscores.html#a276359751228882ea6d13459b956fbe5" title="Read ENSO data from URL." alt="" coords="211,132,361,159"/>
+<area shape="rect" id="node10" href="$namespacegetscores.html#ac929e07af8cd85c6e4fe568be064b0f5" title="Read PDO data from URL." alt="" coords="215,183,357,209"/>
+<area shape="rect" id="node3" href="$namespacesst.html#ae66e88607c089d3794107a093afcea33" title="Get values for given name and url." alt="" coords="431,5,533,32"/>
+<area shape="rect" id="node4" href="$namespacesst.html#a0bf68383a159aebff8c1ea58f6f6e233" title="Save the given url." alt="" coords="603,5,697,32"/>
+<area shape="rect" id="node6" href="$namespacegetscores.html#a4192e13ee143cef9eeae7dac09cae907" title="Clean up and reindex data for final output." alt="" coords="421,56,543,83"/>
+<area shape="rect" id="node7" href="$namespacegetscores.html#a3fb5d14f02eb254919b45b699f3f5a40" title="Read data for given years." alt="" coords="409,107,555,133"/>
+<area shape="rect" id="node8" href="$namespacegetscores.html#abb2a772a11ea64c9de315e68ccde5708" title="Save the given url." alt="" coords="415,157,549,184"/>
+</map>

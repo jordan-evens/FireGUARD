@@ -1,0 +1,4 @@
+<map id="getscores.read_PDO" name="getscores.read_PDO">
+<area shape="rect" id="node1" title="Read PDO data from URL." alt="" coords="5,5,148,32"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#abb2a772a11ea64c9de315e68ccde5708" title="Save the given url." alt="" coords="196,5,329,32"/>
+</map>

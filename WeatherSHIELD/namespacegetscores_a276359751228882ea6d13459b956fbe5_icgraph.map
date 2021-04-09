@@ -1,0 +1,4 @@
+<map id="getscores.read_ENSO" name="getscores.read_ENSO">
+<area shape="rect" id="node1" title="Read ENSO data from URL." alt="" coords="211,5,361,32"/>
+<area shape="rect" id="node2" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,5,163,32"/>
+</map>
