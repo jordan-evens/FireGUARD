@@ -22,13 +22,21 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
         
-    - name: Doxygen Action
+    - name: Doxygen FireSTARR
+      uses: mattnotmitt/doxygen-action@v1.1.0
+      with:
+        # Path to Doxyfile
+        doxyfile-path: "firestarr.conf"
+        # Working directory
+        working-directory: "FireSTARR"
+    
+    - name: Doxygen FireGUARD
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
         # Path to Doxyfile
         doxyfile-path: "fireguard.conf"
         # Working directory
-        working-directory: "documentation" # default is .
+        working-directory: "documentation"
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
@@ -36,4 +44,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         # Default Doxyfile build documentation to html directory. 
         # Change the directory if changes in Doxyfile
-        publish_dir: ./html
+        publish_dir: ./documentation/html
