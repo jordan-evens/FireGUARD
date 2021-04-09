@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['weatherloader_117',['weatherloader',['../namespaceweatherloader.html',1,'']]]
+  ['weatherloader_116',['weatherloader',['../namespaceweatherloader.html',1,'']]]
 ];

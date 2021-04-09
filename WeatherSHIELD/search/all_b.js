@@ -11,7 +11,6 @@ var searchData=
   ['read_5fremote_71',['read_remote',['../namespacedfoss.html#a5a865ed07a9918f95af8b145ca66b163',1,'dfoss']]],
   ['read_5fwx_72',['read_wx',['../classgribloader_1_1_grib_loader.html#a6aed433d13a36ce8367f7a15dfdc6226',1,'gribloader::GribLoader']]],
   ['read_5fyears_73',['read_years',['../namespacegetscores.html#a3fb5d14f02eb254919b45b699f3f5a40',1,'getscores']]],
-  ['readme_74',['README',['../md__weather_s_h_i_e_l_d__r_e_a_d_m_e.html',1,'']]],
-  ['reanalysis1_75',['reanalysis1',['../namespacereanalysis1.html',1,'']]],
-  ['rh_5ffrom_5fsh_76',['rh_from_sh',['../namespacereanalysis1.html#a72d29938e8601232688e0a7bef3d1595',1,'reanalysis1']]]
+  ['reanalysis1_74',['reanalysis1',['../namespacereanalysis1.html',1,'']]],
+  ['rh_5ffrom_5fsh_75',['rh_from_sh',['../namespacereanalysis1.html#a72d29938e8601232688e0a7bef3d1595',1,'reanalysis1']]]
 ];
