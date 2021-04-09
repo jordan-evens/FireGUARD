@@ -127,7 +127,7 @@ call :ensure_file "https://www.python.org/ftp/python/2.7.18/python-2.7.18.msi" "
 call :ensure_file "http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe" "dotNetFx40_Full_x86_x64.exe"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120362" "SQLSRV58.EXE"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120137" "msodbcsql.msi"
-SET DOXYGEN_ZIP=doxygen-1.8.20.windows.x64.bin.zip
+SET DOXYGEN_ZIP=doxygen-1.9.1.windows.bin.zip
 call :ensure_file "http://doxygen.nl/files/%DOXYGEN_ZIP%" %DOXYGEN_ZIP%
 SET DIA_ZIP=dia_0.97.2_win32.zip
 call :ensure_file "https://sourceforge.net/projects/dia-installer/files/dia/0.97.2/%DIA_ZIP%/download" %DIA_ZIP%
