@@ -1,0 +1,4 @@
+<map id="firestarr.shared.project_raster" name="firestarr.shared.project_raster">
+<area shape="rect" id="node1" title="Project a raster into the default coordinate system with the proper cell size and reference point." alt="" coords="5,5,155,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#a95a3d67fcca39e4764c20db1408d6aa7" title="Figure out a valid transformation from the spatialReference to the desired one." alt="" coords="203,5,333,47"/>
+</map>

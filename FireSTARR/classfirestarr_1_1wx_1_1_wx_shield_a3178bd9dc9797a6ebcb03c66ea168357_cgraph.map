@@ -1,0 +1,8 @@
+<map id="firestarr::wx::WxShield::readHindcastByOffset" name="firestarr::wx::WxShield::readHindcastByOffset">
+<area shape="rect" id="node1" title="Read reanalysis data for the given period." alt="" coords="5,71,160,112"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1topo_1_1_point.html#aef13d155b163a77c85e0ed82dbf37bd8" title="Latitude (decimal degrees)" alt="" coords="217,5,349,47"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1topo_1_1_point.html#aad26ed97f8a0b7d2cbc103c29fce5f1c" title="Longitude (decimal degrees)" alt="" coords="217,71,349,112"/>
+<area shape="rect" id="node4" href="$classfirestarr_1_1util_1_1_database.html#a69c4222f3b11eddf5830f4f66ed72312" title="Read a map of WeatherModels to maps of days to Weather." alt="" coords="208,136,357,177"/>
+<area shape="rect" id="node5" href="$classfirestarr_1_1util_1_1_database.html#aa85fabe3a19ec6e5617c2c61a7239996" title="Read a wstring from the current column of the current query." alt="" coords="405,136,555,177"/>
+<area shape="rect" id="node6" href="$classfirestarr_1_1util_1_1_database.html#a1408317acb9523a77a9972dfc171b4cd" title="Check if the result is an error and output message if so." alt="" coords="603,136,752,177"/>
+</map>

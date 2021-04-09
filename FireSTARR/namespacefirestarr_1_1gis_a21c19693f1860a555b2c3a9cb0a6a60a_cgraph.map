@@ -1,0 +1,5 @@
+<map id="firestarr.gis.Project" name="firestarr.gis.Project">
+<area shape="rect" id="node1" title="Project to given spatial reference." alt="" coords="5,35,135,61"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1gis.html#a39fc38fadbe0aa19fd8a44112502e39c" title="Delete the given shapefile." alt="" coords="195,5,320,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1gis.html#a4ed52c23da6314e651e567ee8b458924" title="Determine spatial reference from a source file." alt="" coords="183,57,332,98"/>
+</map>

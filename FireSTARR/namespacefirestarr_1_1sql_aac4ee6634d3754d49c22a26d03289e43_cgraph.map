@@ -1,0 +1,5 @@
+<map id="firestarr.sql.get_all_fires" name="firestarr.sql.get_all_fires">
+<area shape="rect" id="node1" title="Get all fires that match the given mask from DFOSS." alt="" coords="5,5,132,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1sql.html#a46714dc6daf2f5eb76e6f09e4731c35e" title="Execute query on DFOSS database." alt="" coords="180,5,293,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1sql.html#a0375ca4e6bd0829d281d15eacfa4774e" title="Return connection to DFOSS database." alt="" coords="341,5,487,47"/>
+</map>

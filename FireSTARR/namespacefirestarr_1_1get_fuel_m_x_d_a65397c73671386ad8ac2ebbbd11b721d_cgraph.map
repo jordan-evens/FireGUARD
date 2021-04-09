@@ -1,0 +1,4 @@
+<map id="firestarr.getFuelMXD.getFuelMXD" name="firestarr.getFuelMXD.getFuelMXD">
+<area shape="rect" id="node1" title="Save fuel map for given inputs." alt="" coords="5,5,167,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_fuel_m_x_d.html#a79e6989cdc6894c9c2f5e9c28d63a469" title="Get path to save fuel map for given inputs to." alt="" coords="215,5,376,47"/>
+</map>

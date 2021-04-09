@@ -1,0 +1,5 @@
+<map id="firestarr.getProjectionMXD.saveProjectionMXD" name="firestarr.getProjectionMXD.saveProjectionMXD">
+<area shape="rect" id="node1" title="Save projection maps for given inputs." alt="" coords="5,5,209,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_projection_m_x_d.html#a73ef855a2ebf13e3910f4b116d68c8db" title="Save projection maps for given inputs." alt="" coords="257,5,452,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_projection_m_x_d.html#a681919b6de0e11d3838f9fef14d0d077" title="Generate name of mxd to output to when using given parameters." alt="" coords="500,5,695,47"/>
+</map>

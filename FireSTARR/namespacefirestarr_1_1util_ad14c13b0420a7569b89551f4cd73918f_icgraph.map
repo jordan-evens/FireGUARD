@@ -1,0 +1,5 @@
+<map id="firestarr.util.find_lines" name="firestarr.util.find_lines">
+<area shape="rect" id="node1" title="Find lines containing given key and remove start if provided." alt="" coords="391,23,499,65"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a099a5f01fcaaba3e9486b9c66fc038ad" title="Find the first line containing given key and remove start if provided." alt="" coords="208,5,343,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#aa90ae630eb6bb18c5e31c45e22c490c9" title="Generate size and assumptions strings for use on maps." alt="" coords="5,23,160,65"/>
+</map>

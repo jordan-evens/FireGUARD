@@ -1,0 +1,7 @@
+<map id="firestarr::sim::SettingsImplementation::SettingsImplementation" name="firestarr::sim::SettingsImplementation::SettingsImplementation">
+<area shape="rect" id="node1" title="Read settings from a file." alt="" coords="5,27,260,69"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a1398ab26da13d3706ee9de707107e8a9" title="Return new string with whitespace removed from both sides." alt="" coords="308,35,459,61"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#ae790f9de50ffcdc096af8b295dfbf771" title="Remove whitespace from both sides of string." alt="" coords="507,35,623,61"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1util.html#ae8230db0025182815c915af1c38cfeef" title="Remove whitespace from left side of string." alt="" coords="671,5,812,32"/>
+<area shape="rect" id="node5" href="$namespacefirestarr_1_1util.html#a4d788139b846bb1aaab9e945a24b2d64" title="Remove whitespace from right side of string." alt="" coords="683,57,799,98"/>
+</map>

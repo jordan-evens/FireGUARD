@@ -1,0 +1,4 @@
+<map id="firestarr.shared.find_transformation" name="firestarr.shared.find_transformation">
+<area shape="rect" id="node1" title="Figure out a valid transformation from the spatialReference to the desired one." alt="" coords="203,5,333,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#a721fd22814d238d87da56b0ae44e4fa1" title="Project a raster into the default coordinate system with the proper cell size and reference point." alt="" coords="5,5,155,47"/>
+</map>

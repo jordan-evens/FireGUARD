@@ -1,0 +1,5 @@
+<map id="firestarr.getRiskMXD.saveRiskMXD" name="firestarr.getRiskMXD.saveRiskMXD">
+<area shape="rect" id="node1" title="Save risk map for given inputs." alt="" coords="5,5,177,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_risk_m_x_d.html#ac15e709245b1b3820f5449eeaad3ca18" title="Save risk map for given inputs." alt="" coords="225,5,388,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_risk_m_x_d.html#a23c71e48afc2e9774e8e7b7974fa4f4a" title="Get path to save risk map for given inputs to." alt="" coords="436,5,599,47"/>
+</map>

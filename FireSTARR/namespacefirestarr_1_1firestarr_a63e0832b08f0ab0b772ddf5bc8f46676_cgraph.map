@@ -1,0 +1,5 @@
+<map id="firestarr.firestarr.doRun" name="firestarr.firestarr.doRun">
+<area shape="rect" id="node1" title="Run with command line arguments." alt="" coords="5,5,156,32"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1firestarr.html#ad821163bfe766ac4e0cbc60ee7aeb3f8" title="Run fire based on configuartion file and command line arguments." alt="" coords="204,5,336,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1firestarr.html#a78cc50e77337be2757530e33d76cc76c" title="Run fire fore given scenario." alt="" coords="384,5,539,32"/>
+</map>

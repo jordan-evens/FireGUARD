@@ -1,0 +1,5 @@
+<map id="firestarr::wx::WxShield::getWxDb" name="firestarr::wx::WxShield::getWxDb">
+<area shape="rect" id="node1" title="Open database connection for weather database that contains data for given date." alt="" coords="403,5,549,47"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a1c5aa46c3e772a41ad6811a4fd3083fb" title="Reads forecast weather for the given period." alt="" coords="200,5,355,47"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a1811ce18dcf536ff6fef30ab1e2d7fef" title="Initialize a WeatherSHIELD ensemble." alt="" coords="5,5,152,47"/>
+</map>

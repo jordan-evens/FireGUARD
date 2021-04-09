@@ -1,0 +1,7 @@
+<map id="firestarr::wx::WxShield::readActualsByOffset" name="firestarr::wx::WxShield::readActualsByOffset">
+<area shape="rect" id="node1" title="Get observed weather data for the given period." alt="" coords="5,104,152,145"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a59ba5f8fc890e3e2e25ac4322949dea6" title="Open database connection for DFOSS database that contains data for given date." alt="" coords="201,5,348,47"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1topo_1_1_point.html#aef13d155b163a77c85e0ed82dbf37bd8" title="Latitude (decimal degrees)" alt="" coords="209,71,341,112"/>
+<area shape="rect" id="node4" href="$classfirestarr_1_1topo_1_1_point.html#aad26ed97f8a0b7d2cbc103c29fce5f1c" title="Longitude (decimal degrees)" alt="" coords="209,136,341,177"/>
+<area shape="rect" id="node5" href="$classfirestarr_1_1util_1_1_database.html#a2289a275b13c479f6039157124e13388" title="Read a vector of T based on performing the given query." alt="" coords="200,201,349,243"/>
+</map>

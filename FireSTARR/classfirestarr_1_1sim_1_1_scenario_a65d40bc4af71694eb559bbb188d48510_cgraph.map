@@ -1,0 +1,5 @@
+<map id="firestarr::sim::Scenario::weather" name="firestarr::sim::Scenario::weather">
+<area shape="rect" id="node1" title="FwiWeather for given time." alt="" coords="5,5,155,47"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_fire_weather.html#a475cd722bfbd68bf5e6a5db5e14c80f9" title="Get FwiWeather for given time." alt="" coords="203,13,383,39"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a5a25c7eae1bb4c27eee50652d9ff3675" title="Convert day and hour into time index." alt="" coords="431,5,549,47"/>
+</map>

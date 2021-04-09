@@ -1,0 +1,5 @@
+<map id="firestarr.util.fix_timezone_offset" name="firestarr.util.fix_timezone_offset">
+<area shape="rect" id="node1" title="Convert from UTC to local time, respecting DST if required." alt="" coords="199,23,319,65"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#afb365a7701b72fb07cffcbfe25b9359c" title="Save file at given URL into given directory using an FTP connection." alt="" coords="9,5,147,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a4be6e26bf645ce7caf1d75255ae409bc" title="Save file at given URL into given directory using an HTTP connection." alt="" coords="5,56,151,83"/>
+</map>

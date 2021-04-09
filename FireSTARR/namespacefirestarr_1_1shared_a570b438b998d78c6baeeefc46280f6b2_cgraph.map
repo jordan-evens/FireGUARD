@@ -1,0 +1,5 @@
+<map id="firestarr.shared.env_defaults" name="firestarr.shared.env_defaults">
+<area shape="rect" id="node1" title="Set default settings for environment." alt="" coords="5,39,136,80"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#aa47e8571e92798dedf479b3eb3938e07" title="Check if feature exists and is valid." alt="" coords="184,5,356,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1shared.html#a38643b12d296dc743e6e75357f9781d1" title="Set snapRaster and extent to match feature." alt="" coords="191,71,349,112"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="firestarr.sql.read_remote" name="firestarr.sql.read_remote">
+<area shape="rect" id="node1" title="Execute query on DFOSS database." alt="" coords="5,5,119,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1sql.html#a0375ca4e6bd0829d281d15eacfa4774e" title="Return connection to DFOSS database." alt="" coords="167,5,312,47"/>
+</map>

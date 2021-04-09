@@ -1,0 +1,8 @@
+<map id="firestarr.utm.utm_central_meridian_deg" name="firestarr.utm.utm_central_meridian_deg">
+<area shape="rect" id="node1" title="Determines the central meridian for the given UTM zone." alt="" coords="772,35,933,76"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#a4ff078d45bef2c0f8cf8805a148b70cc" title="Computes the footpoint latitude for use in converting transverse Mercator coordinates to ellipsoidal ..." alt="" coords="372,5,515,47"/>
+<area shape="rect" id="node5" href="$namespacefirestarr_1_1utm.html#a3404bec6f39842fea67c522f2cae9355" title="Determines the central meridian for the given UTM zone." alt="" coords="563,64,724,105"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1utm.html#a252104c9cd56639e4bb52eda3063f080" title="Converts Transverse Mercator to latitude/longitude." alt="" coords="187,5,324,47"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1utm.html#a328a5e6bc704edf95ad39a911508ca23" title="Convert UTM to latitude/longitude." alt="" coords="5,35,139,76"/>
+<area shape="rect" id="node6" href="$namespacefirestarr_1_1utm.html#a80407bd09e1018c039394a5739cd0f6b" title="Converts a latitude/longitude pair to x and y coordinates in the UTM projection." alt="" coords="378,123,509,164"/>
+</map>

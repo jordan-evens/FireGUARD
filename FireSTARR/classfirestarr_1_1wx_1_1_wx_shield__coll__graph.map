@@ -1,0 +1,13 @@
+<map id="firestarr::wx::WxShield" name="firestarr::wx::WxShield">
+<area shape="rect" id="node1" title="Implements the WeatherSHIELD method of creating long&#45;range weather forecasts." alt="" coords="510,403,678,759"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,211,164,289"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1topo_1_1_point.html" title="A geographic location in lat/long coordinates." alt="" coords="188,160,320,340"/>
+<area shape="rect" id="node4" title=" " alt="" coords="224,5,284,83"/>
+<area shape="rect" id="node5" title=" " alt="" coords="344,211,561,289"/>
+<area shape="rect" id="node6" title=" " alt="" coords="423,5,482,83"/>
+<area shape="rect" id="node7" title=" " alt="" coords="585,211,624,289"/>
+<area shape="rect" id="node8" title=" " alt="" coords="648,211,695,289"/>
+<area shape="rect" id="node9" title=" " alt="" coords="729,211,784,289"/>
+<area shape="rect" id="node10" title=" " alt="" coords="809,204,945,296"/>
+<area shape="rect" id="node11" title=" " alt="" coords="835,5,918,83"/>
+</map>

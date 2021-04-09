@@ -1,0 +1,4 @@
+<map id="firestarr::sim::ProbabilityMap::addProbabilities" name="firestarr::sim::ProbabilityMap::addProbabilities">
+<area shape="rect" id="node1" title="Combine results from another ProbabilityMap into this one." alt="" coords="5,5,164,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#acc5bf52e0cc51625dbd07e45dab78417" title="Insert value into vector in sorted order even if it is already present." alt="" coords="212,5,339,47"/>
+</map>

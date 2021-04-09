@@ -1,0 +1,7 @@
+<map id="firestarr.sql.get_dfoss_connection" name="firestarr.sql.get_dfoss_connection">
+<area shape="rect" id="node1" title="Return connection to DFOSS database." alt="" coords="368,71,513,112"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1sql.html#a46714dc6daf2f5eb76e6f09e4731c35e" title="Execute query on DFOSS database." alt="" coords="207,71,320,112"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1sql.html#aac4ee6634d3754d49c22a26d03289e43" title="Get all fires that match the given mask from DFOSS." alt="" coords="19,5,145,47"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1sql.html#af9e2503e40688dd6396f56e2432db5aa" title="Get fires that are currently active from DFOSS." alt="" coords="5,71,159,112"/>
+<area shape="rect" id="node5" href="$namespacefirestarr_1_1sql.html#af8f366f62537c3c0e46d13d84e388c94" title="Get fires that are active as of a certain date." alt="" coords="13,136,151,177"/>
+</map>

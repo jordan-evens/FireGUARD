@@ -1,0 +1,4 @@
+<map id="firestarr.Settings.getRasterRoot" name="firestarr.Settings.getRasterRoot">
+<area shape="rect" id="node1" title="Get folder that input rasters reside in." alt="" coords="5,5,208,32"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1_settings.html#ad786a107f75d15589d759f473cb532dc" title="Get home directory to be used as root." alt="" coords="256,5,444,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="firestarr.Settings.shrinkPath" name="firestarr.Settings.shrinkPath">
+<area shape="rect" id="node1" title="Reduce path to be relative to home directory." alt="" coords="5,5,187,32"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1_settings.html#ad786a107f75d15589d759f473cb532dc" title="Get home directory to be used as root." alt="" coords="235,5,423,32"/>
+</map>

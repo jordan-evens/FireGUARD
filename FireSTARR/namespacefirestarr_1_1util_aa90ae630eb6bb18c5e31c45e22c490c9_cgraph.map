@@ -1,0 +1,6 @@
+<map id="firestarr.util.getSizeAndAssumptions" name="firestarr.util.getSizeAndAssumptions">
+<area shape="rect" id="node1" title="Generate size and assumptions strings for use on maps." alt="" coords="5,49,160,90"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a099a5f01fcaaba3e9486b9c66fc038ad" title="Find the first line containing given key and remove start if provided." alt="" coords="208,5,343,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#ad14c13b0420a7569b89551f4cd73918f" title="Find lines containing given key and remove start if provided." alt="" coords="391,23,499,65"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1util.html#a0ccef93f62418058e6e7aa88b7f19f61" title="Format an int with commas breaking it up." alt="" coords="211,107,339,133"/>
+</map>

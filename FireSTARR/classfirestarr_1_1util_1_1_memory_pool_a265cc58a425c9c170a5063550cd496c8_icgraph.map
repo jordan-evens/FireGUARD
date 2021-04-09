@@ -1,0 +1,5 @@
+<map id="firestarr::util::MemoryPool::release" name="firestarr::util::MemoryPool::release">
+<area shape="rect" id="node1" title="Add a T* to the pool of available T*s." alt="" coords="183,39,349,80"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a6f23a72b7933be345d11f86771f22904" title="Call clear on T before releasing it." alt="" coords="5,5,135,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a3fc953966435ba2dba4c247032dd5e41" title="Call reset on T before releasing it." alt="" coords="5,71,135,112"/>
+</map>

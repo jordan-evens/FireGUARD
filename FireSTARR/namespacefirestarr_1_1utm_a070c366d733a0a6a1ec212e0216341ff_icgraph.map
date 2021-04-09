@@ -1,0 +1,5 @@
+<map id="firestarr.utm.arc_length_of_meridian" name="firestarr.utm.arc_length_of_meridian">
+<area shape="rect" id="node1" title="Computes the ellipsoidal distance from the equator to a point at a given latitude." alt="" coords="371,5,524,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#a58bb600626cb0bbd02c8d423bc094153" title="Converts a latitude/longitude pair to Transverse Mercator x and y coordinates." alt="" coords="184,5,323,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1utm.html#a80407bd09e1018c039394a5739cd0f6b" title="Converts a latitude/longitude pair to x and y coordinates in the UTM projection." alt="" coords="5,5,136,47"/>
+</map>

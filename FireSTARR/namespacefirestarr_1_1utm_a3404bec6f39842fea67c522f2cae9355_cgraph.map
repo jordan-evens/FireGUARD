@@ -1,0 +1,5 @@
+<map id="firestarr.utm.utm_central_meridian" name="firestarr.utm.utm_central_meridian">
+<area shape="rect" id="node1" title="Determines the central meridian for the given UTM zone." alt="" coords="5,27,167,69"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#af71dc51c31bc3a45ac7e02cc13c3fe12" title="Convert degrees to radians." alt="" coords="219,5,372,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1utm.html#a10d759139c8043d852392d8d826ef24e" title="Determines the central meridian for the given UTM zone." alt="" coords="215,57,376,98"/>
+</map>

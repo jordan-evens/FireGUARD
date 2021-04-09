@@ -1,0 +1,4 @@
+<map id="firestarr::wx::FwiWeather::ffmc" name="firestarr::wx::FwiWeather::ffmc">
+<area shape="rect" id="node1" title="Fine Fuel Moisture Code." alt="" coords="215,5,377,47"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1sim_1_1_spread_info.html#a2befc78ada5218b447731339f48519c7" title="Fine Fuel Moisture Code used for spread." alt="" coords="5,5,167,47"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="firestarr.shared.check_make" name="firestarr.shared.check_make">
+<area shape="rect" id="node1" title="Check if result exists and if not make it with fct." alt="" coords="5,31,189,57"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#aa9c17fa88642158f488439cc3a27a657" title="Revert to last settings for all environment variables." alt="" coords="241,5,400,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1shared.html#ad2e60ff00df918c33c1426e807b32f72" title="Push all environment variables so we can revert easily." alt="" coords="237,56,404,83"/>
+</map>

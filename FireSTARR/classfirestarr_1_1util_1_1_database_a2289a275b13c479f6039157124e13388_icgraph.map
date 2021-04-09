@@ -1,0 +1,8 @@
+<map id="firestarr::util::Database::readList" name="firestarr::util::Database::readList">
+<area shape="rect" id="node1" title="Read a vector of T based on performing the given query." alt="" coords="395,104,544,145"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_wx_shield.html#af7dfe7ac5059fcc689b8ead85ec586a3" title="Get observed weather data for the given period." alt="" coords="200,5,347,47"/>
+<area shape="rect" id="node4" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a210605d69dcbf3c9edaf5b859a1adfec" title="Find Scores for a date that is offset days away from the current date." alt="" coords="200,71,347,112"/>
+<area shape="rect" id="node5" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a4c0054a8da3d1f32d0bc5f7bafb972b3" title="Read startup values for the given date." alt="" coords="200,136,347,177"/>
+<area shape="rect" id="node6" href="$classfirestarr_1_1wx_1_1_wx_shield.html#afd99f808e3d43fe723253adebeac0d09" title="Read weather data for the day before the given offset." alt="" coords="200,201,347,243"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a1811ce18dcf536ff6fef30ab1e2d7fef" title="Initialize a WeatherSHIELD ensemble." alt="" coords="5,5,152,47"/>
+</map>

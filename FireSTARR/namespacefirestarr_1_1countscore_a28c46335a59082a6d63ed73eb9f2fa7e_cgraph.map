@@ -1,0 +1,5 @@
+<map id="firestarr.countscore.run" name="firestarr.countscore.run">
+<area shape="rect" id="node1" title="Calculate scores that simulations had." alt="" coords="5,31,159,57"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1countscore.html#aeb8dc423302ffd060122fb84f98e43f0" title="Parse time from line of a log." alt="" coords="207,5,392,32"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1countscore.html#a0f4a7a4cfebeda1ff66a22fb06b5731c" title="Read the entire contents of a file." alt="" coords="208,56,391,83"/>
+</map>

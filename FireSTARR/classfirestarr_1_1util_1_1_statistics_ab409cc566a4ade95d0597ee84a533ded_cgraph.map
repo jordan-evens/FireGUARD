@@ -1,0 +1,6 @@
+<map id="firestarr::util::Statistics::studentsT" name="firestarr::util::Statistics::studentsT">
+<area shape="rect" id="node1" title="Calculate Student&#39;s T value." alt="" coords="5,64,155,105"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1util_1_1_statistics.html#a9e131640d867aa2e5b046f0d60a754b4" title="Mean (average) value." alt="" coords="209,5,359,47"/>
+<area shape="rect" id="node3" href="$classfirestarr_1_1util_1_1_statistics.html#a5c8b3ea641413cf585581ab07d80d597" title="Number of data points in the set." alt="" coords="203,71,365,98"/>
+<area shape="rect" id="node4" href="$classfirestarr_1_1util_1_1_statistics.html#a98734f1068d393f6714bb018ae8dee26" title="Sample Variance." alt="" coords="209,123,359,164"/>
+</map>

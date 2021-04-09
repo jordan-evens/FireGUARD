@@ -1,0 +1,9 @@
+<map id="firestarr.arc_util.setDayCommon" name="firestarr.arc_util.setDayCommon">
+<area shape="rect" id="node1" title="Set common attributes on maps that are for a specific day." alt="" coords="5,136,159,177"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1arc__util.html#a61e6ea8d763c1e9000f8f15b12209941" title="Apply extent to data frame in map." alt="" coords="445,5,588,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1arc__util.html#a1fe4308d7f7d774c82e4fa042c928232" title="Set common elements that are on all maps." alt="" coords="207,118,389,145"/>
+<area shape="rect" id="node5" href="$namespacefirestarr_1_1arc__util.html#aac815c6564fbc3d3b76b82963914cc19" title=" " alt="" coords="437,188,596,229"/>
+<area shape="rect" id="node7" href="$namespacefirestarr_1_1arc__util.html#a19f3686ebd1c80d898213ddd3de6184b" title="Set source for an image." alt="" coords="212,220,384,261"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1arc__util.html#a510bc46ad993ee783789e5ce347717d2" title="Apply perimeter to layer within mxd." alt="" coords="445,71,588,112"/>
+<area shape="rect" id="node6" href="$namespacefirestarr_1_1arc__util.html#a7d97e499e7d8a2a74b1f0e3c7fe92769" title="Set text for element." alt="" coords="439,137,595,163"/>
+</map>

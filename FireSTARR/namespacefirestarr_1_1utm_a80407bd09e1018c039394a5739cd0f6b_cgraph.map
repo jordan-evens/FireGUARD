@@ -1,0 +1,8 @@
+<map id="firestarr.utm.lat_lon_to_utm" name="firestarr.utm.lat_lon_to_utm">
+<area shape="rect" id="node1" title="Converts a latitude/longitude pair to x and y coordinates in the UTM projection." alt="" coords="5,64,136,105"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#a58bb600626cb0bbd02c8d423bc094153" title="Converts a latitude/longitude pair to Transverse Mercator x and y coordinates." alt="" coords="195,5,334,47"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1utm.html#af71dc51c31bc3a45ac7e02cc13c3fe12" title="Convert degrees to radians." alt="" coords="397,71,551,98"/>
+<area shape="rect" id="node5" href="$namespacefirestarr_1_1utm.html#a3404bec6f39842fea67c522f2cae9355" title="Determines the central meridian for the given UTM zone." alt="" coords="184,123,345,164"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1utm.html#a070c366d733a0a6a1ec212e0216341ff" title="Computes the ellipsoidal distance from the equator to a point at a given latitude." alt="" coords="397,5,551,47"/>
+<area shape="rect" id="node6" href="$namespacefirestarr_1_1utm.html#a10d759139c8043d852392d8d826ef24e" title="Determines the central meridian for the given UTM zone." alt="" coords="393,123,555,164"/>
+</map>

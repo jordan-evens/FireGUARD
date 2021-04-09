@@ -1,0 +1,6 @@
+<map id="firestarr.getRiskMXD.doRun" name="firestarr.getRiskMXD.doRun">
+<area shape="rect" id="node1" title="Run with command line arguments." alt="" coords="5,13,187,39"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_risk_m_x_d.html#a42817a2a4531e44a6c3f9d36d5c2d485" title="Save risk map for given inputs." alt="" coords="235,5,407,47"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_risk_m_x_d.html#ac15e709245b1b3820f5449eeaad3ca18" title="Save risk map for given inputs." alt="" coords="455,5,617,47"/>
+<area shape="rect" id="node4" href="$namespacefirestarr_1_1get_risk_m_x_d.html#a23c71e48afc2e9774e8e7b7974fa4f4a" title="Get path to save risk map for given inputs to." alt="" coords="665,5,828,47"/>
+</map>

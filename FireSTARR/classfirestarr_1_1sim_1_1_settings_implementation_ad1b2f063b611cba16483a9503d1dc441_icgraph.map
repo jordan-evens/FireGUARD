@@ -1,0 +1,4 @@
+<map id="firestarr::sim::SettingsImplementation::maximumTimeSeconds" name="firestarr::sim::SettingsImplementation::maximumTimeSeconds">
+<area shape="rect" id="node1" title="Maximum time simulation can run before it is ended and whatever results it has are used (s)" alt="" coords="217,5,471,47"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1sim_1_1_settings.html#a524eeaf70e06f236b53460be90b87437" title="Maximum time simulation can run before it is ended and whatever results it has are used (s)" alt="" coords="5,5,169,47"/>
+</map>

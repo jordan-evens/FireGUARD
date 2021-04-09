@@ -1,0 +1,4 @@
+<map id="runfire.runMake" name="runfire.runMake">
+<area shape="rect" id="node1" title="Run make for project." alt="" coords="151,5,261,32"/>
+<area shape="rect" id="node2" href="$namespacerunfire.html#a2f70533d9dc3aea85a9a70d7451e970a" title="Run FireSTARR projections for all matching fires based on Settings." alt="" coords="5,5,103,32"/>
+</map>

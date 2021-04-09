@@ -1,0 +1,4 @@
+<map id="firestarr.validate.do_validate" name="firestarr.validate.do_validate">
+<area shape="rect" id="node1" title="Validate for a specific output of probabilities." alt="" coords="207,5,337,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1validate.html#ab5f257704a23630750fd36cefc5bf46d" title="Run validation for all fires in root folder." alt="" coords="5,13,159,39"/>
+</map>

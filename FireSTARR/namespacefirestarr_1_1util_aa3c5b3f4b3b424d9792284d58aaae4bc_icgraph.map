@@ -1,0 +1,4 @@
+<map id="firestarr.util.read_file" name="firestarr.util.read_file">
+<area shape="rect" id="node1" title="Read entire contents of file and close it." alt="" coords="228,5,364,32"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#af9f6ad7333ae2c40a6672ad62d29dd62" title="Read simulation output file in given directory." alt="" coords="5,5,180,32"/>
+</map>

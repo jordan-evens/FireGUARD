@@ -1,0 +1,5 @@
+<map id="firestarr.arc_util.applyPerim" name="firestarr.arc_util.applyPerim">
+<area shape="rect" id="node1" title="Apply perimeter to layer within mxd." alt="" coords="437,5,580,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1arc__util.html#a1fe4308d7f7d774c82e4fa042c928232" title="Set common elements that are on all maps." alt="" coords="207,13,389,39"/>
+<area shape="rect" id="node3" href="$namespacefirestarr_1_1arc__util.html#aea20f7803e8c7777a9c19eeb8f3e96a9" title="Set common attributes on maps that are for a specific day." alt="" coords="5,5,159,47"/>
+</map>

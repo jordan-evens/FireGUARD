@@ -1,0 +1,4 @@
+<map id="firestarr.utm.map_lat_lon_to_xy" name="firestarr.utm.map_lat_lon_to_xy">
+<area shape="rect" id="node1" title="Converts a latitude/longitude pair to Transverse Mercator x and y coordinates." alt="" coords="5,5,144,47"/>
+<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#a070c366d733a0a6a1ec212e0216341ff" title="Computes the ellipsoidal distance from the equator to a point at a given latitude." alt="" coords="192,5,345,47"/>
+</map>
