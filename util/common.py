@@ -196,8 +196,13 @@ def save_http(to_dir, url, save_as=None, mode='wb', ignore_existing=False):
     if do_save:
         logging.info("Downloading {}".format(save_as))
         try:
+            filedata = urllib2.urlopen(url)
             with open(save_as, mode) as f:
-                f.write(response.read())
+                while True:
+                    tmp = filedata.read(1024 * 1024)
+                    if not tmp:
+                        break 
+                    f.write(tmp)
         except:
             try_remove(save_as)
             raise
