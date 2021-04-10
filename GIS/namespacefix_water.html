@@ -104,9 +104,6 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>mkFuel</b> (zone_name,
 <tr class="memitem:a9ad1e40691983a35d462c83867e84cb9"><td class="memItemLeft" align="right" valign="top"><a id="a9ad1e40691983a35d462c83867e84cb9"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>create_fuel</b> (zone)</td></tr>
 <tr class="separator:a9ad1e40691983a35d462c83867e84cb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac70aa89a4568e2203a772fe0c027e382"><td class="memItemLeft" align="right" valign="top"><a id="ac70aa89a4568e2203a772fe0c027e382"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>makeDamage</b> (_)</td></tr>
-<tr class="separator:ac70aa89a4568e2203a772fe0c027e382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70419937a2ac4b8a248da1fd7d579726"><td class="memItemLeft" align="right" valign="top"><a id="a70419937a2ac4b8a248da1fd7d579726"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>getColumns</b> (_)</td></tr>
 <tr class="separator:a70419937a2ac4b8a248da1fd7d579726"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -244,15 +241,6 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>GIS</b> = r'C:\Fire
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacefix_water.html#ab361197d2ccd255e13740a4e778aaaa3">EARTHENV</a> = os.path.join(GIS_ELEVATION, &quot;EarthEnv.tif&quot;)</td></tr>
 <tr class="memdesc:ab361197d2ccd255e13740a4e778aaaa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEM made by combining EarthEnv data into a TIFF. <br /></td></tr>
 <tr class="separator:ab361197d2ccd255e13740a4e778aaaa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35b372ac089e64fc3b2f855b319a9339"><td class="memItemLeft" align="right" valign="top"><a id="a35b372ac089e64fc3b2f855b319a9339"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>FIDE_INPUT</b> = os.path.join(GIS_FUELS, &quot;LIO&quot;, &quot;FOREST_INSECT_DAMAGE_EVENT.shp&quot;)</td></tr>
-<tr class="separator:a35b372ac089e64fc3b2f855b319a9339"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c7503881b072978f8c121e3ca54ccd9"><td class="memItemLeft" align="right" valign="top"><a id="a0c7503881b072978f8c121e3ca54ccd9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>FIDE</b> = check_make(os.path.join(POLY_GDB, 'FIDE'), lambda _: arcpy.CopyFeatures_management(FIDE_INPUT, _))</td></tr>
-<tr class="separator:a0c7503881b072978f8c121e3ca54ccd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbe037e38110c1f7049aac2007af13e3"><td class="memItemLeft" align="right" valign="top"><a id="acbe037e38110c1f7049aac2007af13e3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DAMAGE</b> = None</td></tr>
-<tr class="separator:acbe037e38110c1f7049aac2007af13e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1513240942aa428a399cdf75e19f784f"><td class="memItemLeft" align="right" valign="top"><a id="a1513240942aa428a399cdf75e19f784f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>MNR_LAMBERT</b> = arcpy.SpatialReference('Projected Coordinate Systems/National Grids/Canada/NAD 1983 CSRS Ontario MNR Lambert')</td></tr>
 <tr class="separator:a1513240942aa428a399cdf75e19f784f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -322,9 +310,12 @@ list&#160;</td><td class="memItemRight" valign="bottom"><b>arg_zones</b> = [floa
 <tr class="memitem:a55d483afa0a39d645a7e1f7fd19128f8"><td class="memItemLeft" align="right" valign="top"><a id="a55d483afa0a39d645a7e1f7fd19128f8"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>canada</b> = os.path.join(INPUT, &quot;canada\\lpr_000b16a_e.shp&quot;)</td></tr>
 <tr class="separator:a55d483afa0a39d645a7e1f7fd19128f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6303519d76f869ec440a084375a4bde"><td class="memItemLeft" align="right" valign="top"><a id="aa6303519d76f869ec440a084375a4bde"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ntl_2018</b> = os.path.join(GIS_FUELS, r'national\fuellayer\FBP_FuelLayer_wBurnscars.tif')</td></tr>
-<tr class="separator:aa6303519d76f869ec440a084375a4bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2264d4e5533c4356eb16f6aa5a4d95"><td class="memItemLeft" align="right" valign="top"><a id="afa2264d4e5533c4356eb16f6aa5a4d95"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>national</b> = os.path.join(GIS_FUELS, r'national\fuel_layer\FBP_FuelLayer_wBurnscars.tif')</td></tr>
+<tr class="separator:afa2264d4e5533c4356eb16f6aa5a4d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ecf434b1a524b4e186ea70461788cae"><td class="memItemLeft" align="right" valign="top"><a id="a6ecf434b1a524b4e186ea70461788cae"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>output</b></td></tr>
+<tr class="separator:a6ecf434b1a524b4e186ea70461788cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5cb1b6483806b9354ea045a5dd04acb"><td class="memItemLeft" align="right" valign="top"><a id="aa5cb1b6483806b9354ea045a5dd04acb"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>PROJECTION_BASE</b> = arcpy.SpatialReference(3159).exportToString().replace(&quot;15N&quot;,&quot;{}N&quot;).replace(&quot;-93.0&quot;,&quot;{}&quot;)</td></tr>
 <tr class="separator:aa5cb1b6483806b9354ea045a5dd04acb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -342,9 +333,9 @@ dictionary&#160;</td><td class="memItemRight" valign="bottom"><b>dct_2018</b> = 
 <tr class="memitem:a356847f4da3abece7a964d67a202627d"><td class="memItemLeft" align="right" valign="top"><a id="a356847f4da3abece7a964d67a202627d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>outputCoordinateSystem</b></td></tr>
 <tr class="separator:a356847f4da3abece7a964d67a202627d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afadf20ba449759641af589b76592b283"><td class="memItemLeft" align="right" valign="top"><a id="afadf20ba449759641af589b76592b283"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ntl_2018_reclassify</b> = calc(&quot;ntl_2018&quot;, lambda _: arcpy.gp.Reclassify_sa(Raster(ntl_2018), &quot;Value&quot;, ';'.join([&quot;{} {}&quot;.format(k, v) for k, v in dct_2018.iteritems()]), _, &quot;DATA&quot;))</td></tr>
-<tr class="separator:afadf20ba449759641af589b76592b283"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a7f5b039521c55c7aa6dc030cc6e6b2"><td class="memItemLeft" align="right" valign="top"><a id="a5a7f5b039521c55c7aa6dc030cc6e6b2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>national_reclassify</b> = calc(&quot;national&quot;, lambda _: arcpy.gp.Reclassify_sa(Raster(national), &quot;Value&quot;, ';'.join([&quot;{} {}&quot;.format(k, v) for k, v in dct_2018.iteritems()]), _, &quot;DATA&quot;))</td></tr>
+<tr class="separator:a5a7f5b039521c55c7aa6dc030cc6e6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a647a25a35a0fe4015d30d840617d5f5a"><td class="memItemLeft" align="right" valign="top"><a id="a647a25a35a0fe4015d30d840617d5f5a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>province_project</b> = project(PROVINCE, os.path.join(BOUNDS_GDB, &quot;PROVINCE_project&quot;))</td></tr>
 <tr class="separator:a647a25a35a0fe4015d30d840617d5f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
