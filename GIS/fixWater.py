@@ -65,9 +65,6 @@ mask_LIO_gdb = os.path.join(OUTPUT, "{}_LIO.gdb")
 PROVINCE = os.path.join(NDD_NON, "PROVINCE")
 ## DEM made by combining EarthEnv data into a TIFF
 EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
-FIDE_INPUT = os.path.join(GIS_FUELS, "LIO", "FOREST_INSECT_DAMAGE_EVENT.shp")
-FIDE = check_make(os.path.join(POLY_GDB, 'FIDE'), lambda _: arcpy.CopyFeatures_management(FIDE_INPUT, _))
-DAMAGE = None
 
 MNR_LAMBERT = arcpy.SpatialReference('Projected Coordinate Systems/National Grids/Canada/NAD 1983 CSRS Ontario MNR Lambert')
 PROJECTION = MNR_LAMBERT
@@ -594,21 +591,6 @@ def create_fuel(zone):
     env_pop()
     return fuel_final
 
-def makeDamage(_):
-    lyr = arcpy.CreateScratchName()
-    def mkList(values):
-        return '(' + ','.join(map(lambda x: "'" + x + "'", values)) +')'
-    damage_types = mkList(['Jack Pine Budworm' , 'Spruce Budworm' , 'Misc Beetle Damage to Jack Pine'])
-    rankings = mkList(['Severe', 'Mortality'])
-    mask = '"INSECT" IN {} AND "EVENT_YEAR" >= {} AND "RANKING" IN {}'
-    filter = mask.format(damage_types, datetime.datetime.now().year - 10, rankings)
-    arcpy.MakeFeatureLayer_management(FIDE, lyr, filter)
-    arcpy.CopyFeatures_management(lyr, _)
-    arcpy.Delete_management(lyr)
-    arcpy.AddField_management("damage", "M3_Value", "SHORT")
-    arcpy.CalculateField_management("damage", "M3_Value", "300", "PYTHON")
-    return _
-
 def getColumns(_):
     return [x.name for x in arcpy.ListFields(_)]
 
@@ -949,7 +931,6 @@ if __name__ == '__main__':
     arcpy.env.outputCoordinateSystem = None
     ntl_2018_reclassify = calc("ntl_2018", lambda _: arcpy.gp.Reclassify_sa(Raster(ntl_2018), "Value", ';'.join(["{} {}".format(k, v) for k, v in dct_2018.iteritems()]), _, "DATA"))
     province_project = project(PROVINCE, os.path.join(BOUNDS_GDB, "PROVINCE_project"))
-    DAMAGE = check_make("damage", makeDamage)
     # /1
     env_pop()
     gridSize = CELLSIZE_M
