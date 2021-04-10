@@ -8,6 +8,7 @@ from __future__ import print_function
 import sys
 sys.path.append('..\util')
 import common
+import unpack
 
 CELLSIZE_M = 100
 import pandas as pd
@@ -149,8 +150,11 @@ if args.zones:
 lakes_nhd = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDWaterbody")
 lakes_nhd_area = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDArea")
 canada = os.path.join(INPUT, "canada\\lpr_000b16a_e.shp")
-ntl_2018 = os.path.join(GIS_FUELS, r'national\fuellayer\FBP_FuelLayer_wBurnscars.tif')
+national = os.path.join(GIS_FUELS, r'national\fuel_layer\FBP_FuelLayer_wBurnscars.tif')
 
+if not os.path.exists(national):
+    common.save_http(GIS_FUELS, r'https://cwfis.cfs.nrcan.gc.ca/downloads/fuels/development/Canadian_Forest_FBP_Fuel_Types/Canadian_Forest_FBP_Fuel_Types_v20191114.zip')
+    unpack.check_zip(GIS_FUELS, '*', output=os.path.join(GIS_FUELS, 'national'))
 PROJECTION_BASE = arcpy.SpatialReference(3159).exportToString().replace("15N","{}N").replace("-93.0","{}")
 
 # NOTE: use 645 instead of 650 because that's what it was before and we don't know why
@@ -337,7 +341,7 @@ def mkFuel(zone_name, buffer, fuel_buffer, projection):
     # \2
     env_push()
     env_defaults(workspace=checkGDB(ensure_dir(os.path.join(NTL_DIR, zone_name)), 'ntl_{}m.gdb'.format(gridSize)), mask="", extent="", snapRaster=buffer, cellSize=CELLSIZE_M)
-    ntl_clip = calc("ntl_clip", lambda _: clip_raster_box(ntl_2018_reclassify, fuel_buffer, _), buildPyramids=False)
+    ntl_clip = calc("ntl_clip", lambda _: clip_raster_box(national_reclassify, fuel_buffer, _), buildPyramids=False)
     # keep entire grid because we need to fill in from outside
     ntl_project = calc("ntl_project", lambda _: project_raster(ntl_clip, _, cellsize_m=CELLSIZE_M, projection=projection))
     ntl_nowater = calc("ntl_nowater", lambda _: SetNull(ntl_project == 102, ntl_project))
@@ -929,7 +933,7 @@ if __name__ == '__main__':
     env_defaults(workspace=POLY_GDB)
     # HACK: clear in case we were pasting this and it's set somehow
     arcpy.env.outputCoordinateSystem = None
-    ntl_2018_reclassify = calc("ntl_2018", lambda _: arcpy.gp.Reclassify_sa(Raster(ntl_2018), "Value", ';'.join(["{} {}".format(k, v) for k, v in dct_2018.iteritems()]), _, "DATA"))
+    national_reclassify = calc("national", lambda _: arcpy.gp.Reclassify_sa(Raster(national), "Value", ';'.join(["{} {}".format(k, v) for k, v in dct_2018.iteritems()]), _, "DATA"))
     province_project = project(PROVINCE, os.path.join(BOUNDS_GDB, "PROVINCE_project"))
     # /1
     env_pop()
@@ -1015,7 +1019,7 @@ if __name__ == '__main__':
             copy_to_server(efri, 'fuel_{}'.format(zonename), workspace=r'data\DSS\Fuels_efri_only.gdb')
             return efri
         updateService(lambda: map(copyEFRI, fuels), 'eFRI_UTM')
-        updateService(lambda: copy_to_server(ntl_2018_reclassify), 'ntl_2018')
+        updateService(lambda: copy_to_server(national_reclassify), 'national')
         env_push()
         #~ updateService(lambda: copy_to_server(os.path.join(), 'fuel'), 'fuel')
         env_defaults(workspace=checkGDB(os.path.join(GENERATED, "lambert"), "fuel_{}m.gdb".format(gridSize)),
