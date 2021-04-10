@@ -10,6 +10,7 @@ import ftplib
 import zipfile
 import os
 import sys
+from unpack import check_zip
 
 def ensure_canvec(theme, prov, extract=True, resolution='50K'):
     """Make sure we have the proper gdb downloaded and unzipped"""
