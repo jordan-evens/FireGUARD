@@ -42,7 +42,7 @@ def read_config(file_name):
     # [CANVEC]
     config.add_section("CANVEC")
     note("Folder to download CANVEC data from", "CANVEC")
-    value("CANVEC_URL", r'ftp://ftp.geogratis.gc.ca/pub/nrcan_rncan/vector/canvec/', "CANVEC")
+    value("CANVEC_URL", r'https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/canvec/', "CANVEC")
     note("File mask to use for matching canvec resolution, theme, and feature", "CANVEC")
     value("CANVEC_MASK", "canvec_{resolution}_{province}_{theme}", "CANVEC")
     # [PROVINCES]
