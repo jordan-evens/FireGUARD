@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['delete_147',['delete',['../namespacedelete.html',1,'']]]
+  ['delete_137',['delete',['../namespacedelete.html',1,'']]]
 ];

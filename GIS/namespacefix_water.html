@@ -125,18 +125,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>copyByFields</b> (src,
 <tr class="memitem:a44b8fd1ce2aa14157002a1642c7e1932"><td class="memItemLeft" align="right" valign="top"><a id="a44b8fd1ce2aa14157002a1642c7e1932"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>percentile</b> (n, pct)</td></tr>
 <tr class="separator:a44b8fd1ce2aa14157002a1642c7e1932"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ca9a91bc84772a4175316e8576aedf0"><td class="memItemLeft" align="right" valign="top"><a id="a8ca9a91bc84772a4175316e8576aedf0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>fixMapper</b> (_)</td></tr>
-<tr class="separator:a8ca9a91bc84772a4175316e8576aedf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7985dd41611e11f5d929d5aff35b29e4"><td class="memItemLeft" align="right" valign="top"><a id="a7985dd41611e11f5d929d5aff35b29e4"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>updateService</b> (fct, name, type='MapServer', folder='DSS')</td></tr>
-<tr class="separator:a7985dd41611e11f5d929d5aff35b29e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0da884c183e0b4f26c39969eb556f783"><td class="memItemLeft" align="right" valign="top"><a id="a0da884c183e0b4f26c39969eb556f783"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>check_water</b> (_)</td></tr>
 <tr class="separator:a0da884c183e0b4f26c39969eb556f783"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac6bdb0bd94b836391fa60f55123e5d3"><td class="memItemLeft" align="right" valign="top"><a id="aac6bdb0bd94b836391fa60f55123e5d3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>copyEFRI</b> (_)</td></tr>
-<tr class="separator:aac6bdb0bd94b836391fa60f55123e5d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -182,9 +173,6 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>GIS</b> = r'C:\Fire
 <tr class="memitem:ae7b35393ea0cb9bba74270ce706f2ac5"><td class="memItemLeft" align="right" valign="top"><a id="ae7b35393ea0cb9bba74270ce706f2ac5"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TIF_OUTPUT</b> = ensure_dir(os.path.join(GENERATED, &quot;out_{:03d}m&quot;.format(CELLSIZE_M)))</td></tr>
 <tr class="separator:ae7b35393ea0cb9bba74270ce706f2ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af546b332455be5fe4bfddbdcee1e0a05"><td class="memItemLeft" align="right" valign="top"><a id="af546b332455be5fe4bfddbdcee1e0a05"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>MAPPER_DIR</b> = ensure_dir(os.path.join(OUTPUT, &quot;mapper&quot;))</td></tr>
-<tr class="separator:af546b332455be5fe4bfddbdcee1e0a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a790e72ccd4c64b152bafed8d22df1a"><td class="memItemLeft" align="right" valign="top"><a id="a6a790e72ccd4c64b152bafed8d22df1a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BOUNDS_DIR</b> = ensure_dir(os.path.join(OUTPUT, &quot;01_bounds&quot;))</td></tr>
 <tr class="separator:a6a790e72ccd4c64b152bafed8d22df1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,9 +203,6 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>GIS</b> = r'C:\Fire
 <tr class="memitem:a40a956c9dba3f077a468b2b7e1c75779"><td class="memItemLeft" align="right" valign="top"><a id="a40a956c9dba3f077a468b2b7e1c75779"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>FUEL_JOIN_DIR</b> = ensure_dir(os.path.join(OUTPUT, &quot;10_fuel_join&quot;))</td></tr>
 <tr class="separator:a40a956c9dba3f077a468b2b7e1c75779"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73e5912512df03f2d507a3fe89fb6a7a"><td class="memItemLeft" align="right" valign="top"><a id="a73e5912512df03f2d507a3fe89fb6a7a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>MAPPER_GDB</b> = os.path.join(GIS_FUELS, &quot;FuelGrid_FBP.gdb&quot;)</td></tr>
-<tr class="separator:a73e5912512df03f2d507a3fe89fb6a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4061674853c62b8cf2ef894f924d6fd5"><td class="memItemLeft" align="right" valign="top"><a id="a4061674853c62b8cf2ef894f924d6fd5"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>POLY_GDB</b> = checkGDB(OUTPUT, &quot;processed.gdb&quot;)</td></tr>
 <tr class="separator:a4061674853c62b8cf2ef894f924d6fd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -280,15 +265,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>LIO_CELL_BUFFER</b> = 
 <tr class="memitem:a0acaff78421986659ff8fef985788b88"><td class="memItemLeft" align="right" valign="top"><a id="a0acaff78421986659ff8fef985788b88"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>args</b> = parser.parse_args()</td></tr>
 <tr class="separator:a0acaff78421986659ff8fef985788b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0ad06114db827e4a1450a93bfb80abf"><td class="memItemLeft" align="right" valign="top"><a id="ae0ad06114db827e4a1450a93bfb80abf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>m</b></td></tr>
-<tr class="separator:ae0ad06114db827e4a1450a93bfb80abf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af45b8b4e3c6396d8a23215be7e51f6ff"><td class="memItemLeft" align="right" valign="top"><a id="af45b8b4e3c6396d8a23215be7e51f6ff"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DO_COPY_TO_SERVER</b> = args.c</td></tr>
-<tr class="separator:af45b8b4e3c6396d8a23215be7e51f6ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8611a8c866e51b11db970b37aec205cf"><td class="memItemLeft" align="right" valign="top"><a id="a8611a8c866e51b11db970b37aec205cf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DO_MAPPER</b> = args.m</td></tr>
-<tr class="separator:a8611a8c866e51b11db970b37aec205cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a619421bfe6ace75bd9ef5e69e0205eed"><td class="memItemLeft" align="right" valign="top"><a id="a619421bfe6ace75bd9ef5e69e0205eed"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>DO_SPLIT</b> = args.split</td></tr>
 <tr class="separator:a619421bfe6ace75bd9ef5e69e0205eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -414,9 +390,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>bigGridSize_m</b> = bi
 <tr class="memitem:ad17e62caff057124f8ce493039117bb2"><td class="memItemLeft" align="right" valign="top"><a id="ad17e62caff057124f8ce493039117bb2"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>fuels</b> = map(create_fuel, ZONES)</td></tr>
 <tr class="separator:ad17e62caff057124f8ce493039117bb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bc0f6df85ed758099bedb58e11fe504"><td class="memItemLeft" align="right" valign="top"><a id="a2bc0f6df85ed758099bedb58e11fe504"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>MAPPER_FINAL</b> = os.path.join(GENERATED, &quot;FuelGrid_FBP.gdb&quot;)</td></tr>
-<tr class="separator:a2bc0f6df85ed758099bedb58e11fe504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">Create FBP fuel rasters from eFRI data and other inputs</pre> </div><h2 class="groupheader">Variable Documentation</h2>
