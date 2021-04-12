@@ -3,7 +3,6 @@ from __future__ import print_function
 
 # NOTE: seems to need to be run in ArcMap for:
 # - the USA water
-# - the mapper creation
 
 import sys
 sys.path.append('..\util')
@@ -42,7 +41,6 @@ DOWNLOADED = os.path.join(GIS, "downloaded")
 OUTPUT = ensure_dir(os.path.join(INTERMEDIATE, "fuels"))
 GENERATED = ensure_dir(os.path.join(GIS, "generated", "fuels"))
 TIF_OUTPUT = ensure_dir(os.path.join(GENERATED, "out_{:03d}m".format(CELLSIZE_M)))
-MAPPER_DIR = ensure_dir(os.path.join(OUTPUT, "mapper"))
 BOUNDS_DIR = ensure_dir(os.path.join(OUTPUT, "01_bounds"))
 WATER_DIR = ensure_dir(os.path.join(OUTPUT, "02_water"))
 NTL_DIR = ensure_dir(os.path.join(OUTPUT, "03_ntl"))
@@ -53,7 +51,6 @@ FUEL_RASTER_DIR = ensure_dir(os.path.join(OUTPUT, "07_fuel_raster"))
 FUEL_MOSAIC_DIR = ensure_dir(os.path.join(OUTPUT, "08_fuel_mosaic"))
 FUEL_DIR = ensure_dir(os.path.join(OUTPUT, "09_fuel"))
 FUEL_JOIN_DIR = ensure_dir(os.path.join(OUTPUT, "10_fuel_join"))
-MAPPER_GDB = os.path.join(GIS_FUELS, "FuelGrid_FBP.gdb")
 
 POLY_GDB = checkGDB(OUTPUT, "processed.gdb")
 PROCESSED_GDB = checkGDB(OUTPUT, "processed_{:03d}m.gdb".format(CELLSIZE_M))
@@ -96,8 +93,6 @@ ZONES = projections.keys()
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--zones", help="any of {}".format(ZONES))
-parser.add_argument("-m", action="store_true", help="create mapper data")
-parser.add_argument("-c", action="store_true", help="copy to server")
 parser.add_argument("--split", action="store_true", help="split output rasters")
 parser.add_argument("--force", action="store_true", help="force generating fuels databases")
 parser.add_argument("--fbp", action="store_true", help="update FBP classifications")
@@ -108,7 +103,7 @@ try:
 except:
     # this will throw if we haven't done this yet
     args = parser.parse_args()
-    if 0 == len(''.join(sys.argv)):
+    #~ if 0 == len(''.join(sys.argv)):
         # this means we're in arcmap?
         #~ args.zones = '14.5,16.5'
         #~ args.zones = '15.0,17.0'
@@ -122,20 +117,13 @@ except:
         #~ args.zones = '17.0'
         #~ args.zones = '17.5'
         #~ args.zones = '18.0'
-        args.m = True
         #~ args.fbp = True
-        #~ args.c = True
         #~ args.force = True
 #~ args.split = True
-DO_COPY_TO_SERVER = args.c
-DO_MAPPER = args.m
 DO_SPLIT = args.split
 FORCE = args.force
 DO_FBP = args.fbp
 if args.zones:
-    if DO_COPY_TO_SERVER or DO_MAPPER:
-        print("Can't run for specific zones if generating mapper or server output")
-        sys.exit(-1)
     arg_zones = [float(x.strip()) for x in args.zones.split(',')]
     for x in arg_zones:
         if x not in ZONES:
@@ -632,296 +620,6 @@ def copyByFields(src, dest, fields):
 def percentile(n, pct):
     return int(float(n) * float(pct) / 100.0)
 
-def fixMapper(_):
-    zone_name = "lambert"
-    zone_dir = ensure_dir(os.path.join(OUTPUT, zone_name))
-    grid_gdb = checkGDB(zone_dir, 'grids_{}m.gdb'.format(gridSize))
-    env_push()
-    env_defaults(workspace=grid_gdb,
-                 cellSize=CELLSIZE_M)
-    arcpy.env.outputCoordinateSystem = PROJECTION
-    # determine extent in zone that we're looking for
-    print("Changing projection to {}".format(PROJECTION.name))
-    fuel = mkFuel(zone_name, buffer, DEM_BOX, PROJECTION)
-    fuel_final = check_make("fuel_final", lambda _: copyFuel(fuel, _))
-    fuel = check_make(os.path.join(checkGDB(GENERATED, "fuel_{:03d}m.gdb".format(CELLSIZE_M)), "fuel"), lambda _: copyFuel(fuel, _))
-    # don't want this in the directory with everything else so put it in parent directory
-    fuel_tif = calc(os.path.join(os.path.dirname(TIF_OUTPUT), "fuel_{:03d}m_{}.tif".format(CELLSIZE_M, 'lambert')), lambda _: copyFuel(fuel_final, _))
-    env_pop()
-    MAPPER_TMP = checkGDB(MAPPER_DIR, "mapper.gdb")
-    mapper_gdb = checkGDB(OUTPUT, "FuelGrid_FBP.gdb")
-    GCS_WGS_1984 = arcpy.SpatialReference(4326)
-    fuel_wcgs_84 = calc(os.path.join(mapper_gdb, 'fuel_{:03d}m'.format(CELLSIZE_M)), lambda _: project_raster(fuel_final, _, projection=GCS_WGS_1984))
-    features = sorted(getFeatures(MAPPER_GDB))
-    env_push()
-    env_defaults(workspace=MAPPER_TMP)
-    zooms = {}
-    for f in features:
-        if '_Point' in f:
-            print("Processing " + f)
-            base = f.replace('_Point', '')
-            if base not in features:
-                print("ERROR: Missing polygon feature for points")
-            zoom = float(os.path.basename(base).replace('Fuel_', '').replace('00', '0.').replace('k', ''))
-            zooms[zoom] = { 'point': f, 'base': base }
-    # start from smallest pixel size and then work from there
-    # don't just use the base data every time because then we get M1/M2 along coast at 40k even though it's C2 until then
-    fuel = Raster(fuel_final)
-    fuel_nowater = calc("fuel_nowater", lambda _: SetNull(fuel == 102, fuel))
-    arcpy.BuildRasterAttributeTable_management(fuel_nowater, "Overwrite")
-    # figure out what values are in the raster
-    with arcpy.da.SearchCursor("fuel_nowater", "VALUE") as cursor:
-        unique_values = set(row[0] for row in cursor)
-    #
-    fuelLookup = FuelLookup(os.path.join(HOME_DIR, 'fuel.lut'))
-    fuel_m3m4 = fuelLookup.makeM3M4(fuel_nowater, "fuel_m3m4")
-    def mkFuelPDF(_):
-        # after we do that then everything that's left is the PDF once we % 100
-        fuel_pdf = fuel_m3m4 % 100
-        fuel_pdf.save(_)
-    fuel_pdf = calc("fuel_pdf", mkFuelPDF)
-    #
-    fuel_conifer = fuelLookup.makeConifer(fuel_nowater, "fuel_conifer")
-    fuel_deciduous = fuelLookup.makeDeciduous(fuel_nowater, "fuel_deciduous")
-    fuel_mixedwood = fuelLookup.makeMixedwood(fuel_nowater, "fuel_mixedwood")
-    #
-    # for determining PC value we need to look at any fuels that contain conifer and ignore the rest
-    def mkFuelPC(_):
-        # NOTE: M3/M4 are currently calculated as all conifer is dead so we're counting the whole PDF as PC
-        fuel_pc = Con(IsNull(fuel_conifer),
-                        Con(IsNull(fuel_deciduous),
-                                Con(IsNull(fuel_mixedwood),
-                                    fuel_mixedwood,
-                                    # all mixedwood cells considered as whatever PC they are
-                                    fuel_mixedwood % 100),
-                                # all deciduous cells considered as 0 PC
-                                0),
-                        # all conifer cells considered as 100 PC
-                        100)
-        fuel_pc.save(_)
-    fuel_pc = calc("fuel_pc", mkFuelPC)
-    #
-    # remove non-fuels but keep everything else the same
-    def mkFuelBase(_):
-        src = Raster(fuel_final)
-        fuel_base = Con(IsNull(src),
-                        src,
-                        Con(src > 100,
-                            Con(src < 200,
-                                Con(src == 102, 102, 101),
-                                src
-                                ),
-                            src
-                            )
-                        )
-        # keep 101 here because we want it to be the backup if the other raster has nothing
-        fuel_base.save(_)
-        arcpy.DefineProjection_management(fuel_base, PROJECTION)
-        return fuel_base
-    fuel_base = calc("fuel_base", mkFuelBase)
-    # we want to make simplified fuels raster so that majority captures different pc and pdf
-    def mkFuelSimple(_):
-        src = fuel_nowater
-        fuel_simple = Con(IsNull(src),
-                        src,
-                        Con(src > 100,
-                            Con(src < 200,
-                                101,
-                                10 * (src / 100)
-                                ),
-                            src
-                            )
-                        )
-        # don't want these included in the majority
-        fuel_simple = SetNull(fuel_simple == 101, fuel_simple)
-        fuel_simple.save(_)
-        arcpy.DefineProjection_management(fuel_simple, PROJECTION)
-        return fuel_simple
-    fuel_simple = calc("fuel_simple", mkFuelSimple)
-    fixed_no_nonfuel = fuel_simple
-    fixed_simple = fuel_base
-    for_simple = fuel_simple
-    for zoom in sorted(zooms.keys()):
-        base = zooms[zoom]['base']
-        point = zooms[zoom]['point']
-        suffix = str(zoom).replace('.', '_')
-        gdb = checkGDB(MAPPER_DIR, "mapper_{}.gdb".format(suffix))
-        mask = os.path.join(gdb, "{}_{}".format('{}', suffix))
-        # want to use result of this for next level of zoom
-        # FIX: works in arcmap but not commandline?
-        water_majority = calc(mask.format('water_majority'), lambda _: arcpy.gp.ZonalStatistics_sa(base, "OBJECTID", fixed_simple, _, "MAJORITY", "DATA"))
-        # revert back to fixed_no_nonfuel as the base so that points that are outside of higher zooms come back in
-        for_simple = calc(mask.format('simple'), lambda _: arcpy.gp.ZonalStatistics_sa(base, "OBJECTID", fixed_no_nonfuel, _, "MAJORITY", "DATA"))
-        # put water back in for areas that have no fuel at all
-        fixed_simple = calc(mask.format('fixed_simple'), lambda _: Con(IsNull(for_simple), Con(IsNull(water_majority), fuel_simple, water_majority), for_simple))
-        fixed_no_nonfuel = calc(mask.format('fixed_no_nonfuel'), lambda _: SetNull(fixed_simple == 101, SetNull(fixed_simple == 102, fixed_simple)))
-        pc = calc(mask.format('pc'), lambda _: arcpy.gp.ZonalStatistics_sa(base, "OBJECTID", fuel_pc, _, "MEAN", "DATA"))
-        pdf = calc(mask.format('pdf'), lambda _: arcpy.gp.ZonalStatistics_sa(base, "OBJECTID", fuel_pdf, _, "MEAN", "DATA"))
-        # # concerned about showing areas as D1 when there's M1/M2 in them too
-        # calc(majority_nd, lambda _: arcpy.gp.ZonalStatistics_sa(base, "fueltype", fuel_nodeciduous, _, "MAJORITY", "DATA"))
-        # rasters = [fixed_majority, fixed_simple, pc, pdf]
-        rasters = [fixed_simple, pc, pdf]
-        FINAL_COLUMNS = ['Id', 'fueltype', 'DegOfModifier', 'FBPkey', 'ISI']
-        def removeExtra(_, keep_columns=None):
-            if not keep_columns:
-                keep_columns = list(FINAL_COLUMNS)
-            # have to keep the object id field but don't want to tie it to a specific name
-            keep_columns += [arcpy.Describe(_).OIDFieldName, 'Shape']
-            keep_columns = map(lambda x: x.lower(), keep_columns)
-            # check against lower case so that we don't miss things with wrong casing
-            extra_columns = [x for x in getColumns(_) if x.lower() not in keep_columns]
-            if len(extra_columns) > 0:
-                arcpy.DeleteField_management(_, ';'.join(extra_columns))
-        def mkProj(_):
-            project(point, _, MNR_LAMBERT)
-            removeExtra(_)
-        proj_point = check_make(os.path.join(gdb, os.path.basename(point) + "_proj"), mkProj)
-        def mkName(_):
-            return proj_point.replace('Point_proj', _)
-        def mkExtracted(base, points):
-            def doMkExtracted(_):
-                arcpy.gp.ExtractValuesToPoints_sa(points, base, _, "NONE", "VALUE_ONLY")
-                removeExtra(_, ['Id', 'RASTERVALU'])
-                arcpy.AlterField_management(_, 'RASTERVALU', base.name)
-            return [os.path.basename(base.name),
-                     check_make(mkName(base.name), doMkExtracted)]
-        simple_points = mkExtracted(fixed_simple, proj_point)
-        def mkFiltered(_, value):
-            def doMkFiltered(_):
-                tmp = arcpy.CreateScratchName(workspace='in_memory')
-                src = simple_points[1]
-                fields = ['Id']
-                arcpy.MakeFeatureLayer_management(src, tmp, '"{}" = {}'.format(simple_points[0], value))
-                copyByFields(tmp, _, ['Id'])
-                arcpy.Delete_management(tmp)
-            return check_make(_, doMkFiltered)
-        m1m2_points = mkFiltered(mkName('m1m2'), 60)
-        pc_points = mkExtracted(pc, m1m2_points)
-        assert(countRows(m1m2_points) == countRows(pc_points[1])), "Invalid number of percent conifer points"
-        m3m4_points = mkFiltered(mkName('m3m4'), 90)
-        pdf_points = mkExtracted(pdf, m3m4_points)
-        assert(countRows(m3m4_points) == countRows(pdf_points[1])), "Invalid number of percent dead fir points"
-        extracted = [simple_points, pc_points, pdf_points]
-        #~ _ = os.path.join(mapper_gdb, os.path.basename(point))
-        def makeFinal(_):
-            env_push()
-            arcpy.env.outputCoordinateSystem = None
-            # don't use check_make since we already know we called it
-            copyByFields(point, _, FINAL_COLUMNS)
-            env_pop()
-            columns = ["Id", "fueltype", "DegOfModifier"]
-            def getIndex(_):
-                return columns.index(getName(_))
-            count = countRows(_)
-            print('Processing {} rows'.format(count))
-            i = 0
-            next_break = 0
-            print("Opening {} for update".format(_))
-            with arcpy.da.UpdateCursor(_, columns, sql_clause=['', "ORDER BY Id"]) as cursor:
-                print("Opening {} for read".format(simple_points[1]))
-                with arcpy.da.SearchCursor(simple_points[1], ['Id', simple_points[0]], sql_clause=['', "ORDER BY Id"]) as cur_simple:
-                    print("Opening {} for read".format(pc_points[1]))
-                    with arcpy.da.SearchCursor(pc_points[1], ['Id', pc_points[0]], sql_clause=['', "ORDER BY Id"]) as cur_pc:
-                        print("Opening {} for read".format(pdf_points[1]))
-                        with arcpy.da.SearchCursor(pdf_points[1], ['Id', pdf_points[0]], sql_clause=['', "ORDER BY Id"]) as cur_pdf:
-                            print("Updating...")
-                            indexId = 0
-                            indexData = 1
-                            for row in cursor:
-                                #~ print("DST: " + str(row))
-                                if i >= next_break:
-                                    cur_pct = int(i * 100.0 / count)
-                                    next_break = (cur_pct + 2) * count / 100
-                                    sys.stdout.write(str(cur_pct) if (0 == (cur_pct % 10)) else '.')
-                                i += 1
-                                s = cur_simple.next()
-                                #~ print("SRC: " + str(s))
-                                assert (s[indexId] == row[indexId]), "Fuel data is invalid: {}\n{}\n".format(str(s), str(row))
-                                f = s[indexData]
-                                # now we need to translate those values into text
-                                fuel = fuelLookup.by_value[f]
-                                if 'O-1' in fuel:
-                                    fuel = 'O-1'
-                                elif 'D-' in fuel:
-                                    fuel = 'D-1'
-                                # use lookups just to make indices obvious
-                                row[columns.index("fueltype")] = fuel
-                                param = 0
-                                deg = ""
-                                if 'M-1' in fuel or 'M-2' in fuel:
-                                    # need percent conifer
-                                    row_pc = cur_pc.next()
-                                    #~ print("PC:  " + str(row_pc))
-                                    assert (row_pc[indexId] == row[indexId]), "Percent Conifer data is invalid: {}\n{}\n".format(str(row_pc), str(row))
-                                    param = row_pc[indexData]
-                                    deg = round_to_nearest(param, 25) if param else 0
-                                elif 'M-3' in fuel or 'M-4' in fuel:
-                                    # need percent dead fir
-                                    row_pdf = cur_pdf.next()
-                                    #~ print("PDF: " + str(row_pdf))
-                                    assert (row_pdf[indexId] == row[indexId]), "Percent Dead Fir data is invalid: {}\n{}\n".format(str(row_pdf), str(row))
-                                    param = row_pdf[indexData]
-                                    deg = round_to_nearest(param, 30) if param else 0
-                                    if 90 == deg:
-                                        deg = 100
-                                row[columns.index("DegOfModifier")] = deg
-                                cursor.updateRow(row)
-            print("100\nDone updating {} rows".format(i))
-            assert (i == count), "Didn't update the right number of rows ({} of {})".format(i, count)
-        final_point = check_make(os.path.join(mapper_gdb, os.path.basename(point)), makeFinal)
-        poly = zooms[zoom]['base']
-        #~ _ = os.path.join(mapper_gdb, os.path.basename(poly))
-        def makeFinalPoly(_):
-            env_push()
-            arcpy.env.outputCoordinateSystem = None
-            # don't use check_make since we already know we called it
-            copyByFields(poly, _, FINAL_COLUMNS)
-            env_pop()
-            count = countRows(_)
-            print('Processing {} rows'.format(count))
-            i = 0
-            next_break = 0
-            print("Opening {} for update".format(_))
-            with arcpy.da.UpdateCursor(_, FINAL_COLUMNS, sql_clause=['', "ORDER BY Id"]) as cursor:
-                print("Opening {} for read".format(final_point))
-                with arcpy.da.SearchCursor(final_point, FINAL_COLUMNS, sql_clause=['', "ORDER BY Id"]) as cur_point:
-                    print("Updating...")
-                    for row in cursor:
-                        if i >= next_break:
-                            cur_pct = int(i * 100.0 / count)
-                            next_break = (cur_pct + 2) * count / 100
-                            sys.stdout.write(str(cur_pct) if (0 == (cur_pct % 10)) else '.')
-                        i += 1
-                        row_point = cur_point.next()
-                        for c in xrange(len(FINAL_COLUMNS)):
-                            f = FINAL_COLUMNS[c]
-                            if f == 'Id':
-                                assert (row[c] == row_point[c]), "Point data is invalid: {}\n{}\n".format(str(row_point), str(row))
-                            else:
-                                row[c] = row_point[c]
-                        cursor.updateRow(row)
-                    print("100\nDone updating {} rows".format(i))
-        final_poly = check_make(os.path.join(mapper_gdb, os.path.basename(poly)), makeFinalPoly)
-    env_pop()
-    # want to compress the final output too
-    arcpy.Copy_management(mapper_gdb, _)
-    #~ arcpy.CompressFileGeodatabaseData_management(_, "Lossless compression")
-    arcpy.Compact_management(_)
-
-import mapper
-def updateService(fct, name, type='MapServer', folder='DSS'):
-    fullName = name + "." + type
-    try:
-        mapper.stopServices(folder, fullName)
-    except:
-        pass
-    try:
-        fct()
-        mapper.startServices(folder, fullName)
-    except:
-        pass
-
-
 if __name__ == '__main__':
     if not arcpy.env.scratchWorkspace:
         arcpy.env.scratchWorkspace = arcpy.env.scratchGDB
@@ -999,39 +697,9 @@ if __name__ == '__main__':
     WATER = check_make(os.path.join(water_projected, "water"), check_water)
     # /3
     env_pop()
-    if DO_COPY_TO_SERVER or not DO_MAPPER:
-        # separate these since they don't depend on each other
-        fuels = map(create_fuel, ZONES)
+    fuels = map(create_fuel, ZONES)
     # /2
     env_pop()
     # /1
     env_pop()
-    MAPPER_FINAL = os.path.join(GENERATED, "FuelGrid_FBP.gdb")
-    if DO_MAPPER:
-        check_make(MAPPER_FINAL, fixMapper)
-    if DO_COPY_TO_SERVER:
-        updateService(lambda: map(copy_to_server, fuels), 'FBP_UTM')
-        def copyEFRI(_):
-            orig = _
-            zonename = orig[-4:]
-            efri = orig.replace(r'fuel_100m.gdb\fuel_{}'.format(zonename),
-                                 r'7_fuel\zone_{}\fuel_100m.gdb\fuel_efri_only'.format(zonename))
-            copy_to_server(efri, 'fuel_{}'.format(zonename), workspace=r'data\DSS\Fuels_efri_only.gdb')
-            return efri
-        updateService(lambda: map(copyEFRI, fuels), 'eFRI_UTM')
-        updateService(lambda: copy_to_server(national_reclassify), 'national')
-        env_push()
-        #~ updateService(lambda: copy_to_server(os.path.join(), 'fuel'), 'fuel')
-        env_defaults(workspace=checkGDB(os.path.join(GENERATED, "lambert"), "fuel_{}m.gdb".format(gridSize)),
-                     cellSize=CELLSIZE_M)
-        #~ arcpy.env.outputCoordinateSystem = PROJECTION
-        if DO_MAPPER:
-            # update the whole database
-            updateService(lambda: copy_to_server(MAPPER_FINAL, workspace=r'data\AFFES_Mapper5\Data'), 'mapperFuel')
-        else:
-            # just do the one raster
-            updateService(lambda: copy_to_server(os.path.join(MAPPER_FINAL, "fuel_{}".format(CELLSIZE_M))), 'fuel')
-        #~ updateService(lambda: copy_to_server("fuel_efri"), 'fuel_efri')
-        #~ updateService(lambda: copy_to_server("fuel_filled"), 'fuel_filled')
-        env_pop()
     print("Done")

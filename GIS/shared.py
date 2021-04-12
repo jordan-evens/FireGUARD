@@ -264,34 +264,3 @@ def try_delete(table_name):
             try_delete(table_name)
 
 
-def copy_to_server(input, output=None, workspace=r'data\DSS\Fuels.gdb'):
-    """Copy to ArcGIS server"""
-    if not output:
-        output = os.path.basename(str(input))
-    print "Copying {} to server".format(str(input))
-    OUT_ARCSERVER = os.path.join(r'D:\arcgisserver', workspace)
-    ACTUAL_SERVER = os.path.join(r'\\' + common.CONFIG.get('FireGUARD', 'mapper_server') + r'\D$\arcgisserver', workspace)
-    copied = os.path.join(OUT_ARCSERVER, output)
-    if arcpy.Exists(copied):
-        arcpy.Delete_management(copied)
-    # remove directories if that's what we're copying
-    if os.path.isdir(copied):
-        os.remove(copied)
-    try:
-        arcpy.CopyFeatures_management(input, copied)
-    except:
-        try:
-            arcpy.CopyRaster_management(input, copied)
-        except:
-            # default to basic copy if neither of those worked
-            arcpy.Copy_management(input, copied)
-    # copy from staging db so we're not worrying about if it was a selection or anything weird
-    on_server = os.path.join(ACTUAL_SERVER, output)
-    if arcpy.Exists(on_server):
-        arcpy.Delete_management(on_server)
-    # remove directories if that's what we're copying
-    if os.path.isdir(on_server):
-        os.remove(on_server)
-    arcpy.Copy_management(copied, on_server)
-
-
