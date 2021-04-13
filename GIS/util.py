@@ -11,6 +11,7 @@ import time
 import dateutil
 import dateutil.parser
 import datetime
+import logging
 
 def ensure_dir(dir):
     """Make sure directory exists"""
