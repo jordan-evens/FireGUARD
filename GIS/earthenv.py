@@ -20,14 +20,19 @@ import glob
 import util
 import logging
 
-import sys
-sys.path.append('../util')
-
-DOWNLOAD_DIR = r'../data/download/ftp/mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/'
-OUT_DIR = 'data'
+DATA_DIR = os.path.realpath('../data')
+GIS = os.path.join(DATA_DIR, 'GIS')
+OUT_DIR = os.path.join(DATA_DIR, 'extracted/earthenv')
+INPUT = os.path.join(GIS, "input")
+GIS_ELEVATION = os.path.join(INPUT, "elevation")
+EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
 MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_{}{}.tar.gz'
+DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download/ftp', os.path.dirname(MASK.replace('http://', '')))
 
 def define_bounds():
+    import sys
+    sys.path.append('../util')
+    import common
     global RANGE_LATITUDE
     global RANGE_LONGITUDE
     MIN_LAT = int(common.BOUNDS['latitude']['min'] / 5) * 5
@@ -55,7 +60,6 @@ def to_download(url):
     return util.save_http(DOWNLOAD_DIR, url)
 
 if __name__ == '__main__':
-    import common
     pool = multiprocessing.Pool(processes=4)
     urls = []
     define_bounds()
@@ -70,11 +74,6 @@ if __name__ == '__main__':
             tar = tarfile.open(f)
             tar.extractall(OUT_DIR)
             tar.close()
-    GIS = os.path.realpath(r'../data/GIS')
-    GIS_SHARE = common.CONFIG.get('FireGUARD', 'gis_share')
-    INPUT = os.path.join(GIS, "input")
-    GIS_ELEVATION = os.path.join(INPUT, "elevation")
-    EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
     if not os.path.exists(EARTHENV):
         os.makedirs(GIS_ELEVATION)
         search_criteria = "EarthEnv-DEM90_*.bil"
