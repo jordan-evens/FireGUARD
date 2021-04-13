@@ -64,9 +64,6 @@ PROVINCE = os.path.join(NDD_NON, "PROVINCE")
 ## DEM made by combining EarthEnv data into a TIFF
 EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
 
-MNR_LAMBERT = arcpy.SpatialReference('Projected Coordinate Systems/National Grids/Canada/NAD 1983 CSRS Ontario MNR Lambert')
-PROJECTION = MNR_LAMBERT
-
 FIRE_DISTURBANCE = os.path.join(GIS_FIRE, r'FIRE_DISTURBANCE_AREA.shp')
 DEM_BOX_SIZE_KM = 50
 BUFF_DIST = "{} kilometers".format(DEM_BOX_SIZE_KM)
