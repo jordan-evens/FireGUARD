@@ -28,7 +28,6 @@ OUT_DIR = 'data'
 MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_{}{}.tar.gz'
 
 def define_bounds():
-    import common
     global RANGE_LATITUDE
     global RANGE_LONGITUDE
     MIN_LAT = int(common.BOUNDS['latitude']['min'] / 5) * 5
@@ -56,6 +55,7 @@ def to_download(url):
     return util.save_http(DOWNLOAD_DIR, url)
 
 if __name__ == '__main__':
+    import common
     pool = multiprocessing.Pool(processes=4)
     urls = []
     define_bounds()
@@ -70,8 +70,13 @@ if __name__ == '__main__':
             tar = tarfile.open(f)
             tar.extractall(OUT_DIR)
             tar.close()
-    out_fp = 'EarthEnv.tif'
-    if not os.path.exists(out_fp):
+    GIS = os.path.realpath(r'../data/GIS')
+    GIS_SHARE = common.CONFIG.get('FireGUARD', 'gis_share')
+    INPUT = os.path.join(GIS, "input")
+    GIS_ELEVATION = os.path.join(INPUT, "elevation")
+    EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
+    if not os.path.exists(EARTHENV):
+        os.makedirs(GIS_ELEVATION)
         search_criteria = "EarthEnv-DEM90_*.bil"
         q = os.path.join(OUT_DIR, search_criteria)
         dem_fps = glob.glob(q)
@@ -82,4 +87,4 @@ if __name__ == '__main__':
         import sys
         sys.path.append(os.path.join(os.path.dirname(sys.executable), 'Scripts'))
         import gdal_merge as gm
-        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', out_fp] + src_files_to_mosaic)
+        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', EARTHENV] + src_files_to_mosaic)
