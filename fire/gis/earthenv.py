@@ -72,6 +72,6 @@ if __name__ == '__main__':
            #~ src = rasterio.open(fp)
            src_files_to_mosaic.append(fp)
         import sys
-        sys.path.append(r'C:\Python27\ArcGIS10.3\Scripts')
+        sys.path.append(sys.executable.replace('python.exe', 'Scripts'))
         import gdal_merge as gm
         gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', out_fp] + src_files_to_mosaic)
