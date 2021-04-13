@@ -21,6 +21,8 @@ import glob
 
 from Settings import Settings
 
+DOWNLOAD_DIR = r'../../data/download/ftp/mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/'
+
 settings = Settings()
 MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90/EarthEnv-DEM90_{}{}.tar.gz'
 MIN_LAT = int(settings.latitude_min / 5) * 5
@@ -46,7 +48,7 @@ OUT_DIR = 'data'
 
 
 def to_download(url):
-    return download(url, 'download')
+    return download(url, DOWNLOAD_DIR)
 
 if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=4)
