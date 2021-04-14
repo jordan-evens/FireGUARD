@@ -136,7 +136,13 @@ if args.zones:
 # https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/National/HighResolution/GDB/NHD_H_National_GDB.zip
 lakes_nhd = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDWaterbody")
 lakes_nhd_area = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDArea")
-canada = os.path.join(INPUT, "canada\\lpr_000b16a_e.shp")
+
+canada = os.path.join(INPUT, "canada\\lcsd000a19a_e.shp")
+
+if not os.path.exists(canada):
+    common.save_http(DOWNLOADED, r'http://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/lcsd000a19a_e.zip')
+    unpack.check_zip(DOWNLOADED, '*', file_mask='lcsd000a19a_e.zip', output=os.path.join(INPUT, 'canada'))
+
 national = os.path.join(GIS_FUELS, r'national\fuel_layer\FBP_FuelLayer_wBurnscars.tif')
 
 if not os.path.exists(national):
@@ -232,8 +238,8 @@ def create_grid(zone):
         print("Changing projection to {}".format(Projection.name))
         arcpy.env.outputCoordinateSystem = Projection
         print("Creating {}m grid for {}".format(gridSize, Projection.name))
-        province = project(PROVINCE, "province", Projection)
-        bounds = check_make("bounds", lambda _: arcpy.Buffer_analysis("province", _, BUFF_DIST))
+        country = project(canada, "canada", Projection)
+        bounds = check_make("bounds", lambda _: arcpy.Buffer_analysis(country, _, BUFF_DIST))
         print("Creating large grid for zone {}".format(zone))
         # create a grid that's got the core part of the zone without worry about edges since we'll have others for that
         # \2
@@ -667,9 +673,7 @@ if __name__ == '__main__':
     # make bounds for use in erasing from NHD data
     can_clip = check_make("canada_clip", lambda _: arcpy.Clip_analysis(canada, DEM_BOX, _))
     canada_project = project(can_clip, "canada_project")
-    can_bounds = check_make("can_bounds", lambda _: arcpy.Merge_management(";".join([province_project, canada_project]), _))
-    canada_box = check_make("canada_box", lambda _: arcpy.Clip_analysis(can_bounds, DEM_BOX, _))
-    outside = check_make("outside", lambda _: arcpy.Erase_analysis(DEM_BOX, province_project, _))
+    canada_box = check_make("canada_box", lambda _: arcpy.Clip_analysis(canada_project, DEM_BOX, _))
     canada_raster = check_make("canada_raster", lambda _: arcpy.FeatureToRaster_conversion(canada_box, "OBJECTID", _, CELLSIZE_M))
     # \3
     env_push()
