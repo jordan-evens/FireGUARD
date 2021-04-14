@@ -63,7 +63,6 @@ BOUNDS_GDB = checkGDB(BOUNDS_DIR, "bounds.gdb")
 NDD_NON = os.path.join(GIS_SHARE, "NDD", "GDDS-Internal-MNRF.gdb")
 
 mask_LIO_gdb = os.path.join(OUTPUT, "{}_LIO.gdb")
-PROVINCE = os.path.join(NDD_NON, "PROVINCE")
 ## DEM made by combining EarthEnv data into a TIFF
 EARTHENV = os.path.join(GIS_ELEVATION, "EarthEnv.tif")
 
@@ -316,7 +315,7 @@ def make_grid(zones, showIntermediate=False):
             outputs += [projections[zone]['ZoneGrid']]
     arcpy.env.addOutputsToMap = origAddOutputsToMap
 
-def makeWater(province, water_projected, erase, orig=None, clear=True, sql=None, clip=None):
+def makeWater(province, water_projected, erase=None, orig=None, clear=True, sql=None, clip=None):
     if not orig:
         orig = os.path.join(CANVEC_FOLDER, "canvec_50K_{}_Hydro.gdb\\waterbody_2".format(province))
     last = orig
@@ -328,7 +327,10 @@ def makeWater(province, water_projected, erase, orig=None, clear=True, sql=None,
         last = check_make("water_{}_no_fields".format(province), lambda _: clearData(last, _))
     projected = os.path.join(water_projected, "WATER_{}_project".format(province))
     last = project(last, projected)
-    last = check_make("water_{}".format(province), lambda _: arcpy.Erase_analysis(last, erase, _))
+    if erase is not None:
+        last = check_make("water_{}".format(province), lambda _: arcpy.Erase_analysis(last, erase, _))
+    else:
+        last = check_make("water_{}".format(province), lambda _: arcpy.CopyFeatures_management(last, _))
     return last
 
 def mkFuel(zone_name, buffer, fuel_buffer, projection):
@@ -643,7 +645,19 @@ if __name__ == '__main__':
     # HACK: clear in case we were pasting this and it's set somehow
     arcpy.env.outputCoordinateSystem = None
     national_reclassify = calc("national", lambda _: arcpy.gp.Reclassify_sa(Raster(national), "Value", ';'.join(["{} {}".format(k, v) for k, v in dct_2018.iteritems()]), _, "DATA"))
-    province_project = project(PROVINCE, os.path.join(BOUNDS_GDB, "PROVINCE_project"))
+    MIN_LAT = common.BOUNDS['latitude']['min']
+    MAX_LAT = common.BOUNDS['latitude']['max']
+    MIN_LON = common.BOUNDS['longitude']['min']
+    MAX_LON = common.BOUNDS['longitude']['max']
+    bounds_array = arcpy.Array([arcpy.Point(MIN_LON, MAX_LAT),
+                                arcpy.Point(MIN_LON, MIN_LAT),
+                                arcpy.Point(MAX_LON, MIN_LAT),
+                                arcpy.Point(MAX_LON, MAX_LAT)])
+    # trying to just use NAD83 (4269) didn't work (made a 1x1 raster for some reason)
+    # MNR Lambert Conformal Conic (3161) doesn't seem to work (not lat/long?)
+    # WGS 84 (4326) should let us define things in lat/lon
+    PROJ = arcpy.SpatialReference(4326)
+    bounds_polygon = arcpy.Polygon(bounds_array, PROJ)
     # /1
     env_pop()
     gridSize = CELLSIZE_M
@@ -655,18 +669,19 @@ if __name__ == '__main__':
     env_push()
     env_defaults(workspace=bounds_grids,
                  cellSize=CELLSIZE_M)
-    boundBox = check_make("BoundBox", lambda _: arcpy.MinimumBoundingGeometry_management(province_project, _, "ENVELOPE"))
+    boundBox = check_make("BoundBox", lambda _: arcpy.MinimumBoundingGeometry_management(bounds_polygon, _, "ENVELOPE"))
     roundBound = check_make("RoundBound", lambda _: arcpy.Buffer_analysis(boundBox, _, BUFF_DIST))
     # HACK: don't want rounded corners so do this again.
     bounds = check_make("bounds", lambda _: arcpy.MinimumBoundingGeometry_management(roundBound, _, "ENVELOPE"))
-    buffer = check_make("buffer", lambda _: arcpy.FeatureToRaster_conversion(bounds, arcpy.ListFields(bounds)[0].name, _, CELLSIZE_M))
+    # project to MNR Lambert so that buffer works in meters
+    bounds_project = project(bounds, "bounds_project")
+    buffer = check_make("buffer", lambda _: arcpy.FeatureToRaster_conversion(bounds_project, arcpy.ListFields(bounds_project)[0].name, _, CELLSIZE_M))
     # NOTE: make sure [bounds] is first so it uses projection from it
-    all_bounds = check_make("AllBounds", lambda _: arcpy.Merge_management(';'.join([bounds] + map(lambda x: os.path.join(BOUNDS_DIR, "zone_{}".format(x).replace(".", "_"), "grids_{}m.gdb".format(CELLSIZE_M), "ZoneBuffer"), ZONES)), _))
+    all_bounds = check_make("AllBounds", lambda _: arcpy.Merge_management(';'.join([bounds_project] + map(lambda x: os.path.join(BOUNDS_DIR, "zone_{}".format(x).replace(".", "_"), "grids_{}m.gdb".format(CELLSIZE_M), "ZoneBuffer"), ZONES)), _))
     DEM_BOX = check_make("box", lambda _: arcpy.MinimumBoundingGeometry_management(all_bounds, _, "ENVELOPE", "ALL"))
     # \2
     env_push()
     env_defaults(snapRaster=buffer, cellSize="")
-    #~ PROVINCE_raster = calc("PROVINCE_raster", lambda _: arcpy.FeatureToRaster_conversion(province_project, "OBJECTID", _, CELLSIZE_M))
     DEM_clip = calc("DEM_clip", lambda _: clip_raster_box(EARTHENV, DEM_BOX, _), buildPyramids=False)
     DEM_project = calc("DEM_project", lambda _: project_raster(DEM_clip, _, cellsize_m=CELLSIZE_M, resampling_type="BILINEAR"))
     all_buffer = check_make("all_buffer", lambda _: arcpy.FeatureToRaster_conversion(DEM_BOX, arcpy.ListFields(DEM_BOX)[0].name, _, CELLSIZE_M))
@@ -687,16 +702,9 @@ if __name__ == '__main__':
     water_projected = checkGDB(WATER_DIR, "water_projected.gdb")
     def check_water(_):
         # \4
-        env_push()
-        env_defaults(extent=province_project, mask=province_project)
-        # we use the water polygons to repopulate the rasters
-        water_ON = makeWater('ON', water_projected, outside, orig=os.path.join(NDD_NON, "OHN_WATERBODY"))
-        # /4
-        env_pop()
-        water_list = (['water_ON'] +
-                     map(lambda _: makeWater(_, water_projected, province_project), ['MB', 'NU', 'NS', 'NB', 'QC']) +
-                     [makeWater('US', water_projected, can_bounds, orig=lakes_nhd, clear=True, sql="FTYPE NOT IN ( 361, 378, 466 )", clip=DEM_BOX),
-                      makeWater('USArea', water_projected, can_bounds, orig=lakes_nhd_area)])
+        water_list = (map(lambda _: makeWater(_, water_projected), ['ON', 'MB', 'NU', 'NS', 'NB', 'QC']) +
+                     [makeWater('US', water_projected, can_box, orig=lakes_nhd, clear=True, sql="FTYPE NOT IN ( 361, 378, 466 )", clip=DEM_BOX),
+                      makeWater('USArea', water_projected, can_box, orig=lakes_nhd_area)])
         water_ALL = check_make("water_ALL", lambda _: arcpy.Merge_management(";".join(water_list), _))
         def makeWaterFinal(_):
             arcpy.Sort_management(water_ALL, _, [["Shape", "ASCENDING"]])
