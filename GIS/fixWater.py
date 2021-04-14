@@ -134,8 +134,13 @@ if args.zones:
 
 # USA National Hydrography Dataset
 # https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/National/HighResolution/GDB/NHD_H_National_GDB.zip
-lakes_nhd = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDWaterbody")
-lakes_nhd_area = os.path.join(GIS_WATER, "NHD.gdb", "Hydrography", "NHDArea")
+NHD_GDB = os.path.join(GIS_WATER, "NHD_H_National_GDB.gdb")
+lakes_nhd = os.path.join(NHD_GDB, "Hydrography", "NHDWaterbody")
+lakes_nhd_area = os.path.join(NHD_GDB, "Hydrography", "NHDArea")
+
+if not (os.path.exists(lakes_nhd) and os.path.exists(lakes_nhd_area)):
+    common.save_http(DOWNLOADED, r'https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/National/HighResolution/GDB/NHD_H_National_GDB.zip')
+    unpack.check_zip(DOWNLOADED, '*', file_mask='NHD_H_National_GDB.zip', output=GIS_WATER)
 
 canada = os.path.join(INPUT, "canada\\lcsd000a19a_e.shp")
 
