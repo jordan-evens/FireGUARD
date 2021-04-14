@@ -51,6 +51,8 @@ FUEL_RASTER_DIR = ensure_dir(os.path.join(OUTPUT, "07_fuel_raster"))
 FUEL_MOSAIC_DIR = ensure_dir(os.path.join(OUTPUT, "08_fuel_mosaic"))
 FUEL_DIR = ensure_dir(os.path.join(OUTPUT, "09_fuel"))
 FUEL_JOIN_DIR = ensure_dir(os.path.join(OUTPUT, "10_fuel_join"))
+CANVEC_FOLDER = os.path.realpath(os.path.join(GIS, '../extracted/canvec/'))
+
 
 POLY_GDB = checkGDB(OUTPUT, "processed.gdb")
 PROCESSED_GDB = checkGDB(OUTPUT, "processed_{:03d}m.gdb".format(CELLSIZE_M))
@@ -304,7 +306,7 @@ def make_grid(zones, showIntermediate=False):
 
 def makeWater(province, water_projected, erase, orig=None, clear=True, sql=None, clip=None):
     if not orig:
-        orig = os.path.join(GIS_WATER, "canvec_50K_{}_Hydro.gdb\\waterbody_2".format(province))
+        orig = os.path.join(CANVEC_FOLDER, "canvec_50K_{}_Hydro.gdb\\waterbody_2".format(province))
     last = orig
     if clip:
         last = check_make("water_{}_clip".format(province), lambda _: arcpy.Clip_analysis(last, clip, _))
