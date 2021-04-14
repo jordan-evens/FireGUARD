@@ -4,11 +4,6 @@ from __future__ import print_function
 # NOTE: seems to need to be run in ArcMap for:
 # - the USA water
 
-import sys
-sys.path.append('..\util')
-import common
-import unpack
-
 CELLSIZE_M = 100
 import pandas as pd
 
@@ -20,7 +15,13 @@ import os
 #~ HOME_DIR = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
 HOME_DIR = "C:\\FireGUARD\\GIS"
 sys.path.append(HOME_DIR)
+os.chdir(HOME_DIR)
 sys.path.append(os.path.join(HOME_DIR, 'fbp_convert'))
+import sys
+sys.path.append('..\util')
+import common
+import unpack
+
 import shared
 #~ reload(shared)
 from shared import *
