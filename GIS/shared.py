@@ -131,6 +131,9 @@ def check_make(result, fct, force=False):
         arcpy.env.overwriteOutput = True
         fct(result)
         env_pop()
+        if not arcpy.Exists(result):
+            print "Did not create {}".format(result)
+            return None
     else:
         print "Already have {}".format(result)
     return result
@@ -213,7 +216,10 @@ def calc(save_to, fct, retries=5, buildPyramids=True, force=False):
                 print "Building pyramids failed."
                 #~ time.sleep(delay)
         return _
-    return Raster(check_make(save_to, do_calc, force))
+    result = check_make(save_to, do_calc, force)
+    if result is not None:
+        return Raster(result)
+    return None
 
 def calc_mask(save_to, input):
     """Create a mask of where a raster has values"""
