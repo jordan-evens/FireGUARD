@@ -69,11 +69,11 @@ if __name__ == '__main__':
     files = pool.map(to_download, urls)
     if not os.path.exists(OUT_DIR):
         os.mkdir(OUT_DIR)
-        for f in files:
-            print(f)
-            tar = tarfile.open(f)
-            tar.extractall(OUT_DIR)
-            tar.close()
+    for f in files:
+        print(f)
+        tar = tarfile.open(f)
+        tar.extractall(OUT_DIR)
+        tar.close()
     if not os.path.exists(EARTHENV):
         os.makedirs(GIS_ELEVATION)
         search_criteria = "EarthEnv-DEM90_*.bil"
