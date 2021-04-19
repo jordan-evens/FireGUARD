@@ -242,7 +242,11 @@ def getFeatures(gdb):
     """Get list of features in a workspace"""
     ws = arcpy.env.workspace
     arcpy.env.workspace = gdb
-    features = map(lambda x: os.path.join(gdb, x), arcpy.ListFeatureClasses())
+    features = arcpy.ListFeatureClasses()
+    if features is None:
+        features = []
+    else:
+        features = map(lambda x: os.path.join(gdb, x), features)
     arcpy.env.workspace = ws
     return features
 
