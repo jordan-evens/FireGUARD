@@ -12,6 +12,7 @@ from __future__ import print_function
 import os
 import multiprocessing
 import tarfile
+import math
 
 import rasterio
 from rasterio.merge import merge
@@ -38,7 +39,9 @@ def define_bounds():
     MIN_LAT = int(common.BOUNDS['latitude']['min'] / 5) * 5
     if MIN_LAT < 0 and 0 != MIN_LAT  / 5:
         MIN_LAT -= 5
-    MAX_LAT = int(common.BOUNDS['latitude']['max'] / 5) * 5
+    MAX_LAT = math.ceil(common.BOUNDS['latitude']['max'] / 5) * 5
+    if MAX_LAT < 85 and 0 != MAX_LAT / 5:
+        MAX_LAT += 5
     RANGE_NORTH = map(lambda _: 'N{:02d}'.format(_),
                       [x for x in reversed([5 * x for x in list(xrange(17))]) if x >= MIN_LAT and x <= MAX_LAT])
     RANGE_SOUTH = map(lambda _: 'S{:02d}'.format(_),
@@ -46,7 +49,7 @@ def define_bounds():
     MIN_LON = int(common.BOUNDS['longitude']['min'] / 5) * 5
     if MIN_LON < 0 and 0 != MIN_LON  / 5:
         MIN_LON -= 5
-    MAX_LON = int(common.BOUNDS['longitude']['max'] / 5) * 5
+    MAX_LON = math.ceil(common.BOUNDS['longitude']['max'] / 5) * 5
     MAX_LON -= 5
     RANGE_WEST = map(lambda _: 'W{:03d}'.format(_),
                      [x for x in reversed([5 * (x + 1) for x in list(xrange(36))]) if -x >= MIN_LON and -x <= MAX_LON])
