@@ -75,7 +75,8 @@ if __name__ == '__main__':
         tar.extractall(OUT_DIR)
         tar.close()
     if not os.path.exists(EARTHENV):
-        os.makedirs(GIS_ELEVATION)
+        if not os.path.exists(GIS_ELEVATION):
+            os.makedirs(GIS_ELEVATION)
         search_criteria = "EarthEnv-DEM90_*.bil"
         q = os.path.join(OUT_DIR, search_criteria)
         dem_fps = glob.glob(q)
