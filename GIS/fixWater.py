@@ -3,6 +3,7 @@ from __future__ import print_function
 
 # NOTE: seems to need to be run in ArcMap for:
 # - the USA water
+# - making the zone boundary rasters
 
 CELLSIZE_M = 100
 import pandas as pd
@@ -363,10 +364,10 @@ def mkFuel(zone_name, buffer, fuel_buffer, projection):
     FILL_SIZE = 10
     bounds_filled = calc("bounds_filled", lambda _: arcpy.sa.Con(arcpy.sa.IsNull(bounds_mask),arcpy.sa.FocalStatistics(bounds_mask,
                                                                    arcpy.sa.NbrRectangle(FILL_SIZE, FILL_SIZE),'MAJORITY'), bounds_mask))
-    # shrink back down so edges don't end up with euclidean
-    bounds_shrink = calc("bounds_shrink", lambda _: Shrink(bounds_filled, FILL_SIZE / 2, [0]))
+    #~ # shrink back down so edges don't end up with euclidean
+    #~ bounds_shrink = calc("bounds_shrink", lambda _: Shrink(bounds_filled, FILL_SIZE / 2, [0]))
     # need to fill in vertical edges
-    bounds_all = calc("bounds_all", lambda _: Con(IsNull(water_raster), bounds_shrink, water_raster))
+    bounds_all = calc("bounds_all", lambda _: Con(IsNull(water_raster), bounds_filled, water_raster))
     bounds_nowater = calc("bounds_nowater", lambda _: SetNull(bounds_all == 102, bounds_all))
     env_pop()
     # /2
@@ -458,47 +459,58 @@ def mkFuel(zone_name, buffer, fuel_buffer, projection):
             def mkUnfiltered(_):
                 # HACK: assume something made it into the raster already
                 rasters = sorted(getRasters(grid_workspace))
-                print("Adding {}".format(raster_path(rasters[0])))
-                copyFuel(rasters[0], _)
-                for r in rasters[1:]:
-                    print("Adding {}".format(raster_path(r)))
-                    arcpy.Mosaic_management(r, _)
+                if len(rasters) > 0:
+                    print("Adding {}".format(raster_path(rasters[0])))
+                    copyFuel(rasters[0], _)
+                    for r in rasters[1:]:
+                        print("Adding {}".format(raster_path(r)))
+                        arcpy.Mosaic_management(r, _)
+                else:
+                    return None
             # NOTE: these rasters look really wrong along the edges but the next step cleans that up
             unfiltered = calc(os.path.join(arcpy.env.workspace, 'unfiltered.tif'), mkUnfiltered)
-            # keep unclassified but not non-fuel or Unknown
-            filtered = calc('filtered.tif', lambda _: SetNull(unfiltered == 101, SetNull(unfiltered == 103, unfiltered)))
-            filter_mask = calc_mask('mask_filtered.tif', filtered)
-            filter_buffer = calc('buffer_filtered.tif', lambda _: Expand(filter_mask, LIO_CELL_BUFFER, [0]))
-            # remove water because we trust the polygons we used before more
-            nowater = calc('nowater.tif', lambda _: SetNull(filtered == 102, filtered))
-            env_pop()
-            env_push()
-            env_defaults(mask=filter_buffer)
-            fuel_euclidean = calc("fuel_euclidean", lambda _: arcpy.gp.EucAllocation_sa(nowater, _, "", "", CELLSIZE_M, "Value", "fuel_euclidean_distance", "fuel_euclidean_direction"))
+            # HACK: use water if no eFRI data
+            fuel_last = fuel_euclidean = nowater = water_raster
+            if unfiltered is not None:
+                # keep unclassified but not non-fuel or Unknown
+                filtered = calc('filtered.tif', lambda _: SetNull(unfiltered == 101, SetNull(unfiltered == 103, unfiltered)))
+                filter_mask = calc_mask('mask_filtered.tif', filtered)
+                filter_buffer = calc('buffer_filtered.tif', lambda _: Expand(filter_mask, LIO_CELL_BUFFER, [0]))
+                # remove water because we trust the polygons we used before more
+                nowater = calc('nowater.tif', lambda _: SetNull(filtered == 102, filtered))
+                env_pop()
+                env_push()
+                env_defaults(mask=filter_buffer)
+                fuel_last = fuel_euclidean = calc("fuel_euclidean", lambda _: arcpy.gp.EucAllocation_sa(nowater, _, "", "", CELLSIZE_M, "Value", "fuel_euclidean_distance", "fuel_euclidean_direction"))
             env_pop()
             # override everything with water, but only use the euclidean where the original non-euclidean national layer doesn't exist
             return calc(_, lambda _: Con(IsNull(water_raster), Con(IsNull(ntl_nowater), fuel_euclidean, nowater), water_raster), FORCE)
         fuel_lio_only = check_make("fuel_{}_only".format(name), ensureLIO, FORCE)
         return fuel_lio_only
     fuel_last = fuel_efri_only = runLIO(1, 'efri')
+    #~ # HACK: if no eFRI data then just set fuel_last to the filled national layer so it gets used
+    #~ if fuel_efri_only is not None:
+        #~ fuel_last = fuel_efri_only
+    #~ else:
+        #~ fuel_last = fuel_filled
     # /2
     env_pop()
     env_push()
     env_defaults(workspace=checkGDB(ensure_dir(os.path.join(FUEL_JOIN_DIR, zone_name)), 'fuel_{}m.gdb'.format(gridSize)))
-    fuel_last = fuel_efri_ntl = calc('fuel_efri_ntl', lambda _: Con(IsNull(fuel_efri_only), fuel_filled, fuel_efri_only), FORCE)
-    fires = calc("fires", lambda _: arcpy.FeatureToRaster_conversion(FIRE_DISTURBANCE, "FIRE_YEAR", _, CELLSIZE_M))
-    cur_year = datetime.datetime.now().year
-    fuel_years = [101, 104, 104, 105, 105, 625, 625, 625, 625, 625]
-    fire_years = []
-    for i in xrange(len(fuel_years)):
-        fire_years.append(calc("fires_{:02d}".format(i), lambda _: Con(fires == (cur_year - i), fuel_years[i])).catalogPath)
-    water = calc("water", lambda _: SetNull(fuel_efri_ntl != 102, fuel_efri_ntl))
-    inputs = ';'.join([water.catalogPath] + fire_years + [fuel_efri_ntl.catalogPath])
-    # HACK: crashing when we try to do this with calc()
-    #~ fuel_last = fuel_fires = calc("fuel_fires", lambda _: arcpy.MosaicToNewRaster_management(inputs, arcpy.env.workspace, _, "", "32_BIT_SIGNED", "", 1, "FIRST"))
-    if not arcpy.Exists(os.path.join(arcpy.env.workspace, "fuel_fires")):
-        arcpy.MosaicToNewRaster_management(inputs, arcpy.env.workspace, "fuel_fires", "", "32_BIT_SIGNED", "", 1, "FIRST")
-    fuel_last = fuel_fires = os.path.join(arcpy.env.workspace, "fuel_fires")
+    fuel_last = fuel_efri_ntl = calc('fuel_efri_ntl', lambda _: Con(IsNull(fuel_last), fuel_filled, fuel_last), FORCE)
+    #~ fires = calc("fires", lambda _: arcpy.FeatureToRaster_conversion(FIRE_DISTURBANCE, "FIRE_YEAR", _, CELLSIZE_M))
+    #~ cur_year = datetime.datetime.now().year
+    #~ fuel_years = [101, 104, 104, 105, 105, 625, 625, 625, 625, 625]
+    #~ fire_years = []
+    #~ for i in xrange(len(fuel_years)):
+        #~ fire_years.append(calc("fires_{:02d}".format(i), lambda _: Con(fires == (cur_year - i), fuel_years[i])).catalogPath)
+    #~ water = calc("water", lambda _: SetNull(fuel_efri_ntl != 102, fuel_efri_ntl))
+    #~ inputs = ';'.join([water.catalogPath] + fire_years + [fuel_efri_ntl.catalogPath])
+    #~ # HACK: crashing when we try to do this with calc()
+    #~ #fuel_last = fuel_fires = calc("fuel_fires", lambda _: arcpy.MosaicToNewRaster_management(inputs, arcpy.env.workspace, _, "", "32_BIT_SIGNED", "", 1, "FIRST"))
+    #~ if not arcpy.Exists(os.path.join(arcpy.env.workspace, "fuel_fires")):
+        #~ arcpy.MosaicToNewRaster_management(inputs, arcpy.env.workspace, "fuel_fires", "", "32_BIT_SIGNED", "", 1, "FIRST")
+    #~ fuel_last = fuel_fires = os.path.join(arcpy.env.workspace, "fuel_fires")
     env_pop()
     return fuel_last
 
@@ -703,8 +715,8 @@ if __name__ == '__main__':
     def check_water(_):
         # \4
         water_list = (map(lambda _: makeWater(_, water_projected), ['ON', 'MB', 'NU', 'NS', 'NB', 'QC']) +
-                     [makeWater('US', water_projected, can_box, orig=lakes_nhd, clear=True, sql="FTYPE NOT IN ( 361, 378, 466 )", clip=DEM_BOX),
-                      makeWater('USArea', water_projected, can_box, orig=lakes_nhd_area)])
+                     [makeWater('US', water_projected, canada_box, orig=lakes_nhd, clear=True, sql="FTYPE NOT IN ( 361, 378, 466 )", clip=DEM_BOX),
+                      makeWater('USArea', water_projected, canada_box, orig=lakes_nhd_area)])
         water_ALL = check_make("water_ALL", lambda _: arcpy.Merge_management(";".join(water_list), _))
         def makeWaterFinal(_):
             arcpy.Sort_management(water_ALL, _, [["Shape", "ASCENDING"]])
