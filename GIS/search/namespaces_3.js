@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['log_141',['log',['../namespacelog.html',1,'']]]
+  ['log_123',['log',['../namespacelog.html',1,'']]]
 ];
