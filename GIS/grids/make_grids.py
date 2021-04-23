@@ -30,6 +30,10 @@ from Settings import Settings
 
 from scipy import ndimage as nd
 
+import sys
+sys.path.append(os.path.join(os.path.dirname(sys.executable), 'Scripts'))
+import gdal_merge as gm
+
 def fill(data, invalid=None):
     """
     Replace the value of invalid 'data' cells (indicated by 'invalid') 
@@ -65,7 +69,7 @@ INTERMEDIATE_DIR = os.path.join(DATA_DIR, 'intermediate')
 DIR = os.path.join(GENERATED_DIR, 'grid')
 TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
-EARTHENV = os.path.join(GENERATED_DIR, 'EarthEnv.tif')
+EARTHENV = os.path.join(DATA_DIR, 'GIS/input/elevation/EarthEnv.tif')
 
 def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
@@ -153,6 +157,7 @@ def clip_fuel(fp, zone):
     tmp_tif = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
     nowater_tif = os.path.join(int_dir, 'nowater_{}'.format(zone).replace('.', '_')) + '.tif'
     polywater_tif = os.path.join(int_dir, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
+    merged_tif = os.path.join(int_dir, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
     filled_tif = os.path.join(int_dir, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
     driver_tif = gdal.GetDriverByName('GTiff')
     driver_gdb = ogr.GetDriverByName("OpenFileGDB")
@@ -285,7 +290,7 @@ def clip_fuel(fp, zone):
         rb = None
         ds = None
     # now the nodata values should all be filled, so apply the water from the polygons
-    if not os.path.exists(polywater_tif):
+    if not os.path.exists(merged_tif):
         ds_filled = gdal.Open(filled_tif, 1)
         dst_ds = driver_tif.CreateCopy(polywater_tif, ds_filled, 0, options=CREATION_OPTIONS)
         dst_ds = None
@@ -300,6 +305,7 @@ def clip_fuel(fp, zone):
             # layer = r'NHDWaterbody'
             print('Adding {}'.format(for_what))
             outputShapefile = os.path.join(int_dir, 'projected_{}_{}'.format(for_what, zone).replace('.', '_') + '.shp')
+            outputRaster = os.path.join(int_dir, 'water_{}_{}'.format(for_what, zone).replace('.', '_') + '.tif')
             if not os.path.exists(outputShapefile):
                 gdb = driver_gdb.Open(path_gdb, 0)
                 lakes = gdb.GetLayerByName(layer)
@@ -308,8 +314,6 @@ def clip_fuel(fp, zone):
                 transform = ds.GetGeoTransform()
                 pixelWidth = transform[1]
                 pixelHeight = transform[5]
-                cols = ds.RasterXSize
-                rows = ds.RasterYSize
                 xLeft = transform[0]
                 yTop = transform[3]
                 xRight = xLeft+cols*pixelWidth
@@ -392,11 +396,20 @@ def clip_fuel(fp, zone):
                         inFeature = tmpLayer.GetNextFeature()
                 ds = None
             # check again to see if we made it or had it already
-            if os.path.exists(outputShapefile):
+            if os.path.exists(outputShapefile) and not os.path.exists(outputRaster):
+                ds = gdal.Open(polywater_tif, 1)
+                transform = ds.GetGeoTransform()
+                proj = ds.GetProjection()
+                ds = None
                 outDataSet = driver_shp.Open(outputShapefile)
                 outLayer = outDataSet.GetLayer()
-                ds = gdal.Open(polywater_tif, osgeo.gdalconst.GA_Update)
+                ds = driver_tif.Create(outputRaster, cols, rows, 1, gdal.GDT_UInt16)
+                ds.SetGeoTransform(transform)
+                ds.SetProjection(proj)
+                #~ ds = gdal.Open(polywater_tif, osgeo.gdalconst.GA_Update)
                 print('Rasterizing...')
+                band = ds.GetRasterBand(1)
+                band.SetNoDataValue(0)
                 gdal.RasterizeLayer(ds, [1], outLayer, burn_values=[102], options=['ALL_TOUCHED=TRUE'])
                 ds.FlushCache()
                 # Save and close the shapefiles
@@ -407,13 +420,19 @@ def clip_fuel(fp, zone):
                 ds = None
             lakes = None
             gdb = None
-        checkAddLakes('USA', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')
+            if os.path.exists(outputRaster):
+                return outputRaster
+            return None
+        water = [checkAddLakes('USA', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')]
         for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
             path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
-            checkAddLakes(prov, path_gdb, 'waterbody_2')
+            water += [checkAddLakes(prov, path_gdb, 'waterbody_2')]
+        # should have a list of rasters that were made
+        water = [x for x in water if x is not None]
+        gm.main(['', '-o', merged_tif, polywater_tif] + water)
         # lakes should have been burned into polywater_tif
     # finally, copy result to output location
-    ds = gdal.Open(polywater_tif, 1)
+    ds = gdal.Open(merged_tif, 1)
     dst_ds = driver_tif.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
     dst_ds = None
     ds = None
