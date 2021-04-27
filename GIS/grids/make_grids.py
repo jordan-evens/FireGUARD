@@ -2,6 +2,7 @@ from __future__ import print_function
 import gc
 #import shapefile
 import rasterio
+from rasterio.merge import merge
 from rasterio.plot import show
 from rasterio.plot import show_hist
 from rasterio.mask import mask
@@ -394,6 +395,8 @@ def clip_fuel(fp, zone):
                         # dereference the features and get the next input feature
                         outFeature = None
                         inFeature = tmpLayer.GetNextFeature()
+                outDataSet = None
+                rasterSource = None
                 ds = None
             # check again to see if we made it or had it already
             if os.path.exists(outputShapefile) and not os.path.exists(outputRaster):
@@ -413,13 +416,16 @@ def clip_fuel(fp, zone):
                 gdal.RasterizeLayer(ds, [1], outLayer, burn_values=[102], options=['ALL_TOUCHED=TRUE'])
                 ds.FlushCache()
                 # Save and close the shapefiles
-                inDataSet = None
                 outDataSet = None
-                rasterSource = None
-                source = None
+                band = None
+                outLayer = None
+                transform = None
                 ds = None
+                source = None
+                proj = None
             lakes = None
             gdb = None
+            gc.collect()
             if os.path.exists(outputRaster):
                 return outputRaster
             return None
@@ -429,7 +435,48 @@ def clip_fuel(fp, zone):
             water += [checkAddLakes(prov, path_gdb, 'waterbody_2')]
         # should have a list of rasters that were made
         water = [x for x in water if x is not None]
-        gm.main(['', '-o', merged_tif, polywater_tif] + water)
+        #~ merge_what = [polywater_tif] + water
+        #~ g = gdal.Warp(merged_tif, merge_what, format="GTiff", options=["COMPRESS=LZW", "TILED=YES"])
+        #~ g = None
+        #~ src_files = map(rasterio.open, water)
+        # HACK: do this because merging everything all at once loads it all into memory and crashes
+        gc.collect()
+        ################################
+        #~ mosaic = rasterio.open(polywater_tif)
+        #~ while len(water) > 0:
+            #~ old_mosaic = mosaic
+            #~ cur_file = water.pop()
+            #~ print('Merging ' + cur_file)
+            #~ cur = rasterio.open(cur_file)
+            #~ mosaic, out_trans = merge([cur, old_mosaic])
+            #~ out_meta = cur.meta.copy()
+            #~ cur = None
+            #~ old_mosaic = None
+            #~ with rasterio.open(merged_tif, "w", **out_meta) as dest:
+                #~ dest.write(mosaic)
+            #~ gc.collect()
+            #~ if len(water) > 0:
+                #~ mosaic = rasterio.open(merged_tif)
+        ################################
+        #~ mosaic, out_trans = merge(src_files)
+        #~ mosaic = rasterio.open(
+        #~ for f in src_files:
+            #~ f.close()
+        #~ src_files = None
+        #~ ds_filled = gdal.Open(polywater_tif, 1)
+        #~ dst_ds = driver_tif.CreateCopy(merged_tif, ds_filled, 0, options=CREATION_OPTIONS)
+        #~ dst_ds = None
+        #~ ds_filled = None
+        #~ for w in water:
+            #~ gm.main(['', '-o', merged_tif, merged_tif] + [w])
+        #~ try:
+            #~ gc.collect()
+        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', merged_tif, polywater_tif] + water)
+        #~ except Exception as e:
+            #~ print(e)
+            #~ if os.path.exists(merged_tif):
+                #~ os.remove(merged_tif)
+            #~ sys.exit(-1)
         # lakes should have been burned into polywater_tif
     # finally, copy result to output location
     ds = gdal.Open(merged_tif, 1)
