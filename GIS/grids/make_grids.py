@@ -23,6 +23,7 @@ import pandas as pd
 import gdalconst
 from osgeo import ogr
 import osgeo
+import subprocess
 
 from Settings import Settings
 
@@ -32,7 +33,8 @@ from Settings import Settings
 from scipy import ndimage as nd
 
 import sys
-sys.path.append(os.path.join(os.path.dirname(sys.executable), 'Scripts'))
+SCRIPTS_DIR = os.path.join(os.path.dirname(sys.executable), 'Scripts')
+sys.path.append(SCRIPTS_DIR)
 import gdal_merge as gm
 
 def fill(data, invalid=None):
@@ -435,49 +437,18 @@ def clip_fuel(fp, zone):
             water += [checkAddLakes(zone, cols, rows, prov, path_gdb, 'waterbody_2')]
         # should have a list of rasters that were made
         water = [x for x in water if x is not None]
-        #~ merge_what = [polywater_tif] + water
-        #~ g = gdal.Warp(merged_tif, merge_what, format="GTiff", options=["COMPRESS=LZW", "TILED=YES"])
-        #~ g = None
-        #~ src_files = map(rasterio.open, water)
         # HACK: do this because merging everything all at once loads it all into memory and crashes
         gc.collect()
-        ################################
-        #~ mosaic = rasterio.open(polywater_tif)
-        #~ while len(water) > 0:
-            #~ old_mosaic = mosaic
-            #~ cur_file = water.pop()
-            #~ print('Merging ' + cur_file)
-            #~ cur = rasterio.open(cur_file)
-            #~ mosaic, out_trans = merge([cur, old_mosaic])
-            #~ out_meta = cur.meta.copy()
-            #~ cur = None
-            #~ old_mosaic = None
-            #~ with rasterio.open(merged_tif, "w", **out_meta) as dest:
-                #~ dest.write(mosaic)
-            #~ gc.collect()
-            #~ if len(water) > 0:
-                #~ mosaic = rasterio.open(merged_tif)
-        ################################
-        #~ mosaic, out_trans = merge(src_files)
-        #~ mosaic = rasterio.open(
-        #~ for f in src_files:
-            #~ f.close()
-        #~ src_files = None
-        #~ ds_filled = gdal.Open(polywater_tif, 1)
-        #~ dst_ds = driver_tif.CreateCopy(merged_tif, ds_filled, 0, options=CREATION_OPTIONS)
-        #~ dst_ds = None
-        #~ ds_filled = None
-        #~ for w in water:
-            #~ gm.main(['', '-o', merged_tif, merged_tif] + [w])
-        #~ try:
-            #~ gc.collect()
-        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', merged_tif, polywater_tif] + water)
-        #~ except Exception as e:
-            #~ print(e)
-            #~ if os.path.exists(merged_tif):
-                #~ os.remove(merged_tif)
-            #~ sys.exit(-1)
-        # lakes should have been burned into polywater_tif
+        run_what = ['python', SCRIPTS_DIR + '/gdal_merge.py', '-co', 'COMPRESS=DEFLATE', '-o', merged_tif, polywater_tif] + water
+        CWD = os.path.realpath('.')
+        process = subprocess.Popen(run_what,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   creationflags=0x08000000,
+                                   cwd=CWD)
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            raise Exception('Error processing merge: ' + stderr)
     # finally, copy result to output location
     ds = gdal.Open(merged_tif, 1)
     dst_ds = driver_tif.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
