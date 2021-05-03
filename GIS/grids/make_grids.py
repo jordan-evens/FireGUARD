@@ -454,6 +454,16 @@ def clip_fuel(fp, zone):
     dst_ds = driver_tif.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
     dst_ds = None
     ds = None
+    # not sure why this wouldn't copy nodata value but it didn't have one
+    ds = gdal.Open(out_tif, 1)
+    rb = ds.GetRasterBand(1)
+    # HACK: for some reason no_data is a double??
+    #~ if no_data is None:
+    no_data = int(-math.pow(2, 15) - 1)
+    rb.SetNoDataValue(no_data)
+    rb.FlushCache()
+    rb = None
+    ds = None
     return out_tif
 
 zone = ZONE_MIN
