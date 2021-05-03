@@ -290,6 +290,7 @@ def clip_fuel(fp, zone):
         os.makedirs(int_dir)
     base_tif = os.path.join(int_dir, 'base_{}'.format(zone).replace('.', '_')) + '.tif'
     tmp_tif = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
+    tmp_np = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.np'
     nowater_tif = os.path.join(int_dir, 'nowater_{}'.format(zone).replace('.', '_')) + '.tif'
     polywater_tif = os.path.join(int_dir, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
     merged_tif = os.path.join(int_dir, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
@@ -345,6 +346,8 @@ def clip_fuel(fp, zone):
     ds = gdal.Open(base_tif, 1)
     rows = ds.RasterYSize
     cols = ds.RasterXSize
+    rb = ds.GetRasterBand(1)
+    no_data = rb.GetNoDataValue()
     # close even though we're opening it in if statement so we know it's closed if we don't enter if
     ds = None
     if not os.path.exists(nowater_tif):
@@ -399,11 +402,9 @@ def clip_fuel(fp, zone):
         gc.collect()
         from scipy.ndimage import _nd_image
         # should be able to just use int16 for indices, but it must rely on it being int32 because it's wrong if it isn't
-        ft = np.zeros((input.ndim,) + input.shape,
-                                dtype=np.int32)
-        # ft = np.zeros((input.ndim,) + input.shape,
-                                # dtype=np.uint16)
+        ft = np.memmap(tmp_np, dtype=np.int32, mode='w+', shape=(input.ndim,) + input.shape)
         _nd_image.euclidean_feature_transform(input, sampling, ft)
+        ft.flush()
         input = None
         gc.collect()
         ds_nowater = gdal.Open(nowater_tif, 1)
@@ -423,6 +424,8 @@ def clip_fuel(fp, zone):
         rb.FlushCache()
         rb = None
         ds = None
+        ft = None
+        os.remove(tmp_np)
     # now the nodata values should all be filled, so apply the water from the polygons
     if not os.path.exists(merged_tif):
         ds_filled = gdal.Open(filled_tif, 1)
