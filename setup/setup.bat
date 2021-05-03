@@ -259,8 +259,8 @@ pip install python_dateutil-2.8.1-py2.py3-none-any.whl
 pip install six-1.15.0-py2.py3-none-any.whl
 pip install pytz-2020.1-py2.py3-none-any.whl
 pip uninstall numpy
-del /s /q c:\Python27\ArcGIS10.4\Lib\site-packages\numpy
-pip install "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
+del /s /q %PYTHONHOME%\Lib\site-packages\numpy
+pip install --ignore-installed "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
 pip install numexpr-2.7.2-cp27-cp27m-win32.whl
 pip install pandas-0.24.2-cp27-cp27m-win32.whl
 pip install cftime-1.0.4-cp27-cp27m-win32.whl
