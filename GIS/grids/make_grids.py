@@ -434,7 +434,8 @@ def clip_fuel(fp, zone):
         ds_filled = None
         gc.collect()
         print('Adding water from polygons')
-        water = [checkAddLakes(zone, cols, rows, 'USA', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')]
+        water = [checkAddLakes(zone, cols, rows, 'USA_Lakes', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDWaterbody')]
+        water += [checkAddLakes(zone, cols, rows, 'USA_Other', r'C:\FireGUARD\data\extracted\nhd\NHD_H_National_GDB.gdb', r'NHDArea')]
         for prov in ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']:
             path_gdb = r'C:\FireGUARD\data\extracted\canvec\canvec_50K_{}_Hydro.gdb'.format(prov)
             water += [checkAddLakes(zone, cols, rows, prov, path_gdb, 'waterbody_2')]
