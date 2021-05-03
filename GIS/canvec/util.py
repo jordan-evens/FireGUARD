@@ -1,4 +1,4 @@
-"""Helper functions that don't involve arcpy"""
+"""Helper functions"""
 
 import log
 import logging

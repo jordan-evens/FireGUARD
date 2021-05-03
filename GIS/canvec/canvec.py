@@ -2,8 +2,6 @@ from config import CONFIG
 import log
 import logging
 
-import arcpy
-from arcpy.sa import *
 from util import save_ftp
 from util import save_http
 import ftplib
@@ -19,7 +17,7 @@ def ensure_canvec(theme, prov, extract=True, resolution='50K'):
     path = os.path.join(CONFIG["CANVEC_FOLDER"], gdb)
     logging.debug("Looking for {}".format(path))
     # if we're only trying to download them then don't check if unzipped, just do download checks
-    if extract and arcpy.Exists(path):
+    if extract and os.path.exists(path):
         return path
     zipname = gdb_root + "_fgdb.zip"
     dir_base =  os.path.join("fgdb", theme)
@@ -43,7 +41,7 @@ def ensure_canvec(theme, prov, extract=True, resolution='50K'):
     if extract:
         # have this parameter so we can download everything without extracting it
         check_zip(CONFIG["CANVEC_FTP"], "*{}*".format(gdb_root), file_mask=zipname, output=CONFIG["CANVEC_FOLDER"], force=True)
-    return path if arcpy.Exists(path) else None
+    return path if os.path.exists(path) else None
 
 
 def download_all(extract=False):
