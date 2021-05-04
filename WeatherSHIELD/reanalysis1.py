@@ -151,7 +151,7 @@ def get_year(year):
                 # determine how much rain happened up to 0800
                 apcp_0800 = apcp_0800_whole + apcp_0800_partial * t_0800_rem
                 c_apcp = max(0, apcp_24 - 1.25)
-                apcp_ratio = 1.0 if 0.0 == apcp_24 else apcp_0800 / apcp_24
+                apcp_ratio = 1.0 if (0.0 == apcp_24 or type(apcp_24) is numpy.ma.core.MaskedConstant) else apcp_0800 / apcp_24
                 c_t1800 = common.kelvin_to_celcius(v_tmp[x])
                 c_tmin = common.kelvin_to_celcius(min(tmin.variables['tmin'][(t-2):(t+2),x[0],x[1]]))
                 c_tmax = common.kelvin_to_celcius(max(tmax.variables['tmax'][(t-2):(t+2),x[0],x[1]]))
