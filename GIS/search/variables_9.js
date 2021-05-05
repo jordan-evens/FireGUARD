@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logger_205',['logger',['../namespacelog.html#ae6d24c2e93b84ae3b742a18bfdb29daa',1,'log']]]
+  ['other_139',['other',['../class_fuel_lookup_1_1_fuel_lookup.html#a8ab3050fa6e07307974392b1995d4af5',1,'FuelLookup::FuelLookup']]]
 ];

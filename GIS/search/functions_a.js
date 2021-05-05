@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['project_172',['project',['../namespaceshared.html#aa934ad6e5e0b0c33518c85aa1a0d90ed',1,'shared']]],
-  ['project_5fraster_173',['project_raster',['../namespaceshared.html#a76a376f6e791041f3b1fdccf2271eeea',1,'shared']]]
+  ['raster_5fpath_118',['raster_path',['../namespaceshared.html#a06c02f554b4f0bf5ff86c5a47c137d7c',1,'shared']]],
+  ['removehandlers_119',['removeHandlers',['../namespacelog.html#aca5d05403ac81af127bbde88de14aad2',1,'log']]]
 ];

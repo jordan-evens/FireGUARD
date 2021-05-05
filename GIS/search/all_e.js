@@ -1,11 +1,6 @@
 var searchData=
 [
-  ['pc_81',['pc',['../namespaceupdate_a_d_d_i.html#a272e954252d2964164e584fb66ebf34a',1,'updateADDI']]],
-  ['pc_5frounded_82',['pc_rounded',['../namespaceupdate_a_d_d_i.html#a7367ad935dc73618c04e741ccbf77868',1,'updateADDI']]],
-  ['pdf_83',['pdf',['../namespaceupdate_a_d_d_i.html#a3ffdc26a675151cb2a705b3796e3fe20',1,'updateADDI']]],
-  ['pdf_5frounded_84',['pdf_rounded',['../namespaceupdate_a_d_d_i.html#a4cdf717de42be57bff45468f323c902a',1,'updateADDI']]],
-  ['project_85',['project',['../namespaceshared.html#aa934ad6e5e0b0c33518c85aa1a0d90ed',1,'shared']]],
-  ['project_5fraster_86',['project_raster',['../namespaceshared.html#a76a376f6e791041f3b1fdccf2271eeea',1,'shared']]],
-  ['projection_87',['PROJECTION',['../namespaceshared.html#a437df86f512f967802248a98d335038b',1,'shared']]],
-  ['pyramid_88',['pyramid',['../namespaceshared.html#ab5c54074c2e506874398d8ce0795b9b7',1,'shared']]]
+  ['raster_5fpath_57',['raster_path',['../namespaceshared.html#a06c02f554b4f0bf5ff86c5a47c137d7c',1,'shared']]],
+  ['removehandlers_58',['removeHandlers',['../namespacelog.html#aca5d05403ac81af127bbde88de14aad2',1,'log']]],
+  ['repl_59',['repl',['../class_fuel_lookup_1_1_fuel_lookup.html#a96a153cfed087e37cf00c1f0eedec64c',1,'FuelLookup::FuelLookup']]]
 ];

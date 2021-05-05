@@ -222,7 +222,7 @@ $(function() {
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="comment"># determine how much rain happened up to 0800</span></div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                apcp_0800 = apcp_0800_whole + apcp_0800_partial * t_0800_rem</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                c_apcp = max(0, apcp_24 - 1.25)</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                apcp_ratio = 1.0 <span class="keywordflow">if</span> 0.0 == apcp_24 <span class="keywordflow">else</span> apcp_0800 / apcp_24</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                apcp_ratio = 1.0 <span class="keywordflow">if</span> (0.0 == apcp_24 <span class="keywordflow">or</span> type(apcp_24) <span class="keywordflow">is</span> numpy.ma.core.MaskedConstant) <span class="keywordflow">else</span> apcp_0800 / apcp_24</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                c_t1800 = common.kelvin_to_celcius(v_tmp[x])</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                c_tmin = common.kelvin_to_celcius(min(tmin.variables[<span class="stringliteral">&#39;tmin&#39;</span>][(t-2):(t+2),x[0],x[1]]))</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                c_tmax = common.kelvin_to_celcius(max(tmax.variables[<span class="stringliteral">&#39;tmax&#39;</span>][(t-2):(t+2),x[0],x[1]]))</div>
