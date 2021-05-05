@@ -74,6 +74,11 @@ TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
 EARTHENV = os.path.join(DATA_DIR, 'GIS/input/elevation/EarthEnv.tif')
 
+INT_FUEL = os.path.join(INTERMEDIATE_DIR, 'fuel')
+DRIVER_SHP = ogr.GetDriverByName('ESRI Shapefile')
+DRIVER_TIF = gdal.GetDriverByName('GTiff')
+DRIVER_GDB = ogr.GetDriverByName("OpenFileGDB")
+
 def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
     import json
@@ -148,15 +153,12 @@ def clip_zone(fp, prefix, zone):
 
 def checkAddLakes(zone, cols, rows, for_what, path_gdb, layer):
     print('Adding {}'.format(for_what))
-    int_dir = os.path.join(INTERMEDIATE_DIR, 'fuel')
-    polywater_tif = os.path.join(int_dir, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
-    outputShapefile = os.path.join(int_dir, 'projected_{}_{}'.format(for_what, zone).replace('.', '_') + '.shp')
-    outputRaster = os.path.join(int_dir, 'water_{}_{}'.format(for_what, zone).replace('.', '_') + '.tif')
-    driver_shp = ogr.GetDriverByName('ESRI Shapefile')
-    driver_tif = gdal.GetDriverByName('GTiff')
-    driver_gdb = ogr.GetDriverByName("OpenFileGDB")
+    INT_FUEL = os.path.join(INTERMEDIATE_DIR, 'fuel')
+    polywater_tif = os.path.join(INT_FUEL, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
+    outputShapefile = os.path.join(INT_FUEL, 'projected_{}_{}'.format(for_what, zone).replace('.', '_') + '.shp')
+    outputRaster = os.path.join(INT_FUEL, 'water_{}_{}'.format(for_what, zone).replace('.', '_') + '.tif')
     if not os.path.exists(outputShapefile):
-        gdb = driver_gdb.Open(path_gdb, 0)
+        gdb = DRIVER_GDB.Open(path_gdb, 0)
         lakes = gdb.GetLayerByName(layer)
         lakes_ref = lakes.GetSpatialRef()
         ds = gdal.Open(polywater_tif, 1)
@@ -192,31 +194,31 @@ def checkAddLakes(zone, cols, rows, for_what, path_gdb, layer):
         vectorGeometry.AssignSpatialReference(lakes_ref)
         if vectorGeometry.Intersect(rasterGeometry):
             print('Intersects zone - clipping...')
-            raster_path = os.path.join(int_dir, 'raster_{}'.format(zone).replace('.', '_') + '.shp')
+            raster_path = os.path.join(INT_FUEL, 'raster_{}'.format(zone).replace('.', '_') + '.shp')
             # Remove output shapefile if it already exists
             if os.path.exists(raster_path):
-                driver_shp.DeleteDataSource(raster_path)
+                DRIVER_SHP.DeleteDataSource(raster_path)
             # Create the output shapefile
-            rasterSource = driver_shp.CreateDataSource(raster_path)
+            rasterSource = DRIVER_SHP.CreateDataSource(raster_path)
             rasterLayer = rasterSource.CreateLayer('raster', lakes_ref, geom_type=ogr.wkbPolygon)
             featureDefn = rasterLayer.GetLayerDefn()
             feature = ogr.Feature(featureDefn)
             feature.SetGeometry(rasterGeometry)
             rasterLayer.CreateFeature(feature)
             feature = None
-            tmp_path = os.path.join(int_dir, 'bounds_{}'.format(zone).replace('.', '_') + '.shp')
+            tmp_path = os.path.join(INT_FUEL, 'bounds_{}'.format(zone).replace('.', '_') + '.shp')
             # delete for now but name nicely in case we want to reuse existing
             if os.path.exists(tmp_path):
-                driver_shp.DeleteDataSource(tmp_path)
-            source = driver_shp.CreateDataSource(tmp_path)
+                DRIVER_SHP.DeleteDataSource(tmp_path)
+            source = DRIVER_SHP.CreateDataSource(tmp_path)
             # tmpLayer = source.CreateLayer('FINAL', lakes_ref, geom_type=ogr.wkbMultiPolygon)
             tmpLayer = source.CreateLayer('tmp', lakes_ref, geom_type=ogr.wkbMultiPolygon)
             ogr.Layer.Clip(lakes, rasterLayer, tmpLayer)
             coordTrans = osr.CoordinateTransformation(lakes_ref, raster_ref)
             print('Reprojecting...')
             # if os.path.exists(outputShapefile):
-                # driver_shp.DeleteDataSource(outputShapefile)
-            outDataSet = driver_shp.CreateDataSource(outputShapefile)
+                # DRIVER_SHP.DeleteDataSource(outputShapefile)
+            outDataSet = DRIVER_SHP.CreateDataSource(outputShapefile)
             outLayer = outDataSet.CreateLayer("lakes", raster_ref, geom_type=ogr.wkbMultiPolygon)
             # add fields
             inLayerDefn = tmpLayer.GetLayerDefn()
@@ -252,9 +254,9 @@ def checkAddLakes(zone, cols, rows, for_what, path_gdb, layer):
         transform = ds.GetGeoTransform()
         proj = ds.GetProjection()
         ds = None
-        outDataSet = driver_shp.Open(outputShapefile)
+        outDataSet = DRIVER_SHP.Open(outputShapefile)
         outLayer = outDataSet.GetLayer()
-        ds = driver_tif.Create(outputRaster, cols, rows, 1, gdal.GDT_UInt16)
+        ds = DRIVER_TIF.Create(outputRaster, cols, rows, 1, gdal.GDT_UInt16)
         ds.SetGeoTransform(transform)
         ds.SetProjection(proj)
         #~ ds = gdal.Open(polywater_tif, osgeo.gdalconst.GA_Update)
@@ -278,6 +280,32 @@ def checkAddLakes(zone, cols, rows, for_what, path_gdb, layer):
         return outputRaster
     return None
 
+def check_nowater(base_tif, zone, cols, rows, no_data):
+    nowater_tif = os.path.join(INT_FUEL, 'nowater_{}'.format(zone).replace('.', '_')) + '.tif'
+    if not os.path.exists(nowater_tif):
+        tmp_tif = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
+        ds = gdal.Open(base_tif, 1)
+        dst_ds = DRIVER_TIF.CreateCopy(tmp_tif, ds, 0, options=CREATION_OPTIONS)
+        dst_ds = None
+        ds = None
+        ds = gdal.Open(tmp_tif, 1)
+        print('Removing water')
+        rb = ds.GetRasterBand(1)
+        vals = rb.ReadAsArray(0, 0, cols, rows)
+        # get rid of water (102)
+        vals[vals == 102] = no_data
+        rb.WriteArray(vals, 0, 0)
+        rb.FlushCache()
+        vals = None
+        rb = None
+        # want a copy of this before we add the water back in so we can fill from non-water
+        dst_ds = DRIVER_TIF.CreateCopy(nowater_tif, ds, 0, options=CREATION_OPTIONS)
+        dst_ds = None
+        ds = None
+        os.remove(tmp_tif)
+        gc.collect()
+    return nowater_tif
+
 def clip_fuel(fp, zone):
     # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
     # zone = 14.5
@@ -285,18 +313,12 @@ def clip_fuel(fp, zone):
     if os.path.exists(out_tif):
         return out_tif
     print(out_tif)
-    int_dir = os.path.join(INTERMEDIATE_DIR, 'fuel')
-    if not os.path.exists(int_dir):
-        os.makedirs(int_dir)
-    base_tif = os.path.join(int_dir, 'base_{}'.format(zone).replace('.', '_')) + '.tif'
-    tmp_tif = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
-    tmp_np = os.path.join(int_dir, 'tmp_{}'.format(zone).replace('.', '_')) + '.np'
-    nowater_tif = os.path.join(int_dir, 'nowater_{}'.format(zone).replace('.', '_')) + '.tif'
-    polywater_tif = os.path.join(int_dir, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
-    merged_tif = os.path.join(int_dir, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
-    filled_tif = os.path.join(int_dir, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
-    driver_tif = gdal.GetDriverByName('GTiff')
-    driver_gdb = ogr.GetDriverByName("OpenFileGDB")
+    base_tif = os.path.join(INT_FUEL, 'base_{}'.format(zone).replace('.', '_')) + '.tif'
+    tmp_tif = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
+    tmp_np = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.np'
+    polywater_tif = os.path.join(INT_FUEL, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
+    merged_tif = os.path.join(INT_FUEL, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
+    filled_tif = os.path.join(INT_FUEL, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
     meridian = (zone - 15.0) * 6.0 - 93.0
     wkt = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, meridian)
     proj_srs = osr.SpatialReference(wkt=wkt)
@@ -350,23 +372,7 @@ def clip_fuel(fp, zone):
     no_data = rb.GetNoDataValue()
     # close even though we're opening it in if statement so we know it's closed if we don't enter if
     ds = None
-    if not os.path.exists(nowater_tif):
-        ds = gdal.Open(base_tif, 1)
-        dst_ds = driver_tif.CreateCopy(tmp_tif, ds, 0, options=CREATION_OPTIONS)
-        dst_ds = None
-        ds = None
-        ds = gdal.Open(tmp_tif, 1)
-        print('Removing water')
-        rb = ds.GetRasterBand(1)
-        vals = rb.ReadAsArray(0, 0, cols, rows)
-        # get rid of water (102)
-        vals[vals == 102] = no_data
-        rb.WriteArray(vals, 0, 0)
-        rb.FlushCache()
-        vals = None
-        # want a copy of this before we add the water back in so we can fill from non-water
-        dst_ds = driver_tif.CreateCopy(nowater_tif, ds, 0, options=CREATION_OPTIONS)
-        dst_ds = None
+    nowater_tif = check_nowater(base_tif, zone, cols, rows, no_data)
     if not os.path.exists(filled_tif):
         # now fill in blanks with surrounding fuels
         print('Filling spaces')
@@ -416,7 +422,7 @@ def clip_fuel(fp, zone):
         rb_nowater = None
         ds_nowater = None
         ds = gdal.Open(base_tif, 1)
-        dst_ds = driver_tif.CreateCopy(filled_tif, ds, 0, options=CREATION_OPTIONS)
+        dst_ds = DRIVER_TIF.CreateCopy(filled_tif, ds, 0, options=CREATION_OPTIONS)
         dst_ds = None
         ds = gdal.Open(filled_tif, 1)
         rb = ds.GetRasterBand(1)
@@ -427,10 +433,11 @@ def clip_fuel(fp, zone):
         ds = None
         ft = None
         os.remove(tmp_np)
+        gc.collect()
     # now the nodata values should all be filled, so apply the water from the polygons
     if not os.path.exists(merged_tif):
         ds_filled = gdal.Open(filled_tif, 1)
-        dst_ds = driver_tif.CreateCopy(polywater_tif, ds_filled, 0, options=CREATION_OPTIONS)
+        dst_ds = DRIVER_TIF.CreateCopy(polywater_tif, ds_filled, 0, options=CREATION_OPTIONS)
         dst_ds = None
         ds_filled = None
         gc.collect()
@@ -454,9 +461,10 @@ def clip_fuel(fp, zone):
         stdout, stderr = process.communicate()
         if process.returncode != 0:
             raise Exception('Error processing merge: ' + stderr)
+        gc.collect()
     # finally, copy result to output location
     ds = gdal.Open(merged_tif, 1)
-    dst_ds = driver_tif.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
+    dst_ds = DRIVER_TIF.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
     dst_ds = None
     ds = None
     # not sure why this wouldn't copy nodata value but it didn't have one
@@ -469,23 +477,27 @@ def clip_fuel(fp, zone):
     rb.FlushCache()
     rb = None
     ds = None
+    gc.collect()
     return out_tif
 
-zone = ZONE_MIN
-while zone <= ZONE_MAX:
-    dem = clip_zone(EARTHENV, 'dem', zone)
-    slope = dem.replace('dem_', 'slope_')
-    if not os.path.exists(slope):
-        print(slope)
-        tmp_slope = slope.replace(DIR, TMP)
-        gdal.DEMProcessing(tmp_slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
-        gdal.Translate(slope, tmp_slope, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-    aspect = dem.replace('dem_', 'aspect_')
-    if not os.path.exists(aspect):
-        print(aspect)
-        tmp_aspect = aspect.replace(DIR, TMP)
-        gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
-        gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-    fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), zone)
-    gc.collect()
-    zone += 0.5
+if __name__ == "__main__":
+    if not os.path.exists(INT_FUEL):
+        os.makedirs(INT_FUEL)
+    zone = ZONE_MIN
+    while zone <= ZONE_MAX:
+        dem = clip_zone(EARTHENV, 'dem', zone)
+        slope = dem.replace('dem_', 'slope_')
+        if not os.path.exists(slope):
+            print(slope)
+            tmp_slope = slope.replace(DIR, TMP)
+            gdal.DEMProcessing(tmp_slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
+            gdal.Translate(slope, tmp_slope, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
+        aspect = dem.replace('dem_', 'aspect_')
+        if not os.path.exists(aspect):
+            print(aspect)
+            tmp_aspect = aspect.replace(DIR, TMP)
+            gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
+            gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
+        fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), zone)
+        gc.collect()
+        zone += 0.5
