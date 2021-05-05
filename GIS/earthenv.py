@@ -60,7 +60,7 @@ def define_bounds():
 
 
 def to_download(url):
-    return util.save_http(DOWNLOAD_DIR, url)
+    return util.save_http(DOWNLOAD_DIR, url, ignore_existing=True)
 
 if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=4)
