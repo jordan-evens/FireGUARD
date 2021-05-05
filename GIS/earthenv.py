@@ -69,9 +69,11 @@ if __name__ == '__main__':
     for lat in RANGE_LATITUDE:
         for lon in RANGE_LONGITUDE:
             urls.append(MASK.format(lat, lon))
+    print('Downloading...')
     files = pool.map(to_download, urls)
     if not os.path.exists(OUT_DIR):
         os.mkdir(OUT_DIR)
+    print('Extracting...')
     for f in files:
         print(f)
         tar = tarfile.open(f)
@@ -80,6 +82,7 @@ if __name__ == '__main__':
     if not os.path.exists(EARTHENV):
         if not os.path.exists(GIS_ELEVATION):
             os.makedirs(GIS_ELEVATION)
+        print('Mosaicing...')
         search_criteria = "EarthEnv-DEM90_*.bil"
         q = os.path.join(OUT_DIR, search_criteria)
         dem_fps = glob.glob(q)
