@@ -363,6 +363,7 @@ def clip_fuel(fp, zone):
         vals[vals == 102] = no_data
         rb.WriteArray(vals, 0, 0)
         rb.FlushCache()
+        vals = None
         # want a copy of this before we add the water back in so we can fill from non-water
         dst_ds = driver_tif.CreateCopy(nowater_tif, ds, 0, options=CREATION_OPTIONS)
         dst_ds = None
