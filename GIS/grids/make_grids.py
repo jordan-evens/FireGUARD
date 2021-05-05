@@ -429,18 +429,9 @@ def check_filled(base_tif, nowater_tif, zone, cols, rows, no_data):
         gc.collect()
     return filled_tif
 
-def clip_fuel(fp, zone):
-    # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
-    # zone = 14.5
-    out_tif = os.path.join(DIR, 'fuel_{}'.format(zone).replace('.', '_')) + '.tif'
-    if os.path.exists(out_tif):
-        return out_tif
-    print(out_tif)
+def check_merged(filled_tif, zone, cols, rows):
     polywater_tif = os.path.join(INT_FUEL, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
     merged_tif = os.path.join(INT_FUEL, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
-    base_tif, cols, rows, no_data = check_base(fp, zone)
-    nowater_tif = check_nowater(base_tif, zone, cols, rows, no_data)
-    filled_tif = check_filled(base_tif, nowater_tif, zone, cols, rows, no_data)
     # now the nodata values should all be filled, so apply the water from the polygons
     if not os.path.exists(merged_tif):
         ds_filled = gdal.Open(filled_tif, 1)
@@ -469,6 +460,19 @@ def clip_fuel(fp, zone):
         if process.returncode != 0:
             raise Exception('Error processing merge: ' + stderr)
         gc.collect()
+    return merged_tif
+
+def clip_fuel(fp, zone):
+    # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
+    # zone = 14.5
+    out_tif = os.path.join(DIR, 'fuel_{}'.format(zone).replace('.', '_')) + '.tif'
+    if os.path.exists(out_tif):
+        return out_tif
+    print(out_tif)
+    base_tif, cols, rows, no_data = check_base(fp, zone)
+    nowater_tif = check_nowater(base_tif, zone, cols, rows, no_data)
+    filled_tif = check_filled(base_tif, nowater_tif, zone, cols, rows, no_data)
+    merged_tif = check_merged(filled_tif, zone, cols, rows)
     # finally, copy result to output location
     ds = gdal.Open(merged_tif, 1)
     dst_ds = DRIVER_TIF.CreateCopy(out_tif, ds, 0, options=CREATION_OPTIONS)
