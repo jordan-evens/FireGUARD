@@ -1,2 +1,0 @@
-# fire
-Fire growth algorithm
