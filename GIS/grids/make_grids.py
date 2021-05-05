@@ -73,6 +73,7 @@ DIR = os.path.join(GENERATED_DIR, 'grid')
 TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
 EARTHENV = os.path.join(DATA_DIR, 'GIS/input/elevation/EarthEnv.tif')
+FUEL_RASTER = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
 
 INT_FUEL = os.path.join(INTERMEDIATE_DIR, 'fuel')
 DRIVER_SHP = ogr.GetDriverByName('ESRI Shapefile')
@@ -491,24 +492,34 @@ def clip_fuel(fp, zone):
     gc.collect()
     return out_tif
 
+def make_zone(zone):
+    print('Making zone {}'.format(zone))
+    dem = clip_zone(EARTHENV, 'dem', zone)
+    slope = dem.replace('dem_', 'slope_')
+    if not os.path.exists(slope):
+        print(slope)
+        tmp_slope = slope.replace(DIR, TMP)
+        gdal.DEMProcessing(tmp_slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
+        gdal.Translate(slope, tmp_slope, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
+    aspect = dem.replace('dem_', 'aspect_')
+    if not os.path.exists(aspect):
+        print(aspect)
+        tmp_aspect = aspect.replace(DIR, TMP)
+        gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
+        gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
+    fbp = clip_fuel(FUEL_RASTER, zone)
+    gc.collect()
+
+from multiprocessing import Process, Queue
+
 if __name__ == "__main__":
     if not os.path.exists(INT_FUEL):
         os.makedirs(INT_FUEL)
     zone = ZONE_MIN
     while zone <= ZONE_MAX:
-        dem = clip_zone(EARTHENV, 'dem', zone)
-        slope = dem.replace('dem_', 'slope_')
-        if not os.path.exists(slope):
-            print(slope)
-            tmp_slope = slope.replace(DIR, TMP)
-            gdal.DEMProcessing(tmp_slope, dem, 'slope', creationOptions=CREATION_OPTIONS)
-            gdal.Translate(slope, tmp_slope, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-        aspect = dem.replace('dem_', 'aspect_')
-        if not os.path.exists(aspect):
-            print(aspect)
-            tmp_aspect = aspect.replace(DIR, TMP)
-            gdal.DEMProcessing(tmp_aspect, dem, 'aspect', creationOptions=CREATION_OPTIONS)
-            gdal.Translate(aspect, tmp_aspect, outputType=gdalconst.GDT_UInt16, creationOptions=CREATION_OPTIONS)
-        fbp = clip_fuel(os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif'), zone)
-        gc.collect()
+        # HACK: use a Process to hopefully get around memory issues
+        p = Process(target=make_zone, args=(zone,))
+        p.start()
+        p.join()
+        #make_zone(zone)
         zone += 0.5
