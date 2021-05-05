@@ -427,7 +427,15 @@ def fix_execute(cursor, stmt, data):
     @param data Data to populate statement with
     @return None
     """
-    cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
+    try:
+        cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
+    except pyodbc.Error as e:
+        for vals in (tuple(map(fix_Types, x)) for x in data):
+            try:
+                cursor.execute(stmt, vals)
+            except pyodbc.Error as e2:
+                logging.error('Error inserting:')
+                logging.error(vals)
 
 def get_database(for_run):
     """!
