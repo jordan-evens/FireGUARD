@@ -306,6 +306,72 @@ def check_nowater(base_tif, zone, cols, rows, no_data):
         gc.collect()
     return nowater_tif
 
+def check_filled(base_tif, nowater_tif, zone, cols, rows, no_data):
+    filled_tif = os.path.join(INT_FUEL, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
+    if not os.path.exists(filled_tif):
+        # now fill in blanks with surrounding fuels
+        print('Filling spaces')
+        # only fill area of original raster
+        ds = gdal.Open(base_tif, 1)
+        rb = ds.GetRasterBand(1)
+        vals = rb.ReadAsArray(0, 0, cols, rows)
+        no_data = rb.GetNoDataValue()
+        vals = None
+        rb = None
+        ds = None
+        # get the raster with no water to start with
+        ds_nowater = gdal.Open(nowater_tif, 1)
+        rb_nowater = ds_nowater.GetRasterBand(1)
+        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
+        # need a 1 where we want to fill in the blanks, so make that cover all nodata cells
+        fill_what = vals_nowater == no_data
+        # fill the nodata values that had a value in the base but not when there's no water
+        rb_nowater = None
+        ds_nowater = None
+        # close this for now because of memory issues
+        vals_nowater = None
+        mask = None
+        gc.collect()
+        # ind = nd.distance_transform_edt(input, return_distances=False, return_indices=True)
+        sampling=None
+        return_distances=False
+        return_indices=True
+        distances=None
+        indices=None
+        gc.collect()
+        input = np.atleast_1d(np.where(fill_what, 1, 0).astype(np.int8))
+        fill_what = None
+        gc.collect()
+        from scipy.ndimage import _nd_image
+        # should be able to just use int16 for indices, but it must rely on it being int32 because it's wrong if it isn't
+        tmp_np = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.np'
+        ft = np.memmap(tmp_np, dtype=np.int32, mode='w+', shape=(input.ndim,) + input.shape)
+        _nd_image.euclidean_feature_transform(input, sampling, ft)
+        ft.flush()
+        input = None
+        gc.collect()
+        ds_nowater = gdal.Open(nowater_tif, 1)
+        rb_nowater = ds_nowater.GetRasterBand(1)
+        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
+        filled = vals_nowater[tuple(ft)]
+        vals_nowater = None
+        rb_nowater = None
+        ds_nowater = None
+        ds = gdal.Open(base_tif, 1)
+        dst_ds = DRIVER_TIF.CreateCopy(filled_tif, ds, 0, options=CREATION_OPTIONS)
+        dst_ds = None
+        ds = gdal.Open(filled_tif, 1)
+        rb = ds.GetRasterBand(1)
+        rb.WriteArray(filled, 0, 0)
+        # rb.WriteArray(vals_nowater[tuple(ft)], 0, 0)
+        rb.FlushCache()
+        rb = None
+        ds = None
+        ft = None
+        os.remove(tmp_np)
+        gc.collect()
+    return filled_tif
+
 def clip_fuel(fp, zone):
     # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
     # zone = 14.5
@@ -314,11 +380,8 @@ def clip_fuel(fp, zone):
         return out_tif
     print(out_tif)
     base_tif = os.path.join(INT_FUEL, 'base_{}'.format(zone).replace('.', '_')) + '.tif'
-    tmp_tif = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.tif'
-    tmp_np = os.path.join(INT_FUEL, 'tmp_{}'.format(zone).replace('.', '_')) + '.np'
     polywater_tif = os.path.join(INT_FUEL, 'polywater_{}'.format(zone).replace('.', '_')) + '.tif'
     merged_tif = os.path.join(INT_FUEL, 'merged_{}'.format(zone).replace('.', '_')) + '.tif'
-    filled_tif = os.path.join(INT_FUEL, 'filled_{}'.format(zone).replace('.', '_')) + '.tif'
     meridian = (zone - 15.0) * 6.0 - 93.0
     wkt = 'PROJCS["NAD_1983_UTM_Zone_{}N",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",{}],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'.format(zone, meridian)
     proj_srs = osr.SpatialReference(wkt=wkt)
@@ -373,67 +436,7 @@ def clip_fuel(fp, zone):
     # close even though we're opening it in if statement so we know it's closed if we don't enter if
     ds = None
     nowater_tif = check_nowater(base_tif, zone, cols, rows, no_data)
-    if not os.path.exists(filled_tif):
-        # now fill in blanks with surrounding fuels
-        print('Filling spaces')
-        # only fill area of original raster
-        ds = gdal.Open(base_tif, 1)
-        rb = ds.GetRasterBand(1)
-        vals = rb.ReadAsArray(0, 0, cols, rows)
-        no_data = rb.GetNoDataValue()
-        vals = None
-        rb = None
-        ds = None
-        # get the raster with no water to start with
-        ds_nowater = gdal.Open(nowater_tif, 1)
-        rb_nowater = ds_nowater.GetRasterBand(1)
-        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
-        # need a 1 where we want to fill in the blanks, so make that cover all nodata cells
-        fill_what = vals_nowater == no_data
-        # fill the nodata values that had a value in the base but not when there's no water
-        rb_nowater = None
-        ds_nowater = None
-        # close this for now because of memory issues
-        vals_nowater = None
-        mask = None
-        gc.collect()
-        # ind = nd.distance_transform_edt(input, return_distances=False, return_indices=True)
-        sampling=None
-        return_distances=False
-        return_indices=True
-        distances=None
-        indices=None
-        gc.collect()
-        input = np.atleast_1d(np.where(fill_what, 1, 0).astype(np.int8))
-        fill_what = None
-        gc.collect()
-        from scipy.ndimage import _nd_image
-        # should be able to just use int16 for indices, but it must rely on it being int32 because it's wrong if it isn't
-        ft = np.memmap(tmp_np, dtype=np.int32, mode='w+', shape=(input.ndim,) + input.shape)
-        _nd_image.euclidean_feature_transform(input, sampling, ft)
-        ft.flush()
-        input = None
-        gc.collect()
-        ds_nowater = gdal.Open(nowater_tif, 1)
-        rb_nowater = ds_nowater.GetRasterBand(1)
-        vals_nowater = rb_nowater.ReadAsArray(0, 0, cols, rows)
-        filled = vals_nowater[tuple(ft)]
-        vals_nowater = None
-        rb_nowater = None
-        ds_nowater = None
-        ds = gdal.Open(base_tif, 1)
-        dst_ds = DRIVER_TIF.CreateCopy(filled_tif, ds, 0, options=CREATION_OPTIONS)
-        dst_ds = None
-        ds = gdal.Open(filled_tif, 1)
-        rb = ds.GetRasterBand(1)
-        rb.WriteArray(filled, 0, 0)
-        # rb.WriteArray(vals_nowater[tuple(ft)], 0, 0)
-        rb.FlushCache()
-        rb = None
-        ds = None
-        ft = None
-        os.remove(tmp_np)
-        gc.collect()
+    filled_tif = check_filled(base_tif, nowater_tif, zone, cols, rows, no_data)
     # now the nodata values should all be filled, so apply the water from the polygons
     if not os.path.exists(merged_tif):
         ds_filled = gdal.Open(filled_tif, 1)
