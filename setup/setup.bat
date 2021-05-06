@@ -122,8 +122,9 @@ IF DEFINED HTTP_PROXY set HTTPS_PROXY=%HTTPS_PROXY:http://=https://%
 SET HAVEPROXY=1
 
 @echo Downloading required files
+SET PYTHON_MSI=python-2.7.18.msi
 call :ensure_file "%SQLDOWNLOAD%/%SQLINSTALL%" "%SQLINSTALL%"
-call :ensure_file "https://www.python.org/ftp/python/2.7.18/python-2.7.18.msi" "python-2.7.18.msi"
+call :ensure_file "https://www.python.org/ftp/python/2.7.18/%PYTHON_MSI%" "%PYTHON_MSI%"
 call :ensure_file "http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe" "dotNetFx40_Full_x86_x64.exe"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120362" "SQLSRV58.EXE"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120137" "msodbcsql.msi"
@@ -235,7 +236,7 @@ IF NOT DEFINED PYTHONHOME  (
 	@rem default to where arcgis 10.3 would be if nothing was found
 	SET PYTHONHOME=C:\Python27\ArcGIS10.3\
 )
-msiexec /I %DOWNLOAD_DIR%\python-2.7.18.msi /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL
+msiexec /I %DOWNLOAD_DIR%\%PYTHON_MSI% /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL
 
 @rem add to path
 echo %PATH% | findstr /C:%PYTHONHOME%;%PYTHONHOME%\Scripts; >nul || goto :addToPath
