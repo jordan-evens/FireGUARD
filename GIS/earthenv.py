@@ -93,4 +93,4 @@ if __name__ == '__main__':
         import sys
         sys.path.append(os.path.join(os.path.dirname(sys.executable), 'Scripts'))
         import gdal_merge as gm
-        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-o', EARTHENV] + src_files_to_mosaic)
+        gm.main(['', '-co', 'COMPRESS=DEFLATE', '-co', 'BIGTIFF=YES', '-o', EARTHENV] + src_files_to_mosaic)
