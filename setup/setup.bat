@@ -122,7 +122,7 @@ IF DEFINED HTTP_PROXY set HTTPS_PROXY=%HTTPS_PROXY:http://=https://%
 SET HAVEPROXY=1
 
 @echo Downloading required files
-SET PYTHON_MSI=python-2.7.18.msi
+SET PYTHON_MSI=python-2.7.18.amd64.msi
 call :ensure_file "%SQLDOWNLOAD%/%SQLINSTALL%" "%SQLINSTALL%"
 call :ensure_file "https://www.python.org/ftp/python/2.7.18/%PYTHON_MSI%" "%PYTHON_MSI%"
 call :ensure_file "http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe" "dotNetFx40_Full_x86_x64.exe"
@@ -223,18 +223,18 @@ IF DEFINED ProgramFiles(x86) (
 
 
 echo Checking for python
-echo %PATH% | findstr /R /C:"C:\\Python27\\ArcGIS10\..;C:\\Python27\\ArcGIS10\..\\Scripts;">nul && goto :havePath
+echo %PATH% | findstr /R /C:"C:\\Python27\\ArcGISx6410\..;C:\\Python27\\ArcGISx6410\..\\Scripts;">nul && goto :havePath
 
 echo Installing python
 @rem find ArcGIS directory
 set PYTHONHOME=
 for /D %%a in ("C:\Python27\*") do (
 	set DIR=%%~nxa
-	if "!DIR:~0,9!"=="ArcGIS10." set PYTHONHOME=%%a
+	if "!DIR:~0,9!"=="ArcGISx6410." set PYTHONHOME=%%a
 )
 IF NOT DEFINED PYTHONHOME  (
-	@rem default to where arcgis 10.3 would be if nothing was found
-	SET PYTHONHOME=C:\Python27\ArcGIS10.3\
+	@rem default to where arcgis 10.4 would be if nothing was found
+	SET PYTHONHOME=C:\Python27\ArcGISx6410.4\
 )
 msiexec /I %DOWNLOAD_DIR%\%PYTHON_MSI% /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL
 
@@ -255,37 +255,38 @@ pushd lib
 @rem need to call from python so we can overwrite pip.exe
 python -m pip install --upgrade pip-20.2.3-py2.py3-none-any.whl setuptools-20.10.1-py2.py3-none-any.whl
 pip install wheel-0.35.1-py2.py3-none-any.whl
-pip install pyodbc-4.0.30-cp27-cp27m-win32.whl
+pip install pyodbc-4.0.30-cp27-cp27m-win_amd64.whl
 pip install python_dateutil-2.8.1-py2.py3-none-any.whl
 pip install six-1.15.0-py2.py3-none-any.whl
 pip install pytz-2020.1-py2.py3-none-any.whl
 pip uninstall numpy
 del /s /q %PYTHONHOME%\Lib\site-packages\numpy
-pip install --ignore-installed "numpy-1.16.6+mkl-cp27-cp27m-win32.whl"
-pip install numexpr-2.7.2-cp27-cp27m-win32.whl
-pip install pandas-0.24.2-cp27-cp27m-win32.whl
-pip install cftime-1.0.4-cp27-cp27m-win32.whl
-pip install netCDF4-1.5.3-cp27-cp27m-win32.whl
+pip install --ignore-installed "numpy-1.16.6+mkl-cp27-cp27m-win_amd64.whl"
+pip install numexpr-2.7.2-cp27-cp27m-win_amd64.whl
+pip install pandas-0.24.2-cp27-cp27m-win_amd64.whl
+pip install cftime-1.0.4-cp27-cp27m-win_amd64.whl
+pip install netCDF4-1.5.3-cp27-cp27m-win_amd64.whl
 pip install --upgrade urllib3-1.22-py2.py3-none-any.whl
 pip install pycparser-2.20-py2.py3-none-any.whl
-pip install cffi-1.14.2-cp27-cp27m-win32.whl
+pip install cffi-1.14.2-cp27-cp27m-win_amd64.whl
 pip install ipaddress-1.0.23-py2.py3-none-any.whl
 pip install enum34-1.1.10-py2-none-any.whl
-pip install cryptography-3.1-cp27-cp27m-win32.whl
+pip install cryptography-3.1-cp27-cp27m-win_amd64.whl
 pip install pyOpenSSL-18.0.0-py2.py3-none-any.whl
 pip install certifi-2018.1.18-py2.py3-none-any.whl
 
 @rem firestarr section
 @rem relies on weathershield being installed previously
-pip install Shapely-1.6.4.post2-cp27-cp27m-win32.whl
-pip install GDAL-2.2.4-cp27-cp27m-win32.whl
+pip install attrs-21.1.0-py2.py3-none-any.whl
+pip install Shapely-1.6.4.post2-cp27-cp27m-win_amd64.whl
+pip install GDAL-2.2.4-cp27-cp27m-win_amd64.whl
 pip install click-6.7-py2.py3-none-any.whl
 pip install click_plugins-1.1.1-py2.py3-none-any.whl
-pip install Fiona-1.8.13-cp27-cp27m-win32.whl
-pip install Cython-0.21.2-cp27-none-win32.whl
-pip install pyproj-1.9.6-cp27-cp27m-win32.whl
+pip install Fiona-1.8.13-cp27-cp27m-win_amd64.whl
+pip install Cython-0.29.23-cp27-cp27m-win_amd64.whl
+pip install pyproj-1.9.6-cp27-cp27m-win_amd64.whl
 pip install --ignore-installed pyparsing-2.4.6-py2.py3-none-any.whl
-pip install matplotlib-2.2.5-cp27-cp27m-win32.whl
+pip install matplotlib-2.2.5-cp27-cp27m-win_amd64.whl
 pip install descartes-1.1.0-py2.py3-none-any.whl
 pip install geopandas-0.6.2-py2.py3-none-any.whl
 pip install functools32-3.2.3.post2-py2-none-any.whl
@@ -293,10 +294,10 @@ pip install urllib3-1.22-py2.py3-none-any.whl
 pip install selenium-3.141.0-py2.py3-none-any.whl
 pip install PyPDF2-1.26.0-py2-none-any.whl
 pip install fpdf-1.7.2-py2.py3-none-any.whl
-pip install rasterio-1.1.2-cp27-cp27m-win32.whl
+pip install rasterio-1.1.2-cp27-cp27m-win_amd64.whl
 pip install pycrs==1.0.2
-pip install Pillow-6.2.2-cp27-cp27m-win32.whl
-pip install reportlab-3.5.32-cp27-cp27m-win32.whl
+pip install Pillow-6.2.2-cp27-cp27m-win_amd64.whl
+pip install reportlab-3.5.32-cp27-cp27m-win_amd64.whl
 popd
 
 @rem MAKE SURE ORACLE IS INSTALLED BEFORE PROCEEDING IF REQUIRED
