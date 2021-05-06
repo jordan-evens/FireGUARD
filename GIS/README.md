@@ -9,7 +9,6 @@ elevation rasters.
 
 This should properly set up a python environment
 
-
 ## Step 2: Run grids/collect.py
 
 This should get some base data that is required for generating the grids
@@ -20,7 +19,8 @@ This should make the DEM for the area defined in the settings file
 
 ## Step 4: Run canvec/canvec.py
 
-This should collect the canvec data that gets used for making more accurate water in the grids
+This should collect the canvec data that gets used for making more accurate water in the grids.
+To minimize amount of downloaded data, run `python canvec.py extract Hydro` to just get water data.
 
 ## Step 5: Run grids/make_grids.py
 
