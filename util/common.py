@@ -21,6 +21,7 @@ import shutil
 import _winreg
 import certifi
 import ssl
+import sys
 
 ## So HTTPS transfers work properly
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -430,12 +431,15 @@ def fix_execute(cursor, stmt, data):
     try:
         cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
     except pyodbc.Error as e:
+        logging.error(e)
         for vals in (tuple(map(fix_Types, x)) for x in data):
             try:
                 cursor.execute(stmt, vals)
             except pyodbc.Error as e2:
                 logging.error('Error inserting:')
                 logging.error(vals)
+                logging.error(e2)
+                sys.exit(-1)
 
 def get_database(for_run):
     """!
