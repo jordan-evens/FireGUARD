@@ -15,9 +15,15 @@ canada = r'http://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/fi
 fbp = r'https://cwfis.cfs.nrcan.gc.ca/downloads/fuels/development/Canadian_Forest_FBP_Fuel_Types/Canadian_Forest_FBP_Fuel_Types_v20191114.zip'
 nhd = r'https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/National/HighResolution/GDB/NHD_H_National_GDB.zip'
 
-if not os.path.exists(EXTRACTED_DIR):
-    os.makedirs(EXTRACTED_DIR)
-unzip(download(canada, DOWNLOAD_DIR), os.path.join(EXTRACTED_DIR, r'canada'))
-unzip(download(fbp, DOWNLOAD_DIR), os.path.join(EXTRACTED_DIR, r'fbp'))
-unzip(download(nhd, DOWNLOAD_DIR), os.path.join(EXTRACTED_DIR, r'nhd'))
+def get(url, name):
+    print('Downloading {}'.format(url))
+    file = download(url, DOWNLOAD_DIR)
+    print('Extracting {}'.format(name))
+    unzip(file, os.path.join(EXTRACTED_DIR, name))
 
+if __name__ == '__main__':
+    if not os.path.exists(EXTRACTED_DIR):
+        os.makedirs(EXTRACTED_DIR)
+    get(canada, r'canada')
+    get(fbp, r'fbp')
+    get(nhd, r'nhd')
