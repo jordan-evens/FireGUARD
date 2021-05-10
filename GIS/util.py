@@ -12,6 +12,10 @@ import dateutil
 import dateutil.parser
 import datetime
 import logging
+import ssl
+
+## So HTTPS transfers work properly
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def ensure_dir(dir):
     """Make sure directory exists"""
