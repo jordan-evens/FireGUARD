@@ -298,6 +298,7 @@ pip install rasterio-1.1.2-cp27-cp27m-win_amd64.whl
 pip install pycrs==1.0.2
 pip install Pillow-6.2.2-cp27-cp27m-win_amd64.whl
 pip install reportlab-3.5.32-cp27-cp27m-win_amd64.whl
+pip install scipy-1.2.3-cp27-cp27m-win_amd64.whl
 popd
 
 @rem MAKE SURE ORACLE IS INSTALLED BEFORE PROCEEDING IF REQUIRED
