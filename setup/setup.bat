@@ -446,7 +446,8 @@ popd
 @rem need to add this manually for now since we didn't reopen prompt after install sql server
 SET PATH=%SQLBINPATH%;%PATH%
 pushd ..\WeatherSHIELD\db
-call init.bat
+@rem HACK: doesn't work if we call it from this script for some reason
+cmd /c init.bat
 popd
 
 echo Adding scheduled tasks for WeatherSHIELD data collection
