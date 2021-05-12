@@ -13,7 +13,6 @@ for /f "delims=" %%f in ('"powershell (Get-Date).Year"') do set YEAR=%%f
 echo Initializing with year %YEAR%
 
 call :loadYear %YEAR%
-pushd ..
 goto :end
 
 :loadYear
