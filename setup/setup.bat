@@ -236,7 +236,7 @@ IF NOT DEFINED PYTHONHOME  (
 	@rem default to where arcgis 10.4 would be if nothing was found
 	SET PYTHONHOME=C:\Python27\ArcGISx6410.4\
 )
-msiexec /I %DOWNLOAD_DIR%\%PYTHON_MSI% /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL
+msiexec /I %DOWNLOAD_DIR%\%PYTHON_MSI% /qb TARGETDIR=%PYTHONHOME% ALLUSERS=1 ADDLOCAL=ALL /norestart
 
 @rem add to path
 echo %PATH% | findstr /C:%PYTHONHOME%;%PYTHONHOME%\Scripts; >nul || goto :addToPath
@@ -312,7 +312,7 @@ set OTHER=
 IF DEFINED ISWIN10 (
     set OTHER=/FeatureName:IIS-ASPNET45 /FeatureName:NetFx4Extended-ASPNET45 /FeatureName:IIS-NetFxExtensibility45
 )
-DISM /Online /Enable-Feature %OTHER% /FeatureName:IIS-ApplicationDevelopment /FeatureName:IIS-ASP /FeatureName:IIS-ASPNET /FeatureName:IIS-CGI /FeatureName:IIS-CommonHttpFeatures /FeatureName:IIS-DefaultDocument /FeatureName:IIS-DirectoryBrowsing /FeatureName:IIS-HealthAndDiagnostics /FeatureName:IIS-HostableWebCore /FeatureName:IIS-HttpCompressionStatic /FeatureName:IIS-HttpErrors /FeatureName:IIS-HttpLogging /FeatureName:IIS-IIS6ManagementCompatibility /FeatureName:IIS-ISAPIExtensions /FeatureName:IIS-ISAPIFilter /FeatureName:IIS-LegacyScripts /FeatureName:IIS-LegacySnapIn /FeatureName:IIS-ManagementConsole /FeatureName:IIS-ManagementScriptingTools /FeatureName:IIS-ManagementService /FeatureName:IIS-Metabase /FeatureName:IIS-NetFxExtensibility /FeatureName:IIS-Performance /FeatureName:IIS-RequestFiltering /FeatureName:IIS-RequestMonitor /FeatureName:IIS-Security /FeatureName:IIS-ServerSideIncludes /FeatureName:IIS-StaticContent /FeatureName:IIS-WebServer /FeatureName:IIS-WebServerManagementTools /FeatureName:IIS-WebServerRole /FeatureName:IIS-WMICompatibility /FeatureName:WAS-ConfigurationAPI /FeatureName:WAS-NetFxEnvironment /FeatureName:WAS-ProcessModel /FeatureName:WAS-WindowsActivationService
+DISM /Online /NoRestart /Enable-Feature %OTHER% /FeatureName:IIS-ApplicationDevelopment /FeatureName:IIS-ASP /FeatureName:IIS-ASPNET /FeatureName:IIS-CGI /FeatureName:IIS-CommonHttpFeatures /FeatureName:IIS-DefaultDocument /FeatureName:IIS-DirectoryBrowsing /FeatureName:IIS-HealthAndDiagnostics /FeatureName:IIS-HostableWebCore /FeatureName:IIS-HttpCompressionStatic /FeatureName:IIS-HttpErrors /FeatureName:IIS-HttpLogging /FeatureName:IIS-IIS6ManagementCompatibility /FeatureName:IIS-ISAPIExtensions /FeatureName:IIS-ISAPIFilter /FeatureName:IIS-LegacyScripts /FeatureName:IIS-LegacySnapIn /FeatureName:IIS-ManagementConsole /FeatureName:IIS-ManagementScriptingTools /FeatureName:IIS-ManagementService /FeatureName:IIS-Metabase /FeatureName:IIS-NetFxExtensibility /FeatureName:IIS-Performance /FeatureName:IIS-RequestFiltering /FeatureName:IIS-RequestMonitor /FeatureName:IIS-Security /FeatureName:IIS-ServerSideIncludes /FeatureName:IIS-StaticContent /FeatureName:IIS-WebServer /FeatureName:IIS-WebServerManagementTools /FeatureName:IIS-WebServerRole /FeatureName:IIS-WMICompatibility /FeatureName:WAS-ConfigurationAPI /FeatureName:WAS-NetFxEnvironment /FeatureName:WAS-ProcessModel /FeatureName:WAS-WindowsActivationService
 @rem add IIS Authentication to windows 10 home
 
 
@@ -326,7 +326,7 @@ for /f "delims=" %%f in ('dir /b %%SystemRoot%%\servicing\Packages\Microsoft-Win
   echo.
 )
 endlocal
-DISM /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication
+DISM /Online /NoRestart /Enable-Feature /FeatureName:IIS-WindowsAuthentication
 
 echo Getting sed
 Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%SED_ZIP% %LOCAL_DIR%\..\WeatherSHIELD\db\sed
