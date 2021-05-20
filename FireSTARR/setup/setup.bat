@@ -30,7 +30,9 @@ git checkout tags/5.2.0
 nmake /f makefile.vc
 popd
 
+git config --global http.sslVerify false
 git clone https://gitlab.com/libtiff/libtiff.git
+git config --global --unset http.sslVerify
 git clone https://github.com/OSGeo/libgeotiff.git
 @rem ~ wget https://download.osgeo.org/osgeo4w/osgeo4w-setup-x86_64.exe
 @rem ~ @rem fix wrong permissions after download
