@@ -70,6 +70,7 @@ DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download')
 GENERATED_DIR = os.path.join(DATA_DIR, 'generated')
 INTERMEDIATE_DIR = os.path.join(DATA_DIR, 'intermediate')
 DIR = os.path.join(GENERATED_DIR, 'grid')
+TILED_DIR = os.path.join(GENERATED_DIR, 'tiled')
 TMP = os.path.realpath('/FireGUARD/data/tmp')
 CREATION_OPTIONS = ['TILED=YES', 'BLOCKXSIZE=256', 'BLOCKYSIZE=256', 'COMPRESS=LZW']
 EARTHENV = os.path.join(DATA_DIR, 'GIS/input/elevation/EarthEnv.tif')
@@ -512,6 +513,20 @@ def make_zone(zone):
 
 from multiprocessing import Process, Queue
 
+def makeTiles():
+    run_what = ['python', SCRIPTS_DIR + '/gdal_retile.py', '-co', 'COMPRESS=DEFLATE', '-v', '-ps', '32000', '32000', '-overlap', '16000', '-targetDir', TILED_DIR]
+    CWD = os.path.realpath(DIR)
+    for file in os.listdir(DIR):
+        print(file)    
+        process = subprocess.Popen(run_what + [os.path.join(DIR, file)],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   creationflags=0x08000000,
+                                   cwd=CWD)
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            raise Exception('Error processing merge: ' + stderr)
+
 if __name__ == "__main__":
     if not os.path.exists(INT_FUEL):
         os.makedirs(INT_FUEL)
@@ -523,3 +538,7 @@ if __name__ == "__main__":
         p.join()
         #make_zone(zone)
         zone += 0.5
+    if not os.path.exists(TILED_DIR):
+        os.makedirs(TILED_DIR)
+        makeTiles()
+
