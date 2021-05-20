@@ -514,8 +514,13 @@ def make_zone(zone):
 from multiprocessing import Process, Queue
 
 def makeTiles():
-    run_what = ['python', SCRIPTS_DIR + '/gdal_retile.py', '-co', 'COMPRESS=DEFLATE', '-v', '-ps', '32000', '32000', '-overlap', '16000', '-targetDir', TILED_DIR]
+    import itertools
+    # HACK: this adds CREATION_OPTIONS items with a '-co' in front of each
+    run_what = list(itertools.chain.from_iterable(([['python', SCRIPTS_DIR + '/gdal_retile.py']] +
+                                                    map(lambda x: ['-co', x], CREATION_OPTIONS) +
+                                                    [['-v', '-ps', '32000', '32000', '-overlap', '16000', '-targetDir', TILED_DIR]])))
     CWD = os.path.realpath(DIR)
+    print(run_what)
     for file in os.listdir(DIR):
         print(file)    
         process = subprocess.Popen(run_what + [os.path.join(DIR, file)],
