@@ -12,6 +12,10 @@ call "%p%"
 
 :build
 pushd ..
+@rem add sed to the path
+pushd ..\WeatherSHIELD\db\sed\bin
+SET PATH=%CD%;%PATH%
+popd
 
 git clone https://github.com/Microsoft/vcpkg.git
 pushd vcpkg
