@@ -464,6 +464,17 @@ def check_merged(filled_tif, zone, cols, rows):
         gc.collect()
     return merged_tif
 
+def fix_nodata(out_tif):
+    ds = gdal.Open(out_tif, 1)
+    rb = ds.GetRasterBand(1)
+    # HACK: for some reason no_data is a double??
+    #~ if no_data is None:
+    no_data = int(-math.pow(2, 15) - 1)
+    rb.SetNoDataValue(no_data)
+    rb.FlushCache()
+    rb = None
+    ds = None
+
 def clip_fuel(fp, zone):
     # fp = os.path.join(EXTRACTED_DIR, r'fbp\fuel_layer\FBP_FuelLayer.tif')
     # zone = 14.5
@@ -481,15 +492,7 @@ def clip_fuel(fp, zone):
     dst_ds = None
     ds = None
     # not sure why this wouldn't copy nodata value but it didn't have one
-    ds = gdal.Open(out_tif, 1)
-    rb = ds.GetRasterBand(1)
-    # HACK: for some reason no_data is a double??
-    #~ if no_data is None:
-    no_data = int(-math.pow(2, 15) - 1)
-    rb.SetNoDataValue(no_data)
-    rb.FlushCache()
-    rb = None
-    ds = None
+    fix_nodata(out_tif)
     gc.collect()
     return out_tif
 
@@ -531,6 +534,10 @@ def makeTiles():
         stdout, stderr = process.communicate()
         if process.returncode != 0:
             raise Exception('Error processing merge: ' + stderr)
+    # HACK: for some reason nodata values aren't set?
+    for file in os.listdir(TILED_DIR):
+        print(file)
+        fix_nodata(os.path.join(TILED_DIR, file))
 
 if __name__ == "__main__":
     if not os.path.exists(INT_FUEL):
