@@ -716,7 +716,7 @@ import multiprocessing
 ## Multiprocessing pool to use
 POOL = None
 
-def download_many(urls, processes=6):
+def download_many(urls, processes=6, fct=download):
     """!
     Download multiple URLs concurrently using current proxy settings
     @param urls List of multiple URLs to download
@@ -729,12 +729,12 @@ def download_many(urls, processes=6):
     get_what = zip([CURRENT_PROXY] * len(urls), urls)
     # HACK: use current proxy so we don't do check for proxy and delay this
     # HACK: the get() call means that KeyboardInterrupt actually works
-    results = POOL.map_async(download, get_what).get(9999999)
+    results = POOL.map_async(fct, get_what).get(9999999)
     for i, result in enumerate(results):
         if isinstance(result, dict):
             # HACK: recreate error by trying to open it again
             # if this works this time then everything is fine right?
-            results[i] = download(get_what[i], suppress_exceptions=False)
+            results[i] = fct(get_what[i], suppress_exceptions=False)
     return results
 
 

@@ -10,6 +10,12 @@ import os
 import pandas
 import logging
 import socket
+import time
+
+# HACK: limit download speed and see if that keeps things in the limits NOMADS has
+def download_and_wait(get_what, suppress_exceptions=False):
+    time.sleep(1)
+    return common.download(get_what, suppress_exceptions)
 
 class GribLoader(WeatherLoader):
     """Loads NAEFS data from NOMADS"""
@@ -91,7 +97,7 @@ class GribLoader(WeatherLoader):
                     assert('{}' not in u)
                     return u
                 urls = map(generate_member, xrange(0, self.num_members))
-                results = common.download_many(urls)
+                results = common.download_many(urls, processes=2, fct=download_and_wait)
                 assert(self.num_members == len(results))
                 try:
                     # logging.debug("Writing file")
