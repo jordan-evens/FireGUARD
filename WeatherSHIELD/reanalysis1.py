@@ -216,9 +216,16 @@ if __name__ == '__main__':
             ## data for current year
             if (1 != len(hindcasts.query('Year == {}'.format(year)))):
                 df = get_year(year)
-                ## @cond Doxygen_Suppress
-                common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'Year', 'HINDCAST', addStartDate=False)
-                ## @endcond
+                retry = True
+                # HACK: keeps failing on insert timing out so try until it doesn't
+                while retry:
+                    try:
+                        ## @cond Doxygen_Suppress
+                        common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'Year', 'HINDCAST', addStartDate=False)
+                        retry = False
+                        ## @endcond
+                    except:
+                        pass
             else:
                 print('Already have {} data for {}'.format(MODEL_NAME, year))
     finally:
