@@ -235,7 +235,7 @@ class FPALoader(WeatherLoader):
             loaded.append(df)
         wx = pandas.concat(loaded)
         # wx = stns.merge(pandas.concat(map(load_data, results)))
-        wx = wx.reset_index().sort(index)
+        wx = wx.reset_index().sort_values(index)
         # override the Generated date for all items since if we pushed an update today
         # and didn't change them then that means we can consider them to be as up to date
         # as the latest version

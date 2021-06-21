@@ -33,7 +33,6 @@ def get_standard():
     try_no_fail(dfoss.load)
     try_no_fail(gethistoric.get_standard)
     try_no_fail(FPALoader().load_records)
-    try_no_fail(GefsLoader().load_records)
     try_no_fail(GepsLoader().load_records)
     try_no_fail(sst.load)
 
