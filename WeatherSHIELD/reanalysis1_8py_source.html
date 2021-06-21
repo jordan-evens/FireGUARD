@@ -287,14 +287,21 @@ $(function() {
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            </div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            <span class="keywordflow">if</span> (1 != len(hindcasts.query(<span class="stringliteral">&#39;Year == {}&#39;</span>.format(year)))):</div>
 <div class="line"><a name="l00218"></a><span class="lineno"><a class="line" href="namespacereanalysis1.html#a445721b78312f1090bae8978fcfcd47a">  218</a></span>&#160;                df = <a class="code" href="namespacereanalysis1.html#a166ac21617cfa737114540efc2bb4110">get_year</a>(year)</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                common.insert_weather(<span class="stringliteral">&#39;HINDCAST&#39;</span>, <span class="stringliteral">&#39;DAT_Hindcast&#39;</span>, df, <span class="stringliteral">&#39;Year&#39;</span>, <span class="stringliteral">&#39;HINDCAST&#39;</span>, addStartDate=<span class="keyword">False</span>)</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                </div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            <span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                print(<span class="stringliteral">&#39;Already have {} data for {}&#39;</span>.format(MODEL_NAME, year))</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="keywordflow">finally</span>:</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordflow">if</span> cnxn:</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            cnxn.close()</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                retry = <span class="keyword">True</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                <span class="comment"># HACK: keeps failing on insert timing out so try until it doesn&#39;t</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                <span class="keywordflow">while</span> retry:</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                    <span class="keywordflow">try</span>:</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                        </div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                        common.insert_weather(<span class="stringliteral">&#39;HINDCAST&#39;</span>, <span class="stringliteral">&#39;DAT_Hindcast&#39;</span>, df, <span class="stringliteral">&#39;Year&#39;</span>, <span class="stringliteral">&#39;HINDCAST&#39;</span>, addStartDate=<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                        retry = <span class="keyword">False</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                        </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                    <span class="keywordflow">except</span>:</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                        <span class="keywordflow">pass</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            <span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                print(<span class="stringliteral">&#39;Already have {} data for {}&#39;</span>.format(MODEL_NAME, year))</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordflow">finally</span>:</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <span class="keywordflow">if</span> cnxn:</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            cnxn.close()</div>
 <div class="ttc" id="anamespacereanalysis1_html_a166ac21617cfa737114540efc2bb4110"><div class="ttname"><a href="namespacereanalysis1.html#a166ac21617cfa737114540efc2bb4110">reanalysis1.get_year</a></div><div class="ttdeci">def get_year(year)</div><div class="ttdoc">Load data for given year.</div><div class="ttdef"><b>Definition:</b> <a href="reanalysis1_8py_source.html#l00100">reanalysis1.py:100</a></div></div>
 <div class="ttc" id="anamespacereanalysis1_html_a235c4e57be17b394ec90a06aca41ddbe"><div class="ttname"><a href="namespacereanalysis1.html#a235c4e57be17b394ec90a06aca41ddbe">reanalysis1.save_file</a></div><div class="ttdeci">def save_file(filename)</div><div class="ttdoc">Save the given url.</div><div class="ttdef"><b>Definition:</b> <a href="reanalysis1_8py_source.html#l00034">reanalysis1.py:34</a></div></div>
 <div class="ttc" id="anamespacereanalysis1_html_a72d29938e8601232688e0a7bef3d1595"><div class="ttname"><a href="namespacereanalysis1.html#a72d29938e8601232688e0a7bef3d1595">reanalysis1.rh_from_sh</a></div><div class="ttdeci">def rh_from_sh(shum, tmp, pressure=1013.25)</div><div class="ttdoc">Convert specific humidity to relative humidity.</div><div class="ttdef"><b>Definition:</b> <a href="reanalysis1_8py_source.html#l00086">reanalysis1.py:86</a></div></div>
