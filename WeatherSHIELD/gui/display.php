@@ -431,9 +431,12 @@ return '['.implode(', ', array_map(create_function('$v', 'return "\'".$v."\'";')
 <?php
     foreach ($ALL_FUELS as $f)
     {
-        echo "<span id='span".$f."' style='display: none;'>";
-        echo "<div class='chart6 chart' style='background-color: white;'><canvas id='".$f."' style='width: 100%; height: 100%;'></canvas>";
-        echo "<br /></span>";
+        if (isset($_GET[$f]))
+        {
+            echo "<span id='span".$f."' style='display: none;'>";
+            echo "<div class='chart6 chart' style='background-color: white;'><canvas id='".$f."' style='width: 100%; height: 100%;'></canvas>";
+            echo "<br /></span>";
+        }
     }
 ?>
 <span id='spanHistoricBar' style='display: none;'>
