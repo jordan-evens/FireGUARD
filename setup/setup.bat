@@ -448,7 +448,11 @@ SET PATH=%SQLBINPATH%;%PATH%
 pushd ..\WeatherSHIELD\db
 @rem HACK: doesn't work if we call it from this script for some reason
 cmd /c init.bat
+@rem put in a dummy set of historic matches
+cd ..
+python -c "import gethistoric; gethistoric.load_past_records()"
 popd
+
 
 echo Adding scheduled tasks for WeatherSHIELD data collection
 SCHTASKS /CREATE /SC DAILY /TN "WxSHIELD NAEFS" /TR "%SystemRoot%\system32\wscript.exe //nologo c:\FireGUARD\util\runinvisible.vbs C:\FireGUARD\WeatherSHIELD\run.bat" /ST 00:01 /RI 30 /du 24:00

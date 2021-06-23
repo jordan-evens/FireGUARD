@@ -181,8 +181,9 @@ if ($conn && $conn_hindcast){
         $stmt = try_query($conn_hindcast,$sql_match);
         while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
             array_push($matches, $row['Year']);
+            // HACK: enforce a minimum score
             // only displays 2 decimal places but log scale so need more precision
-            $grades[$row['Year']] = round($row['GRADE'], 4);
+            $grades[$row['Year']] = round(max($row['GRADE'], 0.0001), 4);
         }
         $outputArray['Matches'] = array('Order' => $matches, 'Grades' => $grades);
     }
