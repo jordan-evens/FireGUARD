@@ -599,7 +599,7 @@ and open the template in the editor.
                 <input type="submit" value="Submit" class="button button-block">
             </div>
             <br />
-            <center style="margin-top: -5px;margin-bottom: 0px;"><a href='https://www.mdpi.com/2571-6255/3/2/16' style="font-weight: bold; color: #AAAAFF;">Info/About</a></center>
+            <center style="margin-top: -5px;margin-bottom: 0px;"><a href="../FireGUARD/">Info/About</a></center>
         </form>
         </div>
         <?php require 'footer.php' ?>
