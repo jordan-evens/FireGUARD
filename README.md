@@ -11,7 +11,7 @@ FireGUARD (Fire Growth under Uncertainty for Appropriate Response Decision Suppo
 
 ## Additional License Condition
 
-All covered works (e.g., copies of this work, derived works) must include a copy of the file (or an updated version of it) that details credits for work up to the time of the original open source release. That file is available [here](ORIGIN.md).
+All covered works (e.g., copies of this work, derived works) must include a copy of the file (or an updated version of it) that details credits for work up to the time of the original open source release. That file is available [here](./ORIGIN.md).
 
 ## Publications
 

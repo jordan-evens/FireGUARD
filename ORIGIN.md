@@ -12,7 +12,7 @@ This file or an updated version of this file must be included with copies of cov
 
 The Aviation, Forest Fire and Emergency Services Branch (AFFES) of the Ontario Ministry of Natural Resources and Forestry (MNRF) funded and supported the research and development that led to FireGUARD. The work was done by collaboration among AFFES personnel and external researchers.
 
-FireGUARD consists of many components and is the product of team effort. Aspects of the work included conceptual model design, research, data analysis, and software development. FireGUARD’s main components are the weather forecast, burn probability, and likelihood-weighted impact. Many people are responsible for or contributed to aspects and components of the work. In addition to those named below, several subject matter experts and decision-makers in MNRF's AFFES and elsewhere gave valuable inputs to model design and evaluations of model outputs.
+FireGUARD consists of many components and is the product of team effort. Aspects of the work included conceptual model design, research, data analysis, and software development. FireGUARD's main components are the weather forecast, burn probability, and likelihood-weighted impact. Many people are responsible for or contributed to aspects and components of the work. In addition to those named below, several subject matter experts and decision-makers in MNRF's AFFES and elsewhere gave valuable inputs to model design and evaluations of model outputs.
 
 ### Jordan Evens
 
