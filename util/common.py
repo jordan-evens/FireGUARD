@@ -181,7 +181,8 @@ def save_http(to_dir, url, save_as=None, mode='wb', ignore_existing=False):
     ensure_dir(to_dir)
     # we want to keep modified times matching on both ends
     do_save = True
-    response = urllib2.urlopen(url)
+    req = urllib2.Request(url, headers={'User-Agent': 'WeatherSHIELD/0.93'})
+    response = urllib2.urlopen(req)
     modlocal = None
     if 'last-modified' in response.headers.keys():
         mod = response.headers['last-modified']
@@ -197,7 +198,7 @@ def save_http(to_dir, url, save_as=None, mode='wb', ignore_existing=False):
     if do_save:
         logging.info("Downloading {}".format(save_as))
         try:
-            filedata = urllib2.urlopen(url)
+            filedata = urllib2.urlopen(req)
             with open(save_as, mode) as f:
                 while True:
                     tmp = filedata.read(1024 * 1024)
