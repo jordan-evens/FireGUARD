@@ -30,22 +30,6 @@ goto haveArchitecture
 SET SQLINSTALL=SQLEXPRWT_x64_ENU.exe
 
 :haveArchitecture
-@rem figure out who's installing this so we know what environment we're in
-for /f "tokens=*" %%a in ('whoami') do set USERS="%%a"
-
-whoami | findstr cihs\\.*\.admin\.cihs >nul && goto :isCIHS
-goto :haveUsers
-
-:isCIHS
-for /f "tokens=*" %%a in ('echo ontario\%USERS:~6,-12%') do set BASE_USER="%%a"
-set USERS=%USERS% %BASE_USER%
-
-:haveUsers
-
-@rem Override proxy settings by uncommenting and changing this
-@rem SET proxyHost=
-@rem SET proxyPort=
-@rem goto :doneproxy
 
 @rem Use a variable for the extra java arguments so we can set a proxy if needed
 SET ARGS=
