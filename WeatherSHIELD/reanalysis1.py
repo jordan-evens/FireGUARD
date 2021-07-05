@@ -116,7 +116,7 @@ def get_year(year):
     jd = netCDF4.num2date(times[:], times.units)
     valid = get_valid_locs(lats, lons)
     # every day is the first key?
-    index = ['Model', 'Year', 'ForTime', 'Latitude', 'Longitude']
+    index = ['model', 'year', 'fortime', 'latitude', 'longitude']
     stations = []
     # HACK: determine length of each period in the data
     period = datetime.datetime.strptime(prate.variables['time'].delta_t, '0000-00-00 %H:%M:%S')
@@ -190,13 +190,13 @@ def get_year(year):
                         ]
             df = pandas.DataFrame(
                     map(calc_values, valid),
-                    columns=['Latitude', 'Longitude', 'TMP', 'RH', 'WS', 'WD', 'APCP', 'APCP_0800'])
-            df['Model'] = MODEL_NAME
+                    columns=['latitude', 'longitude', 'tmp', 'rh', 'ws', 'wd', 'apcp', 'apcp_0800'])
+            df['model'] = MODEL_NAME
             # use time from 18z
-            df['ForTime'] = jd[t]
-            df['Year'] = jd[t].year
+            df['fortime'] = jd[t]
+            df['year'] = jd[t].year
             # HACK: for some reason Latitude's type is object, so fix that
-            df['Latitude'] = df['Latitude'].astype(float)
+            df['latitude'] = df['latitude'].astype(float)
             df = df.set_index(index)
             stations.append(df)
     all = pandas.concat(stations)
@@ -210,18 +210,18 @@ if __name__ == '__main__':
     #~ for year in [2019]:
     cnxn = None
     try:
-        cnxn = common.open_local_db('HINDCAST')
-        hindcasts = pandas.read_sql('SELECT * FROM [HINDCAST].[DAT_Model] WHERE [Model]=\'{}\''.format(MODEL_NAME), cnxn)
+        cnxn = common.open_local_db()
+        hindcasts = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Model WHERE model=\'{}\''.format(MODEL_NAME), cnxn)
         for year in range(1948, datetime.datetime.now().year):
             ## data for current year
-            if (1 != len(hindcasts.query('Year == {}'.format(year)))):
+            if (1 != len(hindcasts.query('year == {}'.format(year)))):
                 df = get_year(year)
                 retry = True
                 # HACK: keeps failing on insert timing out so try until it doesn't
                 while retry:
                     try:
                         ## @cond Doxygen_Suppress
-                        common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'Year', 'HINDCAST', addStartDate=False)
+                        common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'year', addStartDate=False)
                         retry = False
                         ## @endcond
                     except:

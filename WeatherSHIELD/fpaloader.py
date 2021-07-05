@@ -36,7 +36,7 @@ def load_locations():
         return [name, fixed_latitude, fixed_longitude, number]
     with open(GRID_FILE, 'r') as f:
         lines = [line for line in f]
-        columns = ['Name', 'Latitude', 'Longitude', 'Number']
+        columns = ['name', 'latitude', 'longitude', 'number']
         return pandas.DataFrame(map(make_data, lines),
                                 columns=columns)
 
@@ -48,28 +48,28 @@ def load_data(data):
     """
     if not data:
         return None
-    columns = ['Name',
-               'MinutesOfRain',
-               'ForDate',
-               'ForHour',
+    columns = ['name',
+               'minutesofrain',
+               'fordate',
+               'forhour',
                'UNK1',
-               'Generated',
+               'generated',
                'UNK2',
-               'TMP',
-               'RH',
-               'WD',
-               'WS',
-               'APCP']
+               'tmp',
+               'rh',
+               'wd',
+               'ws',
+               'apcp']
     fake_file = StringIO(unicode(data, 'utf-8'))
     df = pandas.read_csv(fake_file,
                           names=columns,
-                          parse_dates=["ForDate", "Generated"],
+                          parse_dates=["fordate", "generated"],
                           date_parser=lambda x: pandas.to_datetime(x, errors='coerce'))
     def make_date(x):
         # combine date with hours
-        return datetime.datetime.combine(x['ForDate'].date(), datetime.time(hour=x['ForHour']))
+        return datetime.datetime.combine(x['fordate'].date(), datetime.time(hour=x['forhour']))
     # print df.dtypes
-    df['ForTime'] = df[['ForDate', 'ForHour']].apply(make_date, axis=1)
+    df['fortime'] = df[['fordate', 'forhour']].apply(make_date, axis=1)
     # HACK: somehow we ended up with duplicate points in the files we used in FPA
     # NOTE: no index is set right now - otherwise would need to reset_index()
     return df.drop_duplicates()
@@ -119,16 +119,16 @@ class FPALoader(WeatherLoader):
             logging.debug('Loading weather from {}'.format(filename))
             wx = pandas.read_csv(
                         filename,
-                        parse_dates=['ForTime', 'Generated']
+                        parse_dates=['forTime', 'generated']
                     )
             all_wx.append(wx)
         if 0 == len(all_wx):
             return
         wx = pandas.concat(all_wx).drop_duplicates()
-        index = ['Generated', 'ForTime', 'Model', 'Member', 'Latitude', 'Longitude']
+        index = ['generated', 'fortime', 'model', 'member', 'latitude', 'longitude']
         wx = wx.sort(index)
-        for generated in wx['Generated'].unique():
-            cur_wx = wx[wx['Generated'] == generated]
+        for generated in wx['generated'].unique():
+            cur_wx = wx[wx['generated'] == generated]
             cur_wx = cur_wx.set_index(index)
             for_run = pandas.to_datetime(generated)
             if not year or for_run.year == year:
@@ -184,8 +184,8 @@ class FPALoader(WeatherLoader):
         @return None
         """
         stns = load_locations()
-        index = ['ForTime', 'Model', 'Member', 'Latitude', 'Longitude']
-        columns = ['Generated', 'TMP', 'RH', 'WS', 'WD', 'APCP']
+        index = ['fortime', 'model', 'member', 'latitude', 'longitude']
+        columns = ['generated', 'tmp', 'rh', 'ws', 'wd', 'apcp']
         loaded = []
         best_date = None
         missing = set([])
@@ -197,7 +197,7 @@ class FPALoader(WeatherLoader):
             if raw_data is None:
                 logging.warning('Empty input file for day {}'.format(i))
             else:
-                cur_date = pandas.Timestamp(raw_data.reset_index()['Generated'].values[0])
+                cur_date = pandas.Timestamp(raw_data.reset_index()['generated'].values[0])
                 logging.debug('Checking cur_date {} against {}'.format(cur_date, best_date))
                 # print type(cur_date), cur_date
                 # print type(best_date), best_date
@@ -213,7 +213,7 @@ class FPALoader(WeatherLoader):
                     if cur_date > best_date:
                         best_date = cur_date
                     # NOTE: if we compare to the base set of stations this should work
-                    difference = set([x for x in stns['Name'].values if x not in raw_data['Name'].values])
+                    difference = set([x for x in stns['name'].values if x not in raw_data['name'].values])
                     if len(difference) > 0:
                         logging.warning('Data missing for day {}: {}'.format(self.for_days[i], difference))
                         missing = add_sets(missing, difference)
@@ -228,18 +228,18 @@ class FPALoader(WeatherLoader):
         for raw_data in raw_loaded:
             df = raw_data.merge(stns)
             # HACK: remove all stations that are missing for any day
-            df = df[~df['Name'].isin(missing)]
-            df['Model'] = 'AFFES'
-            df['Member'] = 0
+            df = df[~df['name'].isin(missing)]
+            df['model'] = 'AFFES'
+            df['member'] = 0
             df = df.set_index(index)[columns]
             loaded.append(df)
         wx = pandas.concat(loaded)
         # wx = stns.merge(pandas.concat(map(load_data, results)))
         wx = wx.reset_index().sort_values(index)
-        # override the Generated date for all items since if we pushed an update today
+        # override the generated date for all items since if we pushed an update today
         # and didn't change them then that means we can consider them to be as up to date
         # as the latest version
-        wx['Generated'] = best_date
+        wx['generated'] = best_date
         wx = wx.set_index(index)[columns]
         return self.save_if_required(wx, force)
     def save_if_required(self, wx, force=False):
@@ -254,18 +254,17 @@ class FPALoader(WeatherLoader):
         # NOTE: need to reset_index() because otherwise only compares wx values
         wx = wx.reset_index().drop_duplicates().set_index(index)
         # HACK: Timestamp format is nicer than datetime's
-        for_run = wx.reset_index()['Generated'].max()
+        for_run = wx.reset_index()['generated'].max()
         # want to put the data into the database for the start date but check if it exists based on for_run
-        start_date = wx.reset_index()['ForTime'].min()
-        dbname = common.get_database(start_date)
+        start_date = wx.reset_index()['fortime'].min()
         # if at any point for_run is already in the database then we're done
         if not force:
             logging.debug('Checking if data is already present for {} model generated at {}'.format(self.name, for_run))
-            exists = self.check_exists(for_run, dbname)
+            exists = self.check_exists(for_run)
             if exists:
                 logging.debug('Data already loaded - aborting')
                 return pandas.Timestamp(for_run)
-        self.save_data(wx, dbname)
+        self.save_data(wx)
         # return the run that we ended up loading data for
         return for_run
     def load_records(self, max_retries=5):

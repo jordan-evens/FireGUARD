@@ -335,7 +335,21 @@ def kelvin_to_celcius(t):
     return t - 273.15
 
 
-def make_insert_statement(table, columns, no_join=True):
+def types_to_parameters(dtypes):
+    """"!
+    Generates parameter symbols that include types_to_parameters
+    @param dtypes Types to use for parameters
+    @return array of typed parameters
+    """
+    def type_to_parameter(dtype):
+        if 'float64' == dtype:
+            return "?::FLOAT"
+        if 'int64' == dtype:
+            return "?::INT"
+        return "?"
+    return map(type_to_parameter, dtypes)
+
+def make_insert_statement(table, columns, dtypes, no_join=True):
     """!
     Generates INSERT statement for table using column names
     @param table Table to insert into
@@ -347,7 +361,7 @@ def make_insert_statement(table, columns, no_join=True):
         return "INSERT INTO {table}({cols}) values ({vals})".format(
                 table=table,
                 cols=', '.join(columns),
-                vals=', '.join(['?'] * len(columns))
+                vals=', '.join(types_to_parameters(dtypes))
             )
     return """
 INSERT INTO {table}({cols})
@@ -360,10 +374,10 @@ WHERE
     """.format(
         table=table,
         cols=', '.join(columns),
-        val_cols=', '.join(map(lambda x: 'val.[' + x + ']', columns)),
-        join_stmt=' AND '.join(map(lambda x: 'val.[' + x + ']=d.[' + x + ']', columns)),
-        null_stmt=' AND '.join(map(lambda x: 'd.[' + x + '] IS NULL', columns)),
-        vals=', '.join(['?'] * len(columns))
+        val_cols=', '.join(map(lambda x: 'val.' + x, columns)),
+        join_stmt=' AND '.join(map(lambda x: 'val.' + x + '=d.' + x, columns)),
+        null_stmt=' AND '.join(map(lambda x: 'd.' + x + ' IS NULL', columns)),
+        vals=', '.join(types_to_parameters(dtypes))
     )
 
 
@@ -394,9 +408,9 @@ def make_sub_insert_statement(table, columns, fkId, fkName, fkTable, fkColumns):
                 vals=', '.join(['?'] * len(columns)),
                 fkId=fkId,
                 fkName=fkName,
-                val_cols=', '.join(map(lambda x: 'val.[' + x + ']', actual_columns)),
+                val_cols=', '.join(map(lambda x: 'val.' + x, actual_columns)),
                 fkTable=fkTable,
-                join_stmt=' AND '.join(map(lambda x: 'val.[' + x + ']=d.[' + x + ']', fkColumns))
+                join_stmt=' AND '.join(map(lambda x: 'val.' + x + '=d.' + x, fkColumns))
             )
 
 
@@ -442,23 +456,14 @@ def fix_execute(cursor, stmt, data):
                 logging.error(e2)
                 sys.exit(-1)
 
-def get_database(for_run):
-    """!
-    Return database corresponding to this date
-    @param for_run Date to find database for
-    @return Name of database that statement corresponds to
-    """
-    return 'WX_{}'.format(for_run.strftime('%Y%m'))
-
-def open_local_db(dbname=None):
+def open_local_db():
     """!
     @param dbname Name of database to open, or None to open default
     @return pyodbc connection to database
     """
-    if not dbname:
-        dbname = get_database(datetime.datetime.now())
+    dbname = 'FireGUARD'
     logging.debug("Opening local database connection to {}".format(dbname))
-    return pyodbc.connect('DSN=WX;DATABASE={};UID=wx_readwrite;PWD=wx_r34dwr1t3p455w0rd!'.format(dbname))
+    return pyodbc.connect('DSN=FireGUARD;DATABASE={};UID=wx_readwrite;PWD=wx_r34dwr1t3p455w0rd!'.format(dbname))
 
 
 def save_data(table, wx, delete_all=False, dbname=None):
@@ -499,7 +504,7 @@ def trans_delete_data(cnxn, table, wx, delete_all=False):
         cursor.execute(stmt_delete)
     else:
         # DELETE statement that uses all unique values for index columns except coordinates
-        non_point_indices = [x for x in wx.index.names if x not in ['Latitude', 'Longitude']]
+        non_point_indices = [x for x in wx.index.names if x not in ['latitude', 'longitude']]
         unique = wx.reset_index()[non_point_indices].drop_duplicates()
         stmt_delete = "DELETE FROM {} WHERE {}".format(table,
                                                        ' and '.join(map(lambda x: x + '=?', non_point_indices))
@@ -525,9 +530,9 @@ def trans_save_data(cnxn, table, wx, delete_all=False):
     trans_delete_data(cnxn, table, wx, delete_all)
     all_wx = wx.reset_index()
     columns = all_wx.columns
-    stmt_insert = make_insert_statement(table, columns)
+    dtypes = all_wx.dtypes
+    stmt_insert = make_insert_statement(table, columns, dtypes)
     trans_insert_data(cnxn, wx, stmt_insert)
-
 
 def trans_insert_data(cnxn, wx, stmt_insert):
     """!
@@ -560,7 +565,7 @@ def write_foreign(cnxn, schema, table, index, fct_insert, cur_df):
     @param cur_df DataFrame with data to insert
     @return DataFrame with original data and merged foreign key data
     """
-    qualified_table = '[{}].[{}]'.format(schema, table)
+    qualified_table = '{}.{}'.format(schema, table)
     logging.debug('Writing foreign key data to {}'.format(qualified_table))
     new_index = cur_df.index.names
     cur_df = cur_df.reset_index()
@@ -575,39 +580,52 @@ def write_foreign(cnxn, schema, table, index, fct_insert, cur_df):
     cur_df = cur_df.merge(fkData)[columns].set_index(new_index)
     return cur_df
 
-
-def insert_weather(schema, final_table, df, modelFK='Generated', database=None, addStartDate=True):
+SCHEMA = None
+MODELFK = None
+FINAL_TABLE = None
+DF = None
+ADDSTARTDATE = None
+def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=True):
     """!
     Insert weather data into table and foreign key tables
     @param schema Schema that table exists in
     @param final_table Table to insert into
     @param df DataFrame with data to insert
     @param modelFK Foreign key to use for inserting into DAT_Model table
-    @param database Database to insert into
     @param addStartDate Whether or not to add start date for weather to data
     @return None
     """
+    global SCHEMA
+    global MODELFK
+    global FINAL_TABLE
+    global DF
+    global ADDSTARTDATE
+    SCHEMA = schema
+    MODELFK = modelFK
+    FINAL_TABLE = final_table
+    DF = df
+    ADDSTARTDATE = addStartDate
+    # HACK: add column for startdate for run
     def do_insert(cnxn, table, data):
         """Insert and ignore duplicate key failures"""
-        stmt_insert = make_insert_statement(table, data.reset_index().columns, False)
+        stmt_insert = make_insert_statement(table, data.reset_index().columns, data.reset_index()[['latitude', 'longitude']].dtypes, False)
         # don't delete and insert without failure
         trans_insert_data(cnxn, data, stmt_insert)
     def do_insert_only(cnxn, table, data):
         """Insert and assume success because no duplicate keys should exist"""
         # rely on deleting from FK table to remove everything from this table, so just insert
-        stmt_insert = make_insert_statement(table, data.reset_index().columns)
+        stmt_insert = make_insert_statement(table, data.reset_index().columns, data.reset_index().dtypes)
         trans_insert_data(cnxn, data, stmt_insert)
-    # HACK: add column for StartDate for run
     if addStartDate:
-        df['StartDate'] = df.reset_index()['ForTime'].min()
+        df['startdate'] = df.reset_index()['fortime'].min()
     try:
-        cnxn = open_local_db(database)
+        cnxn = open_local_db()
         cur_df = df
-        cur_df = write_foreign(cnxn, schema, 'DAT_Location', ['Latitude', 'Longitude'], do_insert, cur_df)
-        cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['Model', modelFK, 'StartDate'] if addStartDate else ['Model', modelFK], trans_save_data, cur_df)
-        cur_df = write_foreign(cnxn, schema, 'DAT_LocationModel', ['ModelGeneratedId', 'LocationId'], do_insert_only, cur_df)
+        cur_df = write_foreign(cnxn, schema, 'DAT_Location', ['latitude', 'longitude'], do_insert, cur_df)
+        cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['model', modelFK, 'startdate'] if addStartDate else ['model', modelFK], trans_save_data, cur_df)
+        cur_df = write_foreign(cnxn, schema, 'DAT_LocationModel', ['modelgeneratedid', 'locationid'], do_insert_only, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
-        do_insert_only(cnxn, '[{}].[{}]'.format(schema, final_table), cur_df)
+        do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
         cnxn.commit()
     finally:
         cnxn.close()
@@ -643,17 +661,17 @@ def read_grib(file, match):
     # convert into pandas DataFrame
     output = pandas.read_csv(io.BytesIO(stdout),
                              header=None,
-                             names=['Generated', 'ForTime', 'Field', 'Level', 'Longitude', 'Latitude', 'Value'],
+                             names=['generated', 'fortime', 'field', 'level', 'longitude', 'latitude', 'value'],
                              converters=dict((x,
                                               lambda x: None if (not x) else float(x)) \
-                                             for x in ['Longitude',
-                                                       'Latitude',
-                                                       'Value']),
-                             parse_dates=['Generated', 'ForTime'],
+                                             for x in ['longitude',
+                                                       'latitude',
+                                                       'value']),
+                             parse_dates=['generated', 'fortime'],
                              encoding='utf8',
                              date_parser=lambda x: pandas.to_datetime(x, errors='coerce'))
-    variable = output[:1]['Field'][0]
-    columns = ['Generated', 'ForTime', 'Longitude', 'Latitude']
+    variable = output[:1]['field'][0]
+    columns = ['generated', 'fortime', 'longitude', 'latitude']
     def parse_ensemble(x):
         """!
         Change ensemble name into a number
@@ -664,10 +682,10 @@ def read_grib(file, match):
         return result
     if -1 != variable.find('.'):
         variable = variable[:variable.find('.')]
-        output['Member'] = output[['Field']].apply(
+        output['member'] = output[['field']].apply(
             lambda x: parse_ensemble(x[0]), axis=1)
-        columns += ['Member']
-    output.columns = output.columns.str.replace('Value', variable)
+        columns += ['member']
+    output.columns = output.columns.str.replace('value', variable)
     # HACK: Need to delete possible duplicates so concat works
     output = output.drop_duplicates(columns)
     return output[columns + [variable]].set_index(columns)

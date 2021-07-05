@@ -18,18 +18,18 @@ $numDays = strval($_GET['numDays']);
 
 function modelArray($last_row, $membersArray)
 {
-    if(is_null($last_row['Generated']))
+    if(is_null($last_row['generated']))
     {
         echo('No historic match data exists');
         exit();
     }
     return array(
             // these are all Zulu times
-            "Generated" => date_format($last_row['Generated'], 'Y-m-d\TH:i:s').'.000Z',
-            "lat"=>$last_row['Latitude'],
-            "lon"=>$last_row['Longitude'],
+            "Generated" => date_format($last_row['generated'], 'Y-m-d\TH:i:s').'.000Z',
+            "lat"=>$last_row['latitude'],
+            "lon"=>$last_row['longitude'],
             // this is in meters, so no decimal digits should be fine
-            "DistanceFrom" => round($last_row['DISTANCE_FROM']),
+            "DistanceFrom" => round($last_row['distance_from']),
             "Members" => $membersArray
         );
 }
@@ -43,25 +43,6 @@ function roundValue($value)
 
 function getStartup($conn_dfoss, $offset, $lat, $long)
 {
-    // uses observed from yesterday
-    $sql_startup = 'SELECT * FROM [INPUTS].[FCT_FWIObserved_By_Offset]('.($offset - 1).', '.$lat.', '.$long.', DEFAULT)';
-    $stmt_startup = try_query($conn_dfoss, $sql_startup);
-    if( $row_startup = sqlsrv_fetch_array( $stmt_startup, SQLSRV_FETCH_ASSOC) ) {
-        // should only be one row
-        // HACK: not sure why numerics are being returned as strings but round() fixes it
-        return array(
-            'Station' => $row_startup['Member'],
-            'Generated' => date_format($row_startup['Generated'], 'Y-m-d\TH:i:s').'.000Z',
-            'lat' => floatval($row_startup['Latitude']),
-            'lon' => floatval($row_startup['Longitude']),
-            'DistanceFrom' => round($row_startup['DISTANCE_FROM']),
-            'FFMC' => roundValue($row_startup['FFMC']),
-            'DMC' => roundValue($row_startup['DMC']),
-            'DC' => roundValue($row_startup['DC']),
-            'APCP_0800' => roundValue($row_startup['APCP_0800']),
-            'qry_Startup' => 'SELECT * FROM [INPUTS].[FCT_FWIObserved_By_Offset]('.($offset - 1).', '.$lat.', '.$long.', DEFAULT)'
-        );
-    }
     return array(
         'Station' => null,
         'Generated' => null,
@@ -86,8 +67,8 @@ function readModels($conn, $sql, $indices, &$dates_array)
     $last_key = null;
     $is_same = null;
     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-        $cur_model = $row['Model'];
-        $cur_member = $row['Member'];
+        $cur_model = $row['model'];
+        $cur_member = $row['member'];
         $temp = array();
         // output all the indices that we said we're going to provide
         foreach ($indices as $var) {
@@ -112,7 +93,7 @@ function readModels($conn, $sql, $indices, &$dates_array)
                 $last_model = $cur_model;
             }
         }
-        $cur_date = date_format($row['ForTime'], 'Y-m-d\TH:i:s').'.000Z';
+        $cur_date = date_format($row['fortime'], 'Y-m-d\TH:i:s').'.000Z';
         // use a single array of dates and then the index in that array for the members
         if (!in_array($cur_date, $dates_array)) {
             array_push($dates_array, $cur_date);
@@ -136,12 +117,12 @@ function readModels($conn, $sql, $indices, &$dates_array)
     return $modelsArray;
 }
 
-$WX_DATABASE = 'WX_'.date_format($startDate, 'Ym');
+$WX_DATABASE = 'FireGUARD';
 
 $conn = connect($WX_DATABASE);
 # use dfoss database from startDate
-$conn_dfoss = connect('DFOSS_'.date_format($startDate, 'Y'));
-$conn_hindcast = connect('HINDCAST');
+$conn_dfoss = connect('FireGUARD');
+$conn_hindcast = connect('FireGUARD');
 if ($conn && $conn_hindcast){
     // could probably look at only asking for what we're going to display
     $indices = array(
@@ -165,25 +146,25 @@ if ($conn && $conn_hindcast){
     $dates_array = array();
 
     $sql = "SELECT *"
-        //~ . " FROM [INPUTS].[FCT_Forecast](".$lat.", ".$long.", ".$numDays.")"
-        . " FROM [INPUTS].[FCT_Forecast_By_Offset](".$offset.", ".$lat.", ".$long.", ".$numDays.")"
-        . "  order by [Model], [Member], [ForTime]";
+        //~ . " FROM INPUTS.FCT_Forecast(".$lat.", ".$long.", ".$numDays.")"
+        . " FROM INPUTS.FCT_Forecast_By_Offset(".$offset.", ".$lat.", ".$long.", ".$numDays.")"
+        . "  order by model, member, fortime";
     $outputArray['qry_FCT_Forecast'] = $sql;
     $outputArray['Models'] = readModels($conn, $sql, $indices, $dates_array);
     // don't do anything with the hindcasts if not > 15 days because they're empty
     if ($numDays > 15) {
         $matches = array();
         $grades = array();
-        $sql_match = "SELECT [Year], [AVG_VALUE], [GRADE]"
-            . " FROM [HINDCAST].[FCT_HistoricMatch_By_Offset](".$offset.")"
-            . " ORDER BY [GRADE] DESC";
+        $sql_match = "SELECT year, avg_value, grade"
+            . " FROM HINDCAST.FCT_HistoricMatch_By_Offset(".$offset.")"
+            . " ORDER BY grade DESC";
         $outputArray['qry_FCT_HistoricMatch_By_Offset'] = $sql_match;
         $stmt = try_query($conn_hindcast,$sql_match);
         while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-            array_push($matches, $row['Year']);
+            array_push($matches, $row['year']);
             // HACK: enforce a minimum score
             // only displays 2 decimal places but log scale so need more precision
-            $grades[$row['Year']] = round(max($row['GRADE'], 0.0001), 4);
+            $grades[$row['year']] = round(max($row['grade'], 0.0001), 4);
         }
         $outputArray['Matches'] = array('Order' => $matches, 'Grades' => $grades);
     }
@@ -191,14 +172,14 @@ if ($conn && $conn_hindcast){
     // NOTE: this automatically clips to 365 days in FCT_Hindcast
     // FIX: there's an issue with leap years not selecting Feb 29
     $sql = "SELECT *"
-        . " FROM [HINDCAST].[FCT_Hindcast_By_Offset](".$offset.", ".$lat.", ".$long.", ".$numDays.")"
-        . " order by [Model], [Member], [ForTime]";
+        . " FROM HINDCAST.FCT_Hindcast_By_Offset(".$offset.", ".$lat.", ".$long.", ".$numDays.")"
+        . " order by model, member, fortime";
     $outputArray['qry_FCT_Hindcast_By_Offset'] = $sql;
     $outputArray['Hindcast'] = readModels($conn_hindcast, $sql, $indices, $dates_array);
     
     $sql = "SELECT *"
-        . " FROM [INPUTS].[FCT_Actuals](".$offset.", ".$numDays.", ".$lat.", ".$long.", DEFAULT)"
-        . " order by [Model], [Member], [ForTime]";
+        . " FROM INPUTS.FCT_Actuals(".$offset.", ".$numDays.", ".$lat.", ".$long.", DEFAULT)"
+        . " order by model, member, fortime";
     $outputArray['Actuals'] = readModels($conn_dfoss, $sql, $indices, $dates_array);
     
     $outputArray['ForDates'] = $dates_array;

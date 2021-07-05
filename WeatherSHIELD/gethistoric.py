@@ -15,7 +15,7 @@ import logging
 ## Folder to save to
 DIR_DATA = r'../data/wx/longrange'
 ## Columns to use
-COLUMNS = ['Name','Year','Month','Value']
+COLUMNS = ['name','year','month','value']
 ## Index columns
 INDEX = COLUMNS[:3]
 # using product created by weather office now
@@ -77,13 +77,13 @@ def load_file(for_run, force=False):
     # throw out everything except years and months
     df = df[df.columns[:13]]
     # change months into numbers
-    df.columns = ['Year'] + range(1, 13)
+    df.columns = ['year'] + range(1, 13)
     df = pandas.melt(df,
-                        id_vars=['Year'],
-                        var_name='Month',
-                        value_name='Value')
+                        id_vars=['year'],
+                        var_name='month',
+                        value_name='value')
     # remove NaN rows
-    df = df.query('Value == Value')
+    df = df.query('value == value')
     # get warnings later if we don't set this
     df.is_copy = False
     # convert to ratio while checking for % and other possible inputs
@@ -94,24 +94,23 @@ def load_file(for_run, force=False):
             x = int(x)
         return x if 1 >= x else x / 100.0
     #~ fix_ratio(df.values[0][2])
-    df['Value'] = df['Value'].apply(fix_ratio)
-    df['Generated'] = pandas.to_datetime(for_run)
-    #~ df['Generated'] = df['Generated'].astype('datetime64[s]')
-    df = df.set_index(['Generated', 'Year', 'Month'])
-    database = 'HINDCAST'
+    df['value'] = df['value'].apply(fix_ratio)
+    df['generated'] = pandas.to_datetime(for_run)
+    #~ df['generated'] = df['generated'].astype('datetime64[s]')
+    df = df.set_index(['generated', 'year', 'month'])
     schema = 'HINDCAST'
     final_table = 'DAT_HistoricMatch'
     def do_insert_only(cnxn, table, data):
         """Insert and assume success because no duplicate keys should exist"""
         # rely on deleting from FK table to remove everything from this table, so just insert
-        stmt_insert = common.make_insert_statement(table, data.reset_index().columns)
+        stmt_insert = common.make_insert_statement(table, data.reset_index().columns, data.reset_index().dtypes)
         common.trans_insert_data(cnxn, data, stmt_insert)
     try:
-        cnxn = common.open_local_db(database)
+        cnxn = common.open_local_db()
         cur_df = df
-        cur_df = common.write_foreign(cnxn, schema, 'DAT_Historic', ['Generated'], common.trans_save_data, cur_df)
+        cur_df = common.write_foreign(cnxn, schema, 'DAT_Historic', ['generated'], common.trans_save_data, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
-        do_insert_only(cnxn, '[{}].[{}]'.format(schema, final_table), cur_df)
+        do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
         cnxn.commit()
     finally:
         cnxn.close()
@@ -124,11 +123,11 @@ def check_exists(for_run):
     @return Whether or not data exists in database for given run
     """
     try:
-        cnxn = common.open_local_db('HINDCAST')
-        df = pandas.read_sql('SELECT * FROM [HINDCAST].[DAT_Historic]', cnxn)
+        cnxn = common.open_local_db()
+        df = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Historic', cnxn)
     finally:
         cnxn.close()
-    return 1 == len(df.query('Generated == \'{}\''.format(for_run)))
+    return 1 == len(df.query('generated == \'{}\''.format(for_run)))
 
 
 def load_past_records(year=None, force=False):

@@ -3,7 +3,7 @@ setlocal enableextensions enabledelayedexpansion
 pushd %~dp0
 SET LOCAL_DIR=%CD%
 SET DOWNLOAD_DIR=%LOCAL_DIR%\download
-mkdir %DOWNLOAD_DIR%
+mkdir %DOWNLOAD_DIR% >nul 2>&1
 
 net session >nul 2>&1
 IF NOT %ERRORLEVEL%==0 echo Must run as administrator in elevated command prompt && goto :end
@@ -12,22 +12,16 @@ echo NOTE: By using this software you agree to the terms of all products install
 PAUSE
 
 SET HAVEPROXY=
-SET EXTRA_USERS=%*
-SET SQLINSTALL=SQLEXPRWT_x86_ENU.exe
-SET SQLDOWNLOAD=http://download.microsoft.com/download/0/4/B/04BE03CD-EAF3-4797-9D8D-2E08E316C998
+SET SQLINSTALL=postgresql-13.3-2-windows-x64.exe
 
 SET ISWIN10=
 (wmic os get version | findstr /I ^^10.>NUL) && set ISWIN10=1
 
-@rem this is the same for 32 and 64 bit
-SET SQLBINPATH=C:\Program Files\Microsoft SQL Server\100\Tools\Binn
 IF DEFINED ProgramFiles(x86) (
-    goto set64bit
+	goto :haveArchitecture
 )
-goto haveArchitecture
-
-:set64bit
-SET SQLINSTALL=SQLEXPRWT_x64_ENU.exe
+echo Need to be using 64-bit Windows
+goto :end
 
 :haveArchitecture
 
@@ -107,11 +101,12 @@ SET HAVEPROXY=1
 
 @echo Downloading required files
 SET PYTHON_MSI=python-2.7.18.amd64.msi
-call :ensure_file "%SQLDOWNLOAD%/%SQLINSTALL%" "%SQLINSTALL%"
+call :ensure_file "https://sbp.enterprisedb.com/getfile.jsp?fileid=1257713" "%SQLINSTALL%"
 call :ensure_file "https://www.python.org/ftp/python/2.7.18/%PYTHON_MSI%" "%PYTHON_MSI%"
 call :ensure_file "http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe" "dotNetFx40_Full_x86_x64.exe"
 call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120362" "SQLSRV58.EXE"
-call :ensure_file "https://go.microsoft.com/fwlink/?linkid=2120137" "msodbcsql.msi"
+SET PGSQLODBC_ZIP="psqlodbc_13_01_0000.zip"
+call :ensure_file "https://ftp.postgresql.org/pub/odbc/versions/msi/%PGSQLODBC_ZIP%" %PGSQLODBC_ZIP%
 SET DOXYGEN_ZIP=doxygen-1.9.1.windows.bin.zip
 call :ensure_file "http://doxygen.nl/files/%DOXYGEN_ZIP%" %DOXYGEN_ZIP%
 SET DIA_ZIP=dia_0.97.2_win32.zip
@@ -173,17 +168,8 @@ robocopy /ndl /mir "%DOWNLOAD_DIR%\bootstrap-3.4.1-dist" "%LOCAL_DIR%\..\Weather
 @rem need to install .NET 3.5 so do that first so it doesn't prompt user
 DISM /Online /Enable-Feature /FeatureName:NetFx3 /All
 
-set USERS=%USERS% %EXTRA_USERS%
-echo Install SQL Server with admin accounts for: %USERS%
-@rem setting this for windows 7 for some reason
-SET SQLSVCACCOUNT=/SQLSVCACCOUNT="NT AUTHORITY\SYSTEM"
-IF DEFINED ISWIN10 (
-    @rem just use default
-    SET SQLSVCACCOUNT=
-    @rem this is default in gui
-    @rem SET SQLSVCACCOUNT=/SQLSVCACCOUNT="NT AUTHORITY\NETWORK SERVICE"
-)
-%DOWNLOAD_DIR%\%SQLINSTALL% /QS /IAcceptSQLServerLicenseTerms /ACTION=install /INSTANCENAME=SQLEXPRESS %SQLSVCACCOUNT% /FEATURES=SSMS,SQLEngine,Replication,SDK /SQMREPORTING=0 /SAPWD=4h5n4dm1np455w0rd! /SQLSYSADMINACCOUNTS=%USERS% /SECURITYMODE=SQL /ERRORREPORTING=0
+echo Install postgresql
+%DOWNLOAD_DIR%\%SQLINSTALL% --mode unattended --servicename FireGUARD_sql --datadir "C:\FireGUARD\data\postgresql" --superpassword "4h5n4dm1np455w0rd!"
 
 @rem need to add %SQLBINPATH% to path for sqlcmd to work
 set PATH=%PATH%;%SQLBINPATH%
@@ -196,12 +182,10 @@ setx /M PATH "%PATH%
 echo Setting up ODBC connection
 @rem why is this different on some machines?
 SET SQLDRIVER=SQL Server
-odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
-odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
+odbcconf.exe /a {CONFIGSYSDSN "PostgreSQL Unicode" "DSN=FireGUARD|Description=FireGUARD|SERVER=localhost|Database=FireGUARD"}
 IF DEFINED ProgramFiles(x86) (
     pushd %SYSTEMROOT%\SysWOW64
-    odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=WX|Description=WX|SERVER=.\SQLEXPRESS|Database=WX"}
-    odbcconf.exe /a {CONFIGSYSDSN "%SQLDRIVER%" "DSN=HINDCAST|Description=HINDCAST|SERVER=.\SQLEXPRESS|Database=HINDCAST"}
+    odbcconf.exe /a {CONFIGSYSDSN "PostgreSQL Unicode" "DSN=FireGUARD|Description=FireGUARD|SERVER=localhost|Database=FireGUARD"}
     popd
 )
 
@@ -366,8 +350,8 @@ net start "World Wide Web Publishing Service"
 
 
 
-
-msiexec /i %DOWNLOAD_DIR%\msodbcsql.msi /qb IACCEPTMSODBCSQLLICENSETERMS=YES
+Powershell Expand-Archive -Force %DOWNLOAD_DIR%\%PGSQLODBC_ZIP% %DOWNLOAD_DIR%\
+psqlodbc-setup.exe
 
 pushd %WINDIR%\system32\inetsrv
 appcmd add apppool /name:wxshield  /managedRuntimeVersion:v4.0 /managedPipelineMode:Integrated

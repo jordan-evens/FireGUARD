@@ -119,8 +119,8 @@ class GribLoader(WeatherLoader):
         index = result.index.names
         columns = result.columns
         result = result.reset_index()
-        result['Model'] = self.name
-        return result.set_index(index + ['Model'])[columns]
+        result['model'] = self.name
+        return result.set_index(index + ['model'])[columns]
     def get_18z(self, for_run, for_day):
         """!
         Return 18z for_day days in the future
@@ -190,7 +190,7 @@ class GribLoader(WeatherLoader):
         @return Precipitation data as pandas dataframe
         """
         pcp = self.read_grib(for_run, for_date, 'APCP')
-        # forTime = pcp.reset_index()['ForTime'][0]
+        # forTime = pcp.reset_index()['fortime'][0]
         # HACK: set all negative or missing precip values to be 0
         pcp[pcp['APCP'] < 0] = 0
         pcp[pcp['APCP'] != pcp['APCP']] = 0
@@ -206,7 +206,7 @@ class GribLoader(WeatherLoader):
         """
         # we want to do end and every 6 hour interval before it up to (but not including) start
         data_end = self.read_precip_file(for_run, end_date)
-        forTime = data_end.reset_index()['ForTime'][0]
+        forTime = data_end.reset_index()['fortime'][0]
         data_period = data_end
         for_date = end_date + datetime.timedelta(hours=-6)
         while for_date > start_date:
@@ -215,7 +215,7 @@ class GribLoader(WeatherLoader):
             data = data.reset_index()
             all_columns = data.columns
             old_index = [x for x in all_columns if x not in old_columns]
-            data['ForTime'] = forTime
+            data['fortime'] = forTime
             # HACK: want to keep this as 18z time for it all
             data = data.set_index(old_index)
             data_period = data_period + data
@@ -291,11 +291,10 @@ class GribLoader(WeatherLoader):
         # save into database that corresponds to the start of this run
         # want to put the data into the database for the start date but check if it exists based on for_run
         start_date = for_run + datetime.timedelta(hours=self.lead_time)
-        dbname = common.get_database(start_date)
         # if at any point for_run is already in the database then we're done
         if not force:
             logging.debug('Checking if data is already present for {} model generated at {}'.format(self.name, for_run))
-            exists = self.check_exists(for_run, dbname)
+            exists = self.check_exists(for_run)
             if exists:
                 logging.debug('Data already loaded - aborting')
                 return pandas.Timestamp(for_run)
@@ -304,7 +303,7 @@ class GribLoader(WeatherLoader):
             results.append(self.get_records(for_run, d))
         # don't save data until everything is loaded
         wx = pandas.concat(results)
-        self.save_data(wx, dbname)
+        self.save_data(wx)
         # return the run that we ended up loading data for
         # HACK: Timestamp format is nicer than datetime's
         return pandas.Timestamp(for_run)
