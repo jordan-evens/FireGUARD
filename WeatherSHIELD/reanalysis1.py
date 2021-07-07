@@ -1,6 +1,6 @@
 """Load reanalysis data"""
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 import csv
 import netCDF4
@@ -8,7 +8,6 @@ import pandas
 import datetime
 import os
 import numpy
-import pyodbc
 import math
 import logging
 
@@ -28,7 +27,7 @@ file_masks = {
 MODEL_NAME = 'Reanalysis1v05'
 
 ## directory to use for data save/load
-DIR_DATA = '../data/wx/reanalysis1'
+DIR_DATA = '/FireGUARD/data/wx/reanalysis1'
 common.ensure_dir(DIR_DATA)
 
 def save_file(filename):
@@ -37,7 +36,7 @@ def save_file(filename):
     @param filename URL to save
     @return Path that file was saved to
     """
-    print filename
+    print(filename)
     url = '/'.join([common.CONFIG.get('FireGUARD', 'reanalysis_server'), filename])
     if url.startswith('ftp'):
         return common.save_ftp(DIR_DATA,
@@ -75,7 +74,7 @@ def get_Dataset(year, colname):
     @param colname Name of field to read data for
     @return netCDF4.Dataset of data read
     """
-    print year, colname
+    print(year, colname)
     file = file_masks[colname].format(year)
     filename = common.try_save(save_file, file)
     #~ filename = os.path.join(DIR_DATA, os.path.basename(file))
@@ -113,7 +112,10 @@ def get_year(year):
     lats = tmp.variables['lat']
     lons = tmp.variables['lon']
     times = tmp.variables['time']
-    jd = netCDF4.num2date(times[:], times.units)
+    jd = netCDF4.num2date(times[:],
+                          times.units,
+                          only_use_cftime_datetimes=False,
+                          only_use_python_datetimes=True)
     valid = get_valid_locs(lats, lons)
     # every day is the first key?
     index = ['model', 'year', 'fortime', 'latitude', 'longitude']
@@ -122,17 +124,17 @@ def get_year(year):
     period = datetime.datetime.strptime(prate.variables['time'].delta_t, '0000-00-00 %H:%M:%S')
     t_d = (period - datetime.datetime(1900, 1, 1)).seconds
     # determine number of periods that make up 1 day
-    t_p = 86400 / t_d
+    t_p = int(86400 / t_d)
     # determine number of whole periods between 0800 and 1300
-    t_0800_start = 18000 / t_d
+    t_0800_start = int(18000 / t_d)
     # determine how much of last partial period is between 1300 and 0800
     t_0800_rem = (1.0 - (18000.0 % t_d) / t_d)
-    for t in xrange(len(jd)):
+    for t in range(len(jd)):
         # t = 6
         #~ if 4 <= jd[t].day:
             #~ break
         if 18 == jd[t].hour:
-            print jd[t]
+            print(jd[t])
             v_tmin = tmin.variables['tmin'][t]
             v_tmax = tmax.variables['tmax'][t]
             v_tmp = tmp.variables['air'][t]
@@ -205,7 +207,6 @@ def get_year(year):
     return all
 
 if __name__ == '__main__':
-    common.check_proxy()
     # get data for each year and save it
     #~ for year in [2019]:
     cnxn = None
@@ -213,6 +214,7 @@ if __name__ == '__main__':
         cnxn = common.open_local_db()
         hindcasts = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Model WHERE model=\'{}\''.format(MODEL_NAME), cnxn)
         for year in range(1948, datetime.datetime.now().year):
+        #for year in [1948]:
             ## data for current year
             if (1 != len(hindcasts.query('year == {}'.format(year)))):
                 df = get_year(year)

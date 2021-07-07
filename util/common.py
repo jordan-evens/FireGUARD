@@ -1,24 +1,23 @@
 """Shared code"""
 
 import math
-import urllib2
-from urlparse import urlparse
+import urllib.request as urllib2
+from urllib.parse import urlparse
 import dateutil
 import time
 import dateutil.parser
 import datetime
 import os
-import pyodbc
+import psycopg2
 import io
 import subprocess
 import shlex
 import pandas
 import logging
-import ConfigParser
+import configparser
 import re
 import numpy
 import shutil
-import _winreg
 import certifi
 import ssl
 import sys
@@ -30,7 +29,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 BOUNDS = None
 
 ## file to load settings from
-SETTINGS_FILE = r'..\settings.ini'
+SETTINGS_FILE = r'../settings.ini'
 ## currently set proxy
 CURRENT_PROXY = None
 ## loaded configuration
@@ -39,6 +38,9 @@ CONFIG = None
 ## @cond Doxygen_Suppress
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 ## @endcond
+
+# query parameter value required for driver
+PARAM = "%s"
 
 def ensure_dir(dir):
     """!
@@ -60,7 +62,7 @@ def read_config(force=False):
     global BOUNDS
     logging.debug('Reading config file {}'.format(SETTINGS_FILE))
     if force or CONFIG is None:
-        CONFIG = ConfigParser.SafeConfigParser()
+        CONFIG = configparser.SafeConfigParser()
         # set default values and then read to overwrite with whatever is in config
         CONFIG.add_section('FireGUARD')
         # NOTE: should use if this is required to work while proxy isn't already authenticated
@@ -89,7 +91,7 @@ def read_config(force=False):
                 CONFIG.readfp(configfile)
         except:
             logging.info('Creating new config file {}'.format(SETTINGS_FILE))
-            with open(SETTINGS_FILE, 'wb') as configfile:
+            with open(SETTINGS_FILE, 'w') as configfile:
                 CONFIG.write(configfile)
         BOUNDS = {
             'latitude': {
@@ -106,46 +108,6 @@ def read_config(force=False):
 # HACK: need to do this every time file is loaded or else threads might get to it first
 read_config()
 
-
-def set_proxy(address, verbose=True):
-    """!
-    Set proxy to given address
-    @param address Proxy address
-    @param verbose Whether or not to output proxy settings
-    @return None
-    """
-    if verbose:
-        # HACK: blank out password in logs
-        safe_address = address
-        if address is not None and -1 != address.find('@'):
-            safe_address = re.sub('(.*):(.*)@(.*)', '\\1:<password>@\\3', address)
-        logging.debug("Setting proxy to {}".format(safe_address))
-    global CURRENT_PROXY
-    CURRENT_PROXY = address
-    proxy = urllib2.ProxyHandler(None if address is None else {'http': address, 'https': address})
-    opener = urllib2.build_opener(proxy)
-    urllib2.install_opener(opener)
-
-
-def check_proxy():
-    """!
-    Check if proxy should be used
-    @return Whether or not proxy should be used
-    """
-    try:
-        # reset to none before checking because otherwise it hangs checking if it's already set
-        set_proxy(None, False)
-        # if we can reach the proxy config file then use the proxy
-        # HACK: for now just use registry key .pac file to check if on proxy 
-        #       but still require proxy in settings
-        with _winreg.OpenKey(_winreg.HKEY_CURRENT_USER,
-                              "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings") as k:
-            proxy = _winreg.QueryValueEx(k, 'AutoConfigURL')
-            response = urllib2.urlopen(proxy)
-            set_proxy(CONFIG.get('FireGUARD', 'proxy'))
-        return True
-    except:
-        return False
 
 def fix_timezone_offset(d):
     """!
@@ -175,6 +137,7 @@ def save_http(to_dir, url, save_as=None, mode='wb', ignore_existing=False):
     logging.debug("Saving {}".format(url))
     if save_as is None:
         save_as = os.path.join(to_dir, os.path.basename(url))
+    print(save_as)
     if ignore_existing and os.path.exists(save_as):
         logging.debug('Ignoring existing file')
         return save_as
@@ -230,21 +193,23 @@ def save_ftp(to_dir, url, user="anonymous", password="", ignore_existing=False):
     site = urlp.netloc
     filename = os.path.basename(urlp.path)
     logging.debug("Saving {}".format(filename))
+    save_as = os.path.join(to_dir, filename)
+    print(save_as)
+    if os.path.isfile(save_as):
+        if ignore_existing:
+            logging.debug('Ignoring existing file')
+            return save_as
     import ftplib
     #logging.debug([to_dir, url, site, user, password])
     ftp = ftplib.FTP(site)
     ftp.login(user, password)
     ftp.cwd(folder)
-    save_as = os.path.join(to_dir, filename)
     do_save = True
-    ftptime = ftp.sendcmd('MDTM {}'.format(filename))
-    ftpdatetime = datetime.datetime.strptime(ftptime[4:], '%Y%m%d%H%M%S')
     ftplocal = fix_timezone_offset(ftpdatetime)
     # if file exists then compare mod times
     if os.path.isfile(save_as):
-        if ignore_existing:
-            logging.debug('Ignoring existing file')
-            return save_as
+        ftptime = ftp.sendcmd('MDTM {}'.format(filename))
+        ftpdatetime = datetime.datetime.strptime(ftptime[4:], '%Y%m%d%H%M%S')
         filetime = os.path.getmtime(save_as)
         filedatetime = datetime.datetime.fromtimestamp(filetime)
         do_save = ftplocal != filedatetime
@@ -334,22 +299,7 @@ def kelvin_to_celcius(t):
     """
     return t - 273.15
 
-
-def types_to_parameters(dtypes):
-    """"!
-    Generates parameter symbols that include types_to_parameters
-    @param dtypes Types to use for parameters
-    @return array of typed parameters
-    """
-    def type_to_parameter(dtype):
-        if 'float64' == dtype:
-            return "?::FLOAT"
-        if 'int64' == dtype:
-            return "?::INT"
-        return "?"
-    return map(type_to_parameter, dtypes)
-
-def make_insert_statement(table, columns, dtypes, no_join=True):
+def make_insert_statement(table, columns, no_join=True):
     """!
     Generates INSERT statement for table using column names
     @param table Table to insert into
@@ -361,7 +311,7 @@ def make_insert_statement(table, columns, dtypes, no_join=True):
         return "INSERT INTO {table}({cols}) values ({vals})".format(
                 table=table,
                 cols=', '.join(columns),
-                vals=', '.join(types_to_parameters(dtypes))
+                vals=', '.join([PARAM] * len(columns))
             )
     return """
 INSERT INTO {table}({cols})
@@ -377,7 +327,7 @@ WHERE
         val_cols=', '.join(map(lambda x: 'val.' + x, columns)),
         join_stmt=' AND '.join(map(lambda x: 'val.' + x + '=d.' + x, columns)),
         null_stmt=' AND '.join(map(lambda x: 'd.' + x + ' IS NULL', columns)),
-        vals=', '.join(types_to_parameters(dtypes))
+        vals=', '.join([PARAM] * len(columns))
     )
 
 
@@ -405,7 +355,7 @@ def make_sub_insert_statement(table, columns, fkId, fkName, fkTable, fkColumns):
                 table=table,
                 actual_cols=', '.join([fkName] + actual_columns),
                 cols=', '.join(columns),
-                vals=', '.join(['?'] * len(columns)),
+                vals=', '.join([PARAM] * len(columns)),
                 fkId=fkId,
                 fkName=fkName,
                 val_cols=', '.join(map(lambda x: 'val.' + x, actual_columns)),
@@ -433,6 +383,8 @@ def fix_Types(x):
     # for some reason the dates are giving too much precision for the database to use if seconds are specified
     if isinstance(x, numpy.datetime64):
         x = pandas.to_datetime(x)
+    if isinstance(x, numpy.int64):
+        x = int(x)
     return fix_None(x)
 
 
@@ -445,25 +397,29 @@ def fix_execute(cursor, stmt, data):
     """
     try:
         cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
-    except pyodbc.Error as e:
+    except psycopg2.Error as e:
         logging.error(e)
         for vals in (tuple(map(fix_Types, x)) for x in data):
             try:
                 cursor.execute(stmt, vals)
-            except pyodbc.Error as e2:
+            except psycopg2.Error as e2:
                 logging.error('Error inserting:')
                 logging.error(vals)
                 logging.error(e2)
                 sys.exit(-1)
 
+DB_USER = 'wx_readwrite'
+DB_PASSWORD = 'wx_r34dwr1t3p455w0rd!'
+#DB_USER = 'docker'
+#DB_PASSWORD = 'docker'
+
 def open_local_db():
     """!
     @param dbname Name of database to open, or None to open default
-    @return pyodbc connection to database
+    @return psycopg2 connection to database
     """
-    dbname = 'FireGUARD'
-    logging.debug("Opening local database connection to {}".format(dbname))
-    return pyodbc.connect('DSN=FireGUARD;DATABASE={};UID=wx_readwrite;PWD=wx_r34dwr1t3p455w0rd!'.format(dbname))
+    logging.debug("Opening local database connection")
+    return psycopg2.connect(dbname='FireGUARD', port=5432, user=DB_USER, password=DB_PASSWORD, host='172.18.0.2')
 
 
 def save_data(table, wx, delete_all=False, dbname=None):
@@ -507,7 +463,7 @@ def trans_delete_data(cnxn, table, wx, delete_all=False):
         non_point_indices = [x for x in wx.index.names if x not in ['latitude', 'longitude']]
         unique = wx.reset_index()[non_point_indices].drop_duplicates()
         stmt_delete = "DELETE FROM {} WHERE {}".format(table,
-                                                       ' and '.join(map(lambda x: x + '=?', non_point_indices))
+                                                       ' and '.join(map(lambda x: x + '=' + PARAM, non_point_indices))
                                                        )
         logging.debug("Deleting existing data using {}".format(stmt_delete))
         logging.debug(unique.values)
@@ -530,8 +486,7 @@ def trans_save_data(cnxn, table, wx, delete_all=False):
     trans_delete_data(cnxn, table, wx, delete_all)
     all_wx = wx.reset_index()
     columns = all_wx.columns
-    dtypes = all_wx.dtypes
-    stmt_insert = make_insert_statement(table, columns, dtypes)
+    stmt_insert = make_insert_statement(table, columns)
     trans_insert_data(cnxn, wx, stmt_insert)
 
 def trans_insert_data(cnxn, wx, stmt_insert):
@@ -547,7 +502,8 @@ def trans_insert_data(cnxn, wx, stmt_insert):
     all_wx = wx.reset_index()
     # HACK: this is returning int64 when we know they aren't
     for i in index:
-        if 'int64' == all_wx[i].dtype:
+        print("Fixing column " + str(i))
+        if 'int64' in str(all_wx[i].dtype):
             all_wx[i] = all_wx[i].astype(int)
     logging.debug("Inserting {} rows into database".format(len(all_wx)))
     # use generator expression instead of list so we don't convert and then use
@@ -605,16 +561,20 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
     FINAL_TABLE = final_table
     DF = df
     ADDSTARTDATE = addStartDate
+    # schema = common.SCHEMA
+    # modelFK = common.MODELFK
+    # final_table = common.FINAL_TABLE
+    # addStartDate = ADDSTARTDATE
     # HACK: add column for startdate for run
     def do_insert(cnxn, table, data):
         """Insert and ignore duplicate key failures"""
-        stmt_insert = make_insert_statement(table, data.reset_index().columns, data.reset_index()[['latitude', 'longitude']].dtypes, False)
+        stmt_insert = make_insert_statement(table, data.reset_index().columns, False)
         # don't delete and insert without failure
         trans_insert_data(cnxn, data, stmt_insert)
     def do_insert_only(cnxn, table, data):
         """Insert and assume success because no duplicate keys should exist"""
         # rely on deleting from FK table to remove everything from this table, so just insert
-        stmt_insert = make_insert_statement(table, data.reset_index().columns, data.reset_index().dtypes)
+        stmt_insert = make_insert_statement(table, data.reset_index().columns)
         trans_insert_data(cnxn, data, stmt_insert)
     if addStartDate:
         df['startdate'] = df.reset_index()['fortime'].min()
@@ -714,8 +674,6 @@ def download(get_what, suppress_exceptions=True):
     try:
         proxy = get_what[0]
         url = get_what[1]
-        if proxy is not None:
-            set_proxy(proxy, verbose=False)
         # HACK: check this to make sure url completion has worked properly
         assert('{}' not in url)
         response = urllib2.urlopen(url)

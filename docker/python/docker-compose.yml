@@ -1,0 +1,16 @@
+# docker-compose build
+version: '2.1'
+
+build:
+    context: ../../
+
+services:
+  python:
+    container_name: fireguard-python
+    build: .
+    image: python
+
+networks:
+  default:
+    external: true
+    name: fireguard-network

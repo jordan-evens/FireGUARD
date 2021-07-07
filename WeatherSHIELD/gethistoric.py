@@ -4,10 +4,9 @@ import pandas
 import re
 import datetime
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 from common import split_line
-import pyodbc
 import numpy
 import os
 import logging
@@ -46,9 +45,6 @@ def get_standard(force=False):
     @param force Whether or not to save if file already exists
     @return Timestamp for saved data
     """
-    # HACK: this is inside the intranet so make sure we're not using a proxy if we're in the intranet
-    if common.CURRENT_PROXY is not None and common.CURRENT_PROXY.endswith(common.MNR_PROXY):
-        common.set_proxy(None)
     logging.debug('Saving long range forecast matches')
     filename = save_file(url)
     filetime = os.path.getmtime(filename)

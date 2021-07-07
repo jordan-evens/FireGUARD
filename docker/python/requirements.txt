@@ -1,0 +1,6 @@
+psycopg2-binary
+postgis
+pandas
+ConfigParser
+certifi
+netCDF4

@@ -6,13 +6,32 @@ CREATE DATABASE "FireGUARD"
     WITH 
     OWNER = postgres
     ENCODING = 'UTF8'
-    LC_COLLATE = 'English_United States.1252'
-    LC_CTYPE = 'English_United States.1252'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
 COMMENT ON DATABASE "FireGUARD"
     IS 'weather and other information';
+
+\c FireGUARD
+
+-- Enable PostGIS (as of 3.0 contains just geometry/geography)
+CREATE EXTENSION postgis;
+-- enable raster support (for 3+)
+CREATE EXTENSION postgis_raster;
+-- Enable Topology
+CREATE EXTENSION postgis_topology;
+-- Enable PostGIS Advanced 3D
+-- and other geoprocessing algorithms
+-- sfcgal not available with all distributions
+CREATE EXTENSION postgis_sfcgal;
+-- fuzzy matching needed for Tiger
+CREATE EXTENSION fuzzystrmatch;
+-- rule based standardizer
+CREATE EXTENSION address_standardizer;
+-- example rule data set
+CREATE EXTENSION address_standardizer_data_us;
+-- Enable US Tiger Geocoder
+CREATE EXTENSION postgis_tiger_geocoder;
 
 -- Role: wx_readwrite
 -- DROP ROLE wx_readwrite;
@@ -38,7 +57,7 @@ CREATE ROLE wx_readonly WITH
   NOREPLICATION
   ENCRYPTED PASSWORD 'SCRAM-SHA-256$4096:/vNJcJxZqMJgwjfSY6SlqQ==$SnJeXe3KYPusRCrHXeOTAWruW1CFbtEqNeFbxYAUPMo=:6lh+JWzI67I1svEbPsI9wSvxbOxGychScuRXLE6SNGE=';
 
-CREATE SCHEMA INPUTS; 
+CREATE SCHEMA INPUTS;
  
 CREATE OR REPLACE FUNCTION INPUTS.DISTANCE
 (
@@ -48,10 +67,9 @@ CREATE OR REPLACE FUNCTION INPUTS.DISTANCE
     LongitudeB FLOAT
 )
 RETURNS FLOAT AS $$
-	DECLARE a CONSTANT point := point(LatitudeA, LongitudeA);
-	DECLARE b CONSTANT point := point(LatitudeB, LongitudeB);
 	BEGIN
-		return ST_Distance(a, b);
+		return ST_Distance(ST_SetSRID( ST_Point(LongitudeA, LatitudeA), 4326)::geography,
+						   ST_SetSRID( ST_Point(LongitudeB, LatitudeB), 4326)::geography);
 	END;
 $$ LANGUAGE plpgsql;
 
@@ -239,21 +257,17 @@ CREATE OR REPLACE FUNCTION INPUTS.FCT_Forecast_By_Offset (
     NumberDays INT
 )
 RETURNS TABLE (
+	Generated TIMESTAMP,
+    ForTime TIMESTAMP,
 	Model VARCHAR(20),
+	Member INT,
 	Latitude FLOAT,
 	Longitude FLOAT,
-	Generated TIMESTAMP,
-	LocationModelId INT,
-    ForTime TIMESTAMP,
     TMP FLOAT,
     RH FLOAT,
     WS FLOAT,
     WD FLOAT,
     APCP FLOAT,
-    APCP_0800 FLOAT,
-	Month INT,
-	Day INT,
-	FAKE_DATE TIMESTAMP,
 	DISTANCE_FROM FLOAT
 )
 LANGUAGE plpgsql
@@ -280,46 +294,46 @@ BEGIN
         (
             SELECT
                 DISTINCT c.*
-            FROM (SELECT Model, MAX(Generated) As Generated
+            FROM (SELECT m.Model, MAX(m.Generated) As Generated
                     FROM INPUTS.DAT_Model m
-                    WHERE StartDate < DATEADD(DD, DATEDIFF(DD, 0, DATEADD(DD, DateOffset + 1, GETDATE())), 0)
-                    GROUP BY Model) m
+                    WHERE StartDate < (current_date + (DateOffset + 1) * INTERVAL '1 day')
+                    GROUP BY m.Model) m
             INNER JOIN LATERAL (
                 SELECT
                 *
                 FROM (
-                    SELECT Latitude,
-                            Longitude,
-                            Generated,
+                    SELECT loc.Latitude,
+                            loc.Longitude,
+                            m.Generated,
                             m.Model,
-                            LocationModelId,
-                            INPUTS.DISTANCE(Latitude, Longitude, lat, long) AS DISTANCE_FROM
+                            lm.LocationModelId,
+                            INPUTS.DISTANCE(loc.Latitude, loc.Longitude, lat, long) AS DISTANCE_FROM
                     FROM
                     (SELECT ModelGeneratedId
-                    FROM INPUTS.DAT_Model
-                    WHERE Model=m.Model AND Generated=m.Generated) m2
+                    FROM INPUTS.DAT_Model d
+                    WHERE d.Model=m.Model AND d.Generated=m.Generated) m2
                     LEFT JOIN INPUTS.DAT_LocationModel lm ON m2.ModelGeneratedId=lm.ModelGeneratedId
                     LEFT JOIN INPUTS.DAT_Location loc ON loc.LocationId=lm.LocationId
                     WHERE
                         -- We should always be in a reasonable boundary if we're looking +/- 1 degree around it
-                        Latitude >= (ROUND(lat,0,1) - 1) AND Longitude >= (ROUND(long,0,1) - 1)
-                        AND Latitude <= (ROUND(lat,0,1) + 1) AND Longitude <= (ROUND(long,0,1) + 1)
-                        AND NOT EXISTS (SELECT * FROM WXSHIELD.INPUTS.DAT_Exclude_Points
-                                    WHERE Latitude=loc.Latitude AND Longitude=loc.Longitude)
+                        loc.Latitude >= (lat - 1) AND loc.Longitude >= (long - 1)
+                        AND loc.Latitude <= (lat + 1) AND loc.Longitude <= (long + 1)
+                        AND NOT EXISTS (SELECT * FROM INPUTS.DAT_Exclude_Points exc
+                                    WHERE exc.Latitude=loc.Latitude AND exc.Longitude=loc.Longitude)
                 ) s
                 ORDER BY DISTANCE_FROM ASC
 				LIMIT 1
             ) c ON true
         ) dist
         LEFT JOIN (SELECT *
-                    FROM INPUTS.DAT_Forecast
+                    FROM INPUTS.DAT_Forecast f
                     WHERE
-                        ForTime <= DATEADD(DD, DATEDIFF(DD, 0, DATEADD(DD, DateOffset, GETDATE())), NumberDays)
-                        AND ForTime >= DATEADD(DD, DATEDIFF(DD, 0, DATEADD(DD, DateOffset, GETDATE())), 0)) cur ON
+                        f.ForTime <= (current_date + (DateOffset + NumberDays + 1) * INTERVAL '1 day')
+                        AND f.ForTime >= (current_date + (DateOffset + 1) * INTERVAL '1 day')) cur ON
                     dist.LocationModelId=cur.LocationModelId
         ) n
-        WHERE ForTime IS NOT NULL;
-END; $$
+        WHERE n.ForTime IS NOT NULL;
+END; $$;
 
 
 CREATE FUNCTION INPUTS.FCT_Forecast (
@@ -328,24 +342,19 @@ CREATE FUNCTION INPUTS.FCT_Forecast (
     NumberDays INT
 )
 RETURNS TABLE (
+	Generated TIMESTAMP,
+    ForTime TIMESTAMP,
 	Model VARCHAR(20),
+	Member INT,
 	Latitude FLOAT,
 	Longitude FLOAT,
-	Generated TIMESTAMP,
-	LocationModelId INT,
-    ForTime TIMESTAMP,
     TMP FLOAT,
     RH FLOAT,
     WS FLOAT,
     WD FLOAT,
     APCP FLOAT,
-    APCP_0800 FLOAT,
-	Month INT,
-	Day INT,
-	FAKE_DATE TIMESTAMP,
 	DISTANCE_FROM FLOAT
-)
-LANGUAGE plpgsql
+)LANGUAGE plpgsql
 AS $$
 BEGIN
 	RETURN QUERY
@@ -477,15 +486,15 @@ BEGIN
 		m.Year,
 		m.Month,
 		m.Value,
-		DATEADD(YYYY, Year-1900, DATEADD(MM, Month-1, 0)) AS FAKE_DATE
+		TIMESTAMP '1900-01-01' + ((m.Year - 1900) * INTERVAL '1 year') + ((m.Month - 1) * INTERVAL '1 month') AS FAKE_DATE
 	FROM 
-		(SELECT Generated, HistoricGeneratedId
-			FROM HINDCAST.DAT_Historic
-			WHERE DATEADD(DD, DATEDIFF(DD, 0, Generated), 0) <= FirstDay
-			ORDER BY Generated DESC
+		(SELECT hist.Generated, hist.HistoricGeneratedId
+			FROM HINDCAST.DAT_Historic hist
+			WHERE hist.Generated <= FirstDay
+			ORDER BY hist.Generated DESC
 			LIMIT 1) h
 		LEFT JOIN HINDCAST.DAT_HistoricMatch m ON h.HistoricGeneratedId=m.HistoricGeneratedId;
-END;$$
+END;$$;
 
 CREATE OR REPLACE FUNCTION HINDCAST.FCT_Closest (
     lat FLOAT,
@@ -503,19 +512,19 @@ BEGIN
 	RETURN QUERY
     SELECT *
     FROM (
-        SELECT LocationId, Latitude, Longitude, INPUTS.DISTANCE(LATITUDE, LONGITUDE, lat, long) AS DISTANCE_FROM
+        SELECT loc.LocationId, loc.Latitude, loc.Longitude, INPUTS.DISTANCE(loc.Latitude, loc.Longitude, lat, long) AS DISTANCE_FROM
         FROM HINDCAST.DAT_Location loc
         WHERE
-            NOT EXISTS (SELECT * FROM WXSHIELD.INPUTS.DAT_Exclude_Points
-                        WHERE Latitude=loc.Latitude AND Longitude=loc.Longitude)
+            NOT EXISTS (SELECT * FROM INPUTS.DAT_Exclude_Points exc
+                        WHERE exc.Latitude=loc.Latitude AND exc.Longitude=loc.Longitude)
             -- We should always be in a reasonable boundary if we're looking +/- 3 degrees around it
             -- since resolution is 2.5 degrees
-            AND Latitude >= (ROUND(lat,0,1) - 3) AND Longitude >= (ROUND(long,0,1) - 3)
-            AND Latitude <= (ROUND(lat,0,1) + 3) AND Longitude <= (ROUND(long,0,1) + 3)
+            AND loc.Latitude >= (lat - 3) AND loc.Longitude >= (long - 3)
+            AND loc.Latitude <= (lat + 3) AND loc.Longitude <= (long + 3)
     ) s
     ORDER BY DISTANCE_FROM ASC
 	LIMIT 1;
-END;$$
+END;$$;
 
 CREATE OR REPLACE FUNCTION HINDCAST.FCT_All_Closest (
     FirstDay TIMESTAMP,
