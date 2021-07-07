@@ -544,8 +544,6 @@ RETURNS TABLE (
     WD FLOAT,
     APCP FLOAT,
     APCP_0800 FLOAT,
-	Month INT,
-	Day INT,
 	FAKE_DATE TIMESTAMP,
 	DISTANCE_FROM FLOAT
 )
@@ -557,20 +555,18 @@ BEGIN
         m.Model,
         c.Latitude,
         c.Longitude,
-        (SELECT MAX(Generated)
-            FROM HINDCAST.DAT_Historic
-            WHERE DATEADD(DD, DATEDIFF(DD, 0, Generated), 0) <= FirstDay) as Generated,
-        cur.*, 
-        MONTH(cur.ForTime) as Month,
-        DAY(cur.ForTime) as Day,
-        DATEADD(YYYY, YEAR(FirstDay) - YEAR(cur.ForTime), cur.ForTime) as FAKE_DATE,
-        DISTANCE_FROM
+        (SELECT MAX(hist.Generated)
+            FROM HINDCAST.DAT_Historic hist
+            WHERE DATE(hist.Generated) <= FirstDay) as Generated,
+        cur.*,
+		(cur.ForTime + ((EXTRACT(YEAR from FirstDay) - EXTRACT(YEAR from cur.ForTime)) * INTERVAL '1 year')) AS FAKE_DATE,
+        c.DISTANCE_FROM
     FROM
         HINDCAST.FCT_Closest(lat, long) c
         LEFT JOIN HINDCAST.DAT_LocationModel lm ON lm.LocationId=c.LocationId
         LEFT JOIN HINDCAST.DAT_Model m ON m.ModelGeneratedId=lm.ModelGeneratedId
-        LEFT JOIN HINDCAST.HINDCAST.DAT_Hindcast cur ON lm.LocationModelId=cur.LocationModelId;
-END;$$
+        LEFT JOIN HINDCAST.DAT_Hindcast cur ON lm.LocationModelId=cur.LocationModelId;
+END;$$;
 
 CREATE OR REPLACE FUNCTION HINDCAST.FCT_Quadtratic
 (
@@ -586,7 +582,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN alpha * POWER(Value, 4) + beta * POWER(Value, 3) + charlie * POWER(Value, 2) + delta * Value + epsilon;
-END;$$
+END;$$;
 
 CREATE OR REPLACE FUNCTION HINDCAST.FCT_WeightMonth
 (
@@ -604,7 +600,7 @@ AS $$
 BEGIN
 	result := HINDCAST.FCT_Quadtratic(Month, a, b, c, d, e);
 	RETURN result;
-END; $$
+END; $$;
 
 CREATE FUNCTION HINDCAST.FCT_WeightMatch
 (
@@ -622,7 +618,7 @@ AS $$
 BEGIN
 	result := HINDCAST.FCT_Quadtratic(Value, a, b, c, d, e);
     RETURN result;
-END; $$
+END; $$;
 
 
 CREATE FUNCTION HINDCAST.FCT_GradeHistoric
@@ -637,10 +633,10 @@ AS $$
 BEGIN
     result := HINDCAST.FCT_WeightMonth(Month) * HINDCAST.FCT_WeightMatch(Value);
 	RETURN result;
-END; $$
+END; $$;
 
 
-CREATE FUNCTION HINDCAST.FCT_HistoricMatch_By_Offset
+CREATE OR REPLACE FUNCTION HINDCAST.FCT_HistoricMatch_By_Offset
 (
     DateOffset INT
 )
@@ -652,7 +648,7 @@ RETURNS TABLE (
         )
 LANGUAGE plpgsql
 AS $$
-    DECLARE FirstDay TIMESTAMP := DATEADD(DD, DATEDIFF(DD, 0, DATEADD(DD, DateOffset, GETDATE())), 0);
+    DECLARE FirstDay TIMESTAMP := (current_date + (DateOffset + 1) * INTERVAL '1 day');
     DECLARE NumberMonths INT := 5;
     DECLARE OffsetMonths INT := 0;
     DECLARE MinRatioScore FLOAT := 0.725;
@@ -666,38 +662,36 @@ BEGIN
         (SUM(MONTH_GRADE) - SUM(HINDCAST.FCT_GradeHistoric(MinRatioScore, WHICH_MONTH)))/(SUM(HINDCAST.FCT_GradeHistoric(1, WHICH_MONTH)) - SUM(HINDCAST.FCT_GradeHistoric(MinRatioScore, WHICH_MONTH))) AS GRADE
     FROM
     (
-        SELECT DISTINCT Year
-        FROM HINDCAST.DAT_Model
-        WHERE YEAR < YEAR(FirstDay)
+        SELECT DISTINCT m.Year
+        FROM HINDCAST.DAT_Model m
+        WHERE m.YEAR < EXTRACT(YEAR from FirstDay)
     ) m
     INNER JOIN LATERAL
     (
         SELECT *
-        FROM HINDCAST.FCT_Historic_By_Date(FirstDay)
-        WHERE Year=m.Year
+        FROM HINDCAST.FCT_Historic_By_Date(FirstDay) h
+        WHERE h.Year=m.Year
     ) h ON true 
     INNER JOIN LATERAL
     (
         SELECT
-            DATEADD(MM, OffsetMonths, h.FAKE_DATE) AS START_FROM,
-            HINDCAST.FCT_GradeHistoric(Value, (DATEDIFF(MM, DATEADD(MM, OffsetMonths, h.FAKE_DATE), FAKE_DATE) + OffsetMonths)) AS MONTH_GRADE,
+            (h.FAKE_DATE + OffsetMonths * INTERVAL '1 month') AS START_FROM,
+            HINDCAST.FCT_GradeHistoric(Value, (EXTRACT(MONTH from FAKE_DATE) + OffsetMonths)::integer) AS MONTH_GRADE,
             Value,
-            (DATEDIFF(MM, DATEADD(MM, OffsetMonths, h.FAKE_DATE), FAKE_DATE) + OffsetMonths) AS WHICH_MONTH,
+            (EXTRACT(MONTH from h.FAKE_DATE) + OffsetMonths)::integer AS WHICH_MONTH,
             FAKE_DATE as FOR_MONTH
         FROM HINDCAST.FCT_Historic_By_Date(FirstDay)
         WHERE
-            FAKE_DATE >= DATEADD(MM, OffsetMonths, h.FAKE_DATE)
+            FAKE_DATE >= h.FAKE_DATE + OffsetMonths * INTERVAL '1 month'
             -- not <= because that would be NumberMonths + 1 months
-            AND FAKE_DATE < DATEADD(MM, NumberMonths, DATEADD(MM, OffsetMonths, h.FAKE_DATE))
+            AND FAKE_DATE < (h.FAKE_DATE + (NumberMonths + OffsetMonths) * INTERVAL '1 month')
     ) s ON true 
-    WHERE MONTH(FAKE_DATE)=MONTH(FirstDay)
+    WHERE EXTRACT(MONTH from h.FAKE_DATE)=EXTRACT(MONTH from FirstDay)
     GROUP BY h.Generated, h.Year, s.START_FROM;
-END; $$
+END; $$;
 
 
-CREATE FUNCTION HINDCAST.FCT_HistoricMatch
-(
-)
+CREATE OR REPLACE FUNCTION HINDCAST.FCT_HistoricMatch()
 RETURNS TABLE (
 	Generated TIMESTAMP,
 	Year INT,
@@ -709,10 +703,10 @@ AS $$
 BEGIN
 	RETURN QUERY
     SELECT * FROM HINDCAST.FCT_HistoricMatch_By_Offset(0);
-END; $$
+END; $$;
 
 
-CREATE FUNCTION HINDCAST.FCT_Hindcast_Slice (
+CREATE OR REPLACE FUNCTION HINDCAST.FCT_Hindcast_Slice (
     FirstDay TIMESTAMP,
     lat FLOAT,
     long FLOAT,
@@ -737,33 +731,34 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 AS $$
 BEGIN
+	RETURN QUERY
 	SELECT
     c.Generated,
-    DATEADD(YY, YearOffset, FAKE_DATE) AS ForTime,
-    Model,
-    (YEAR(ForTime) - YearOffset) as Member,
-    Latitude,
-    Longitude,
-    TMP,
-    RH,
-    WS,
-    WD,
+    (c.FAKE_DATE + YearOffset * INTERVAL '1 year') AS ForTime,
+    c.Model,
+    (EXTRACT(YEAR from c.ForTime) - YearOffset)::integer as Member,
+    c.Latitude,
+    c.Longitude,
+    c.TMP,
+    c.RH,
+    c.WS,
+    c.WD,
     -- HACK: change to use 0800 - 1300 precip portion for day 1
     (SELECT CAST (
                 CASE
-                    WHEN 0 = DATEDIFF(dd, FAKE_DATE, FirstDay)
-                        THEN (APCP - APCP_0800)
-                    ELSE APCP
+                    WHEN DATE(c.FAKE_DATE)=DATE(FirstDay)
+                        THEN (c.APCP - c.APCP_0800)
+                    ELSE c.APCP
                 END AS FLOAT)) as APCP,
-    DISTANCE_FROM
-FROM HINDCAST.HINDCAST.FCT_ALL_Closest(FirstDay, lat, long) c
-WHERE DATEADD(YY, YearOffset, FAKE_DATE) > StartDay
+    c.DISTANCE_FROM
+FROM HINDCAST.FCT_ALL_Closest(FirstDay, lat, long) c
+WHERE (FAKE_DATE + YearOffset * INTERVAL '1 year') > StartDay
 -- HACK: do this instead of EndDay because some years have Feb 29 and so have more days
-AND DATEADD(YY, YearOffset, FAKE_DATE) < DATEADD(DD, NumberDays, StartDay);
-END; $$
+AND (c.FAKE_DATE + YearOffset * INTERVAL '1 year') < (StartDay + NumberDays * INTERVAL '1 day');
+END; $$;
 
 
-CREATE FUNCTION HINDCAST.FCT_Hindcast_By_Offset (
+CREATE OR REPLACE FUNCTION HINDCAST.FCT_Hindcast_By_Offset (
     DateOffset INT,
     lat FLOAT,
     long FLOAT,
@@ -788,13 +783,13 @@ AS $$
     DECLARE CurrentStart TIMESTAMP;
     DECLARE YearEnd TIMESTAMP;
     DECLARE MaxDays INT;
-    DECLARE FirstDay TIMESTAMP := DATEADD(DD, DATEDIFF(DD, 0, DATEADD(DD, DateOffset, GETDATE())), 0);
+    DECLARE FirstDay TIMESTAMP := current_date + DateOffset * INTERVAL '1 day';
     DECLARE CurrentOffset INT := 0;
     DECLARE DaysPicked INT := 0;
 BEGIN
-	YearEnd := CAST(CAST(((YEAR(FirstDay)) + 1) AS VARCHAR(4)) + '-01-01' AS DATE);
-	MaxDays := DATEDIFF(DD, CurrentStart, YearEnd);
+	YearEnd := make_date(EXTRACT(YEAR from FirstDay)::integer + 1, 1, 1);
 	CurrentStart := FirstDay;
+	MaxDays := DATE_PART('day', YearEnd - CurrentStart);
     -- hard code a limit here because we don't want to duplicate data output
     IF NumberDays > 365 THEN
         NumberDays := 365;
@@ -809,18 +804,18 @@ BEGIN
 		RETURN QUERY
         SELECT
             *
-        FROM HINDCAST.FCT_Hindcast_Slice(FirstDay, lat, long, CurrentStart, CurrentEnd, CurrentOffset)
-        WHERE Member IN (SELECT YEAR FROM HINDCAST.HINDCAST.DAT_Model);
+        FROM HINDCAST.FCT_Hindcast_Slice(FirstDay, lat, long, CurrentStart, CurrentEnd, CurrentOffset) s
+        WHERE s.Member IN (SELECT YEAR FROM HINDCAST.DAT_Model);
         CurrentOffset := CurrentOffset + 1;
         -- NOTE: this is until Jan 1  00:00:00 since we pick dates <= it and we need 18z of Dec 31
-        CurrentStart := CAST(CAST((YEAR(FirstDay) + CurrentOffset) AS VARCHAR(4)) + '-01-01' AS DATE);
+        CurrentStart := make_date(EXTRACT(YEAR from FirstDay)::integer + CurrentOffset, 1, 1);
         MaxDays := 365;
     END LOOP;
 	RETURN;
 END; $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION HINDCAST.FCT_Hindcast (
+CREATE OR REPLACE FUNCTION HINDCAST.FCT_Hindcast (
     lat FLOAT,
     long FLOAT,
     NumberDays INT

@@ -4,10 +4,8 @@ import logging
 import sys
 sys.path.append('..\util')
 import common
-from fpaloader import FPALoader
 from gefsloader import GefsLoader
 from gepsloader import GepsLoader
-import dfoss
 import gethistoric
 import sst
 
@@ -30,9 +28,7 @@ def get_standard():
     Get standard available weather
     @return None
     """
-    try_no_fail(dfoss.load)
     try_no_fail(gethistoric.get_standard)
-    try_no_fail(FPALoader().load_records)
     try_no_fail(GepsLoader().load_records)
     try_no_fail(sst.load)
 

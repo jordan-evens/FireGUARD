@@ -30,8 +30,6 @@ BOUNDS = None
 
 ## file to load settings from
 SETTINGS_FILE = r'../settings.ini'
-## currently set proxy
-CURRENT_PROXY = None
 ## loaded configuration
 CONFIG = None
 
@@ -80,9 +78,9 @@ def read_config(force=False):
         CONFIG.set('FireGUARD', 'longitude_max', '-73')
         CONFIG.set('FireGUARD', 'dfoss_connection', '')
         CONFIG.set('FireGUARD', 'url_agency_wx', '')
-        CONFIG.set('FireGUARD', 'url_agency_wx_longrange', '')
-        CONFIG.set('FireGUARD', 'fpa_locations_grid', '')
-        CONFIG.set('FireGUARD', 'reanalysis_server', 'ftp://ftp.cdc.noaa.gov')
+        CONFIG.set('FireGUARD', 'url_agency_wx_longrange', 'http://www.affes.mnr.gov.on.ca/extranet/Bulletin_Boards/WXProducts/')
+        CONFIG.set('FireGUARD', 'fpa_locations_grid', 'longrange.csv')
+        CONFIG.set('FireGUARD', 'reanalysis_server', 'ftp://ftp.cdc.noaa.gov/Datasets/ncep.reanalysis/')
         CONFIG.set('FireGUARD', 'reanalysis_server_user', '')
         CONFIG.set('FireGUARD', 'reanalysis_server_password', '')
         CONFIG.set('FireGUARD', 'naefs_server', 'https://nomads.ncep.noaa.gov/cgi-bin/')
@@ -205,11 +203,11 @@ def save_ftp(to_dir, url, user="anonymous", password="", ignore_existing=False):
     ftp.login(user, password)
     ftp.cwd(folder)
     do_save = True
+    ftptime = ftp.sendcmd('MDTM {}'.format(filename))
+    ftpdatetime = datetime.datetime.strptime(ftptime[4:], '%Y%m%d%H%M%S')
     ftplocal = fix_timezone_offset(ftpdatetime)
     # if file exists then compare mod times
     if os.path.isfile(save_as):
-        ftptime = ftp.sendcmd('MDTM {}'.format(filename))
-        ftpdatetime = datetime.datetime.strptime(ftptime[4:], '%Y%m%d%H%M%S')
         filetime = os.path.getmtime(save_as)
         filedatetime = datetime.datetime.fromtimestamp(filetime)
         do_save = ftplocal != filedatetime
@@ -600,7 +598,7 @@ def read_grib(file, match):
     """
     # logging.debug(file)
     CWD = os.path.join(os.path.dirname(file))
-    cmd = r'wgrib2-v0.1.9.4\bin\wgrib2.exe'
+    cmd = '/FireGUARD/WeatherSHIELD/wgrib2'
     bounds = '{}:{} {}:{}'.format(BOUNDS['longitude']['min'],
                                   BOUNDS['longitude']['max'],
                                   BOUNDS['latitude']['min'],
@@ -613,7 +611,6 @@ def read_grib(file, match):
     process = subprocess.Popen(run_what,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE,
-                               creationflags=0x08000000,
                                cwd=CWD)
     stdout, stderr = process.communicate()
     if process.returncode != 0:
@@ -672,8 +669,7 @@ def download(get_what, suppress_exceptions=True):
     @return Contents of URL, or exception
     """
     try:
-        proxy = get_what[0]
-        url = get_what[1]
+        url = get_what
         # HACK: check this to make sure url completion has worked properly
         assert('{}' not in url)
         response = urllib2.urlopen(url)
@@ -695,9 +691,9 @@ def download_many(urls, fct=download):
     @param processes Number of processes to use for downloading
     @return List of paths that files have been saved to
     """
-    get_what = zip([CURRENT_PROXY] * len(urls), urls)
+    get_what = list(urls)
     # HACK: use current proxy so we don't do check for proxy and delay this
-    results = map(fct, get_what)
+    results = list(map(fct, get_what))
     for i, result in enumerate(results):
         if isinstance(result, dict):
             # HACK: recreate error by trying to open it again

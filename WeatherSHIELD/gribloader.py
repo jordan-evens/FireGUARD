@@ -1,10 +1,10 @@
 from weatherloader import WeatherLoader
 import datetime
-import urllib2
+import urllib.request as urllib2
 
 import glob
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 import os
 import pandas
@@ -60,7 +60,7 @@ class GribLoader(WeatherLoader):
             """
             # Get full url for the file that has the data we're asking for
             diff = for_date - for_run
-            real_hour = (diff.days * 24) + (diff.seconds / 60 / 60)
+            real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
             file = self.mask.format('{}', for_run.hour, real_hour)
             var = r'&{}=on&var_{}=on'.format(weather_index.layer, weather_index.name)
             subregion_mask = r'&subregion=&leftlon={}&rightlon={}&toplat={}&bottomlat={}'
@@ -96,7 +96,7 @@ class GribLoader(WeatherLoader):
                     u = partial_url.format(member_name)
                     assert('{}' not in u)
                     return u
-                urls = map(generate_member, xrange(0, self.num_members))
+                urls = list(map(generate_member, range(0, self.num_members)))
                 results = common.download_many(urls, fct=download_and_wait)
                 assert(self.num_members == len(results))
                 try:
@@ -254,7 +254,7 @@ class GribLoader(WeatherLoader):
         @return datetime for closest model run to current time
         """
         now = datetime.datetime.now()
-        nearest_run = int(interval * round(now.hour / interval))
+        nearest_run = int(interval * round(now.hour / interval)) % 24
         return datetime.datetime.combine(now.date(), datetime.time(nearest_run))
     def load_past_records(self, year=None, force=False):
         """!
@@ -315,9 +315,8 @@ class GribLoader(WeatherLoader):
         @param force Whether or not ot force loading if records already exist
         @return None
         """
-        common.check_proxy()
         for_run = self.get_nearest_run(self.interval)
-        for i in xrange(max_retries):
+        for i in range(max_retries):
             try:
                 return self.load_specific_records(for_run)
             except urllib2.HTTPError as ex:

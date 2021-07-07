@@ -44,3 +44,4 @@ docker build --tag fireguard-python .
 # build from main directory
 docker build --tag fireguard-python -f docker/python/Dockerfile . && docker run -it --rm --name fireguard-cli -v C:\FireGUARD\data:/FireGUARD/data --network fireguard-network fireguard-python /bin/bash
 
+docker exec -it --rm --name fireguard-cli -v C:\FireGUARD\data:/FireGUARD/data --network fireguard-network fireguard-python /bin/bash

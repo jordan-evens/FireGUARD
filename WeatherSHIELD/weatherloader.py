@@ -1,7 +1,7 @@
 """WeatherLoader class"""
 
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 import pandas
 import os
@@ -9,7 +9,7 @@ import os
 class WeatherLoader(object):
     """ Loads weather data """
     ## directory to save data
-    DIR_DATA = r'..\data\wx'
+    DIR_DATA = '../data/wx'
     def check_exists(self, for_run):
         """!
         Check if data for given generated time already exists

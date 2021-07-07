@@ -66,9 +66,6 @@ def load():
     Load data for all indices
     @return pandas DataFrame of loaded data
     """
-    if common.CURRENT_PROXY is not None and common.CURRENT_PROXY.endswith(common.MNR_PROXY):
-        common.set_proxy(None)
-    common.check_proxy()
     nino1_2 = getValues("Nino1+2", url_nino1_2)
     nino3 = getValues("Nino3", url_nino3)
     nino3_4 = getValues("Nino3.4", url_nino3_4)

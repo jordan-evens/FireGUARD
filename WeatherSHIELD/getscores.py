@@ -157,9 +157,6 @@ def get_standard():
     Get values for all indices and calculate moving averages and trends
     @return None
     """
-    if common.CURRENT_PROXY is not None and common.CURRENT_PROXY.endswith(common.MNR_PROXY):
-        common.set_proxy(None)
-    common.check_proxy()
     amo = read_AMO(URL_AMO)
     #~ print amo
     # estimate predictions for amo

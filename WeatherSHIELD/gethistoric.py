@@ -73,7 +73,7 @@ def load_file(for_run, force=False):
     # throw out everything except years and months
     df = df[df.columns[:13]]
     # change months into numbers
-    df.columns = ['year'] + range(1, 13)
+    df.columns = ['year'] + list(range(1, 13))
     df = pandas.melt(df,
                         id_vars=['year'],
                         var_name='month',
@@ -99,7 +99,7 @@ def load_file(for_run, force=False):
     def do_insert_only(cnxn, table, data):
         """Insert and assume success because no duplicate keys should exist"""
         # rely on deleting from FK table to remove everything from this table, so just insert
-        stmt_insert = common.make_insert_statement(table, data.reset_index().columns, data.reset_index().dtypes)
+        stmt_insert = common.make_insert_statement(table, data.reset_index().columns)
         common.trans_insert_data(cnxn, data, stmt_insert)
     try:
         cnxn = common.open_local_db()
