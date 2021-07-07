@@ -297,14 +297,12 @@ return '['.implode(', ', array_map(create_function('$v', 'return "\'".$v."\'";')
     </head>
     <body>
     
-    <!--<img src="..\images\blah.png" style="width:304px;height:auto;" alt="big logo">
-    <img src="..\images\bars.png" alt="Green Bars">-->
     <div align='center'>
         <h1 id='title' style='color:black'>WeatherSHIELD Report</h1>
         <table>
             <tr>
                 <td class='report'>
-                    <img id='imgLogo' src='Images/weathershield.png' alt='WeatherSHIELD Logo' style='width:auto; height: 150px'>
+                    <img id='imgLogo' src='img/weathershield.png' alt='WeatherSHIELD Logo' style='width:auto; height: 150px'>
                 </td>
                 <td class='report'>
                     <p id='reportTitle'>
@@ -318,7 +316,7 @@ return '['.implode(', ', array_map(create_function('$v', 'return "\'".$v."\'";')
                 </td>
                 <td class='report'>
                     <?php if($is_debug) echo "<a id='datalink' href=''>" ?>
-                    <img id='imgAFFES' src='Images/AFFES.png' alt='AFFES Logo' style='width:auto; height: 150px'>
+                    <img id='imgAFFES' src='img/AFFES.png' alt='AFFES Logo' style='width:auto; height: 150px'>
                     <?php if($is_debug) echo "</a>" ?>
                 </td>
             </tr>

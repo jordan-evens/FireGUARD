@@ -367,7 +367,7 @@ and open the template in the editor.
     <body>
         <div class="container form">
         <form id="formInputs" data-toggle="validator" role="form" style="margin-top: -25px;margin-bottom:-25px;" action="display.php" method="get">
-            <center><img src="images\shieldwebsite.png" alt="WeatherSHIELD Logo" style="width:auto;height:75px;margin-bottom: 5px;"></center>
+            <center><img src="img/shieldwebsite.png" alt="WeatherSHIELD Logo" style="width:auto;height:75px;margin-bottom: 5px;"></center>
                 <hr style="width: 75%">
                 <h3>Forecast Location</h3>
                 <center>
