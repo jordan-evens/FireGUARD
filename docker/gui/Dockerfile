@@ -1,23 +1,36 @@
 FROM php:7.2-apache
-RUN apt-get update
-RUN apt-get install -y libpq-dev \
-  && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-  && docker-php-ext-install pdo pdo_pgsql pgsql
-RUN apt-get install -y wget unzip
 WORKDIR /var/www/html/wxshield/
-RUN wget https://github.com/twbs/bootstrap/releases/download/v3.4.1/bootstrap-3.4.1-dist.zip
-RUN unzip bootstrap-3.4.1-dist.zip
-RUN mv bootstrap-3.4.1-dist bootstrap
-RUN rm bootstrap-3.4.1-dist.zip
-WORKDIR /var/www/html/wxshield/js/
-RUN wget https://code.jquery.com/jquery-1.11.3.js
-RUN wget https://code.jquery.com/jquery-1.11.3.min.js
-RUN wget https://github.com/jquery-validation/jquery-validation/archive/1.11.1.zip
-RUN unzip 1.11.1.zip
-RUN mv jquery-validation-1.11.1/jquery.validate.js ./
-RUN wget https://github.com/MrRio/jsPDF/archive/v1.2.61.zip
-RUN unzip v1.2.61.zip
-RUN mkdir -p jspdf & mv jsPDF-1.2.61/dist/jspdf.min.js jspdf/jspdf.js
+RUN apt-get update \
+	&& apt-get install -y libpq-dev \
+	&& docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+	&& docker-php-ext-install pdo pdo_pgsql pgsql \
+	&& apt-get install -y wget unzip \
+	&& wget https://github.com/twbs/bootstrap/releases/download/v3.4.1/bootstrap-3.4.1-dist.zip \
+	&& unzip bootstrap-3.4.1-dist.zip \
+	&& rm bootstrap-3.4.1-dist.zip \
+	&& mv bootstrap-3.4.1-dist bootstrap \
+	&& mkdir -p /var/www/html/wxshield/js/ \
+	&& cd /var/www/html/wxshield/js/ \
+	&& wget https://code.jquery.com/jquery-1.11.3.js \
+	&& wget https://code.jquery.com/jquery-1.11.3.min.js \
+	&& wget https://github.com/jquery-validation/jquery-validation/archive/1.11.1.zip \
+	&& unzip 1.11.1.zip \
+	&& rm 1.11.1.zip \
+	&& mv jquery-validation-1.11.1/jquery.validate.js ./ \
+	&& wget https://github.com/MrRio/jsPDF/archive/v1.2.61.zip \
+	&& unzip v1.2.61.zip \
+	&& rm v1.2.61.zip \
+	&& (mkdir -p jspdf & mv jsPDF-1.2.61/dist/jspdf.min.js jspdf/jspdf.js) \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/* \
+	&& rm -rf \
+      /usr/share/man/* \
+      /usr/includes/* \
+      /var/cache/apk/* \
+      /root/.npm/* \
+      /usr/lib/node_modules/npm/man/* \
+      /usr/lib/node_modules/npm/doc/* \
+      /usr/lib/node_modules/npm/html/* \
+      /usr/lib/node_modules/npm/scripts/*
 # FIX: this shouldn't be static
 COPY settings.ini /var/www/html/wxshield
 COPY WeatherSHIELD/gui/ /var/www/html/wxshield/
