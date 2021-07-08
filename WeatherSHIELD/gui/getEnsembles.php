@@ -25,9 +25,9 @@ function modelArray($last_row, $membersArray)
     }
     return array(
             // these are all Zulu times
-            "Generated" => date_format($last_row['generated'], 'Y-m-d\TH:i:s').'.000Z',
-            "lat"=>$last_row['latitude'],
-            "lon"=>$last_row['longitude'],
+            "Generated" => $last_row['generated'],
+            "lat"=>floatval($last_row['latitude']),
+            "lon"=>floatval($last_row['longitude']),
             // this is in meters, so no decimal digits should be fine
             "DistanceFrom" => round($last_row['distance_from']),
             "Members" => $membersArray
@@ -66,7 +66,7 @@ function readModels($conn, $sql, $indices, &$dates_array)
     $last_row = null;
     $last_key = null;
     $is_same = null;
-    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
+    while( $row = pg_fetch_array($stmt) ) {
         $cur_model = $row['model'];
         $cur_member = $row['member'];
         $temp = array();
@@ -93,7 +93,7 @@ function readModels($conn, $sql, $indices, &$dates_array)
                 $last_model = $cur_model;
             }
         }
-        $cur_date = date_format($row['fortime'], 'Y-m-d\TH:i:s').'.000Z';
+        $cur_date = $row['fortime'];
         // use a single array of dates and then the index in that array for the members
         if (!in_array($cur_date, $dates_array)) {
             array_push($dates_array, $cur_date);
@@ -126,11 +126,11 @@ $conn_hindcast = connect('FireGUARD');
 if ($conn && $conn_hindcast){
     // could probably look at only asking for what we're going to display
     $indices = array(
-        'TMP',
-        'RH',
-        'WS',
-        'WD',
-        'APCP'
+        'tmp',
+        'rh',
+        'ws',
+        'wd',
+        'apcp'
     );
     // if we've specified indices then only get those
     if (isset($_GET["indices"])) {
@@ -141,7 +141,7 @@ if ($conn && $conn_hindcast){
     $outputArray['FromDatabase'] = $WX_DATABASE;
     $outputArray['FakeDatabase'] = 'WX_'.date_format($startDate, 'Ym');
     // define which indices are going to be included and their order
-    $outputArray['Indices'] = $indices;
+    $outputArray['Indices'] = array_map('strtoupper', $indices);
     $outputArray['StartupValues'] = getStartup($conn_dfoss, $offset, $lat, $long);
     $dates_array = array();
 
@@ -160,8 +160,8 @@ if ($conn && $conn_hindcast){
             . " ORDER BY grade DESC";
         $outputArray['qry_FCT_HistoricMatch_By_Offset'] = $sql_match;
         $stmt = try_query($conn_hindcast,$sql_match);
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-            array_push($matches, $row['year']);
+        while( $row = pg_fetch_array($stmt) ) {
+            array_push($matches, intval($row['year']));
             // HACK: enforce a minimum score
             // only displays 2 decimal places but log scale so need more precision
             $grades[$row['year']] = round(max($row['grade'], 0.0001), 4);
@@ -177,10 +177,7 @@ if ($conn && $conn_hindcast){
     $outputArray['qry_FCT_Hindcast_By_Offset'] = $sql;
     $outputArray['Hindcast'] = readModels($conn_hindcast, $sql, $indices, $dates_array);
     
-    $sql = "SELECT *"
-        . " FROM INPUTS.FCT_Actuals(".$offset.", ".$numDays.", ".$lat.", ".$long.", DEFAULT)"
-        . " order by model, member, fortime";
-    $outputArray['Actuals'] = readModels($conn_dfoss, $sql, $indices, $dates_array);
+    $outputArray['Actuals'] = array();
     
     $outputArray['ForDates'] = $dates_array;
     // we only need to know the day we started since they're sequential
@@ -188,11 +185,11 @@ if ($conn && $conn_hindcast){
     echo json_encode($outputArray);
 }
 else{
-    echo("Error could not connect to SQL database: ".print_r( sqlsrv_errors(), true));
+    echo("Error could not connect to SQL database: ".print_r( pg_errors(), true));
 }
 
 /* Close the connection. */
-sqlsrv_close( $conn);
-sqlsrv_close( $conn_dfoss);
-sqlsrv_close( $conn_hindcast);
+pg_close( $conn);
+pg_close( $conn_dfoss);
+pg_close( $conn_hindcast);
 ?>

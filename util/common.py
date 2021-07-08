@@ -2,6 +2,7 @@
 
 import math
 import urllib.request as urllib2
+import urllib.error
 from urllib.parse import urlparse
 import dateutil
 import time
@@ -235,9 +236,12 @@ def try_save(fct, url, max_save_retries=5):
     while (True):
         try:
             return fct(url)
-        except urllib2.URLError as ex:
+        except urllib.error.URLError as ex:
             logging.warning(ex)
             # no point in retrying if URL doesn't exist
+            if 403 == ex.code:
+                logging.error(ex.reason)
+                raise ex
             if 404 == ex.code or save_tries >= max_save_retries:
                 raise ex
             logging.warning("Retrying save for {}".format(url))
@@ -675,7 +679,7 @@ def download(get_what, suppress_exceptions=True):
         response = urllib2.urlopen(url)
         # logging.debug("Saving {}".format(url))
         return response.read()
-    except urllib2.URLError as ex:
+    except urllib.error.URLError as ex:
         # provide option so that we can call this from multiprocessing and still handle errors
         if suppress_exceptions:
             # HACK: return type and url for exception

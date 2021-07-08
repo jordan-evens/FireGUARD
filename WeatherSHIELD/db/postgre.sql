@@ -847,23 +847,6 @@ END; $$ LANGUAGE plpgsql;
 -- ***************************************************
 
 
-CREATE SCHEMA LOG; 
-
-CREATE TABLE LOG.FCT_Forecast(
-    IP VARCHAR(15) NOT NULL,
-    Timeof TIMESTAMP NOT NULL,
-    Latitude FLOAT NOT NULL,
-    Longitude FLOAT NOT NULL,
-    reqOffset INT NOT NULL,
-    NumDays INT NOT NULL,
-    Query TEXT NOT NULL  
-);
-
--- ***************************************************
---                    END OF LOG
--- ***************************************************
-
-
 GRANT USAGE ON SCHEMA INPUTS to wx_readwrite;
 GRANT USAGE ON SCHEMA INPUTS to wx_readonly;
 GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA INPUTS TO wx_readwrite;
@@ -877,10 +860,3 @@ GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA HINDCAST TO wx_read
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA HINDCAST TO wx_readwrite;
 GRANT SELECT ON ALL TABLES IN SCHEMA HINDCAST TO wx_readonly;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA HINDCAST TO wx_readonly;
-
-GRANT USAGE ON SCHEMA LOG to wx_readwrite;
-GRANT USAGE ON SCHEMA LOG to wx_readonly;
-GRANT SELECT, INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA LOG TO wx_readwrite;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA LOG TO wx_readwrite;
-GRANT SELECT ON ALL TABLES IN SCHEMA LOG TO wx_readonly;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA LOG TO wx_readonly;

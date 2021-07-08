@@ -39,27 +39,8 @@ $show_scenarios = isset($_GET["Scenarios"]) ? 'true' : 'false';
 $override = isset($_GET["override"]) ? 'true' : 'false';
 $query = $_SERVER['QUERY_STRING'];
 $conn = connect('WXSHIELD');
-
-if ($conn){
-    $log_sql = "INSERT INTO [LOG].[FCT_Forecast] (IP, TimeOf, Latitude, Longitude, Offset, NumDays, Query) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $user_ip = $_SERVER['REMOTE_ADDR'];
-    $time_of = date("Y-m-d H:i:s");
-    $log_stmt = sqlsrv_prepare($conn, $log_sql, array( &$user_ip, &$time_of, &$lat, &$long, &$offset, &$numDays, &$query));
-    if ( !$log_stmt )
-    {
-        die("Error could not prepare SQL command: ".print_r( sqlsrv_errors(), true));
-    }
-    if (!sqlsrv_execute($log_stmt))
-    {
-        die("Error could not run SQL command: ".print_r( sqlsrv_errors(), true));
-    }
-}
-else
-{
-    die("Error could not connect to SQL database: ".print_r( sqlsrv_errors(), true));
-}
 /* Close the connection. */
-sqlsrv_close( $conn);
+pg_close( $conn);
 
 //define variables and set them to false or empty
 $strLat = "";
