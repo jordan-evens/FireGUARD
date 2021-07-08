@@ -23,5 +23,6 @@ RUN apt-get purge -y --auto-remove gcc make gfortran
 RUN apt-get install -y libgfortran5 libgomp1
 WORKDIR /FireGUARD/WeatherSHIELD
 RUN rm -rf grib2
+WORKDIR /FireGUARD
 COPY WeatherSHIELD /FireGUARD/WeatherSHIELD/
 COPY util /FireGUARD/util/

@@ -1,5 +1,5 @@
 <?php
-    $config = parse_ini_file("C:\\FireGUARD\settings.ini", true);
+    $config = parse_ini_file("settings.ini", true);
 ?>
 <!DOCTYPE html>
 <html lang="en">
