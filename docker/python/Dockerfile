@@ -6,8 +6,8 @@ RUN pip install -r requirements.txt
 WORKDIR /FireGUARD/WeatherSHIELD/
 RUN apt-get update \
 	&& apt-get install -y gcc make gfortran wget
-RUN wget ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v1.9.4 \
-	&& tar -xzvf wgrib2.tgz.v1.9.4
+RUN wget ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.0.2\
+	&& tar -xzvf wgrib2.tgz.v3.0.2
 WORKDIR /FireGUARD/WeatherSHIELD/grib2
 RUN export CC=gcc \
 	&& export FC=gfortran \

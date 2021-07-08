@@ -22,27 +22,27 @@ class GribLoader(WeatherLoader):
     # Provide mapping between fields we're looking for and the file names that contain them
     class WeatherIndex(object):
         """Simple class for mapping indices to lookup data"""
-        def __init__(self, name, grib_field, layer):
+        def __init__(self, name, match, layer):
             """!
             An index in the grib data that gets processed
             @param self Pointer to this
             @param name Name of the index
-            @param grib_field Field in the grib data to read index for
+            @param match Array of what to match
             @param layer Layer in the grib data to read for index
             """
             ## Name of the index
             self.name = name
             ## Field in the grib data to read for index
-            self.grib_field = grib_field
+            self.match = match
             ## Layer in the grib data to read for index
             self.layer = layer
     ## The indices that get processed when loading weather
     indices = {
-        'TMP': WeatherIndex('TMP', r':TMP:2 m above ground:', 'lev_2_m_above_ground'),
-        'UGRD': WeatherIndex('UGRD', r':UGRD:10 m above ground:', 'lev_10_m_above_ground'),
-        'VGRD': WeatherIndex('VGRD', r':VGRD:10 m above ground:', 'lev_10_m_above_ground'),
-        'RH': WeatherIndex('RH', r':RH:2 m above ground:', 'lev_2_m_above_ground'),
-        'APCP': WeatherIndex('APCP', r':APCP:surface:', 'lev_surface')
+        'TMP': WeatherIndex('TMP', [':TMP', ':2 m above ground:'], 'lev_2_m_above_ground'),
+        'UGRD': WeatherIndex('UGRD', [':UGRD', ':10 m above ground:'], 'lev_10_m_above_ground'),
+        'VGRD': WeatherIndex('VGRD', [':VGRD', ':10 m above ground:'], 'lev_10_m_above_ground'),
+        'RH': WeatherIndex('RH', [':RH', ':2 m above ground:'], 'lev_2_m_above_ground'),
+        'APCP': WeatherIndex('APCP', [':APCP', ':surface:'], 'lev_surface')
     }
     def read_grib(self, for_run, for_date, name):
         """!
@@ -115,7 +115,7 @@ class GribLoader(WeatherLoader):
             return common.try_save(save_file, partial_url)
         weather_index = self.indices[name]
         file = get_match_files(weather_index)
-        result = common.read_grib(file, weather_index.grib_field)
+        result = common.read_grib(file, weather_index.match)
         index = result.index.names
         columns = result.columns
         result = result.reset_index()

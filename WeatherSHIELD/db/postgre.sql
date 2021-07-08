@@ -329,7 +329,7 @@ BEGIN
                     FROM INPUTS.DAT_Forecast f
                     WHERE
                         f.ForTime <= (current_date + (DateOffset + NumberDays + 1) * INTERVAL '1 day')
-                        AND f.ForTime >= (current_date + (DateOffset + 1) * INTERVAL '1 day')) cur ON
+                        AND f.ForTime >= (current_date + DateOffset * INTERVAL '1 day')) cur ON
                     dist.LocationModelId=cur.LocationModelId
         ) n
         WHERE n.ForTime IS NOT NULL;
@@ -648,7 +648,7 @@ RETURNS TABLE (
         )
 LANGUAGE plpgsql
 AS $$
-    DECLARE FirstDay TIMESTAMP := (current_date + (DateOffset + 1) * INTERVAL '1 day');
+    DECLARE FirstDay TIMESTAMP := (current_date + DateOffset * INTERVAL '1 day');
     DECLARE NumberMonths INT := 5;
     DECLARE OffsetMonths INT := 0;
     DECLARE MinRatioScore FLOAT := 0.725;

@@ -93,17 +93,17 @@ function readModels($conn, $sql, $indices, &$dates_array)
                 $last_model = $cur_model;
             }
         }
-        $cur_date = $row['fortime'];
+        $cur_date = $row['fortime'].' GMT';
         // use a single array of dates and then the index in that array for the members
         if (!in_array($cur_date, $dates_array)) {
             array_push($dates_array, $cur_date);
         }
         $date_key = array_search($cur_date, $dates_array);
-        if ($is_same && $last_key != ($date_key - 1))
-        {
-            // HACK: output is missing a day so just duplicate
-            $dataArray[$date_key - 1] = $temp;
-        }
+        // if ($is_same && $last_key != ($date_key - 1))
+        // {
+            //HACK: output is missing a day so just duplicate
+            // $dataArray[$date_key - 1] = $temp;
+        // }
         $last_key = $date_key;
         $dataArray[$date_key] = $temp;
         $last_row = $row;
@@ -134,7 +134,7 @@ if ($conn && $conn_hindcast){
     );
     // if we've specified indices then only get those
     if (isset($_GET["indices"])) {
-        $indices = explode(',', strval($_GET['indices']));
+        $indices = array_map('strtolower', explode(',', strval($_GET['indices'])));
     }
     $outputArray = array();
     $outputArray['givenStart'] = $startDate->format('Y-m-d');

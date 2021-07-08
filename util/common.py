@@ -384,7 +384,7 @@ def fix_Types(x):
     """
     # for some reason the dates are giving too much precision for the database to use if seconds are specified
     if isinstance(x, numpy.datetime64):
-        x = pandas.to_datetime(x)
+        x = pandas.to_datetime(x, utc=True)
     if isinstance(x, numpy.int64):
         x = int(x)
     return fix_None(x)
@@ -531,6 +531,14 @@ def write_foreign(cnxn, schema, table, index, fct_insert, cur_df):
     fct_insert(cnxn, qualified_table, sub_data)
     # should be much quicker to read out the fk data and do a join on this end
     fkData = pandas.read_sql("SELECT * FROM {}".format(qualified_table), cnxn)
+    print(fkData.columns)
+    print(fkData.dtypes)
+    for i in range(len(fkData.columns)):
+        if fkData.dtypes[i] == 'datetime64[ns]':
+            c = fkData.columns[i]
+            print('Fixing ' + c)
+            fkData[c] = pandas.to_datetime(fkData[c], utc=True)
+    print(fkData.dtypes)
     fkId = [x for x in fkData.columns if x not in index][0]
     fkColumns = [x for x in fkData.columns if x != fkId]
     new_index = [fkId] + [x for x in new_index if x not in fkColumns]
@@ -579,7 +587,7 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
         stmt_insert = make_insert_statement(table, data.reset_index().columns)
         trans_insert_data(cnxn, data, stmt_insert)
     if addStartDate:
-        df['startdate'] = df.reset_index()['fortime'].min()
+        df['startdate'] = pandas.to_datetime(df.reset_index()['fortime'].min(), utc=True)
     try:
         cnxn = open_local_db()
         cur_df = df
@@ -607,7 +615,7 @@ def read_grib(file, match):
                                   BOUNDS['longitude']['max'],
                                   BOUNDS['latitude']['min'],
                                   BOUNDS['latitude']['max'])
-    args = r'-match "' + match + '" -inv /dev/null -undefine out-box {} -csv'.format(bounds)
+    args = ' '.join(map(lambda x: '-match "' + x + '"', match)) + ' -inv /dev/null -undefine out-box {} -set_ext_name 1 -csv'.format(bounds)
     output = r'-'
     # run generated command for parsing data
     run_what = [cmd] + [os.path.basename(file)] + shlex.split(args) + [output]
@@ -630,7 +638,7 @@ def read_grib(file, match):
                                                        'value']),
                              parse_dates=['generated', 'fortime'],
                              encoding='utf8',
-                             date_parser=lambda x: pandas.to_datetime(x, errors='coerce'))
+                             date_parser=lambda x: pandas.to_datetime(x, utc=True, errors='coerce'))
     variable = output[:1]['field'][0]
     columns = ['generated', 'fortime', 'longitude', 'latitude']
     def parse_ensemble(x):
@@ -639,7 +647,7 @@ def read_grib(file, match):
         @param x Data to parse
         @return Number representing ensemble name
         """
-        result = 0 if -1 != x.find('low-res_ctl') else int(x[x.find('.') + 1:])
+        result = 0 if -1 != x.find('low-res_ctl') else int(x[x.find('=') + 1:])
         return result
     if -1 != variable.find('.'):
         variable = variable[:variable.find('.')]
