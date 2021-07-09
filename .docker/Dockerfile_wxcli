@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM python:3.6-slim
 WORKDIR /FireGUARD
-COPY docker/python/requirements.txt requirements.txt
+COPY .docker/requirements_wxcli.txt requirements.txt
 WORKDIR /FireGUARD/WeatherSHIELD/
 RUN pip install -r /FireGUARD/requirements.txt \
 	&& apt-get update \
@@ -30,5 +30,4 @@ RUN pip install -r /FireGUARD/requirements.txt \
       /usr/lib/node_modules/npm/scripts/* \
 	  /FireGUARD/WeatherSHIELD/grib2 \
 	&& mkdir /FireGUARD/data
-COPY WeatherSHIELD /FireGUARD/WeatherSHIELD/
-COPY util /FireGUARD/util/
+

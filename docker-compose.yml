@@ -1,12 +1,17 @@
 # docker-compose build
-version: '2.1'
+version: '3.9'
 volumes:
   dbbackups:
   postgis-data:
 
 services:
   db:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile_db
     container_name: fireguard-db
+    deploy:
+      mode: global
     image: kartoza/postgis:13-3.1
     volumes:
       - postgis-data:/var/lib/postgresql
@@ -21,14 +26,18 @@ services:
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
     ports:
       - 25432:5432
+    networks:
+      default:
+        ipv4_address: 172.18.0.200
     restart: on-failure
     healthcheck:
       test: "exit 0"
 
-  dbbackups:
-    container_name: fireguard-backup
+  db-backups:
     image: kartoza/pg-backup:13.0
-    hostname: pg-backups
+    container_name: pg-backups
+    deploy:
+      mode: global
     volumes:
       - dbbackups:/backups
     environment:
@@ -38,10 +47,51 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - POSTGRES_DBNAME=gis
+    networks:
+      default:
+        ipv4_address: 172.18.0.201
     restart: on-failure
     depends_on:
       db:
         condition: service_healthy
+
+  wxshield:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile_gui
+    container_name: fireguard-wxshield
+    deploy:
+      mode: global
+    image: "php:7.2-apache"
+    ports:
+      - 8080:80
+    networks:
+      default:
+        ipv4_address: 172.18.0.202
+    restart: on-failure
+    volumes:
+      - type: bind
+        source: ./settings.ini
+        target: /var/www/html/wxshield/settings.ini
+    depends_on:
+      db:
+        condition: service_healthy
+
+  wxcli:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile_wxcli
+    image: python
+    volumes:
+      - type: bind
+        source: ./data
+        target: /FireGUARD/data
+      - type: bind
+        source: ./WeatherSHIELD
+        target: /FireGUARD/WeatherSHIELD
+      - type: bind
+        source: ./util
+        target: /FireGUARD/util
 
 networks:
   default:

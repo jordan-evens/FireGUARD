@@ -91,7 +91,7 @@ def load_file(for_run, force=False):
         return x if 1 >= x else x / 100.0
     #~ fix_ratio(df.values[0][2])
     df['value'] = df['value'].apply(fix_ratio)
-    df['generated'] = pandas.to_datetime(for_run)
+    df['generated'] = pandas.to_datetime(for_run, utc=True)
     #~ df['generated'] = df['generated'].astype('datetime64[s]')
     df = df.set_index(['generated', 'year', 'month'])
     schema = 'HINDCAST'

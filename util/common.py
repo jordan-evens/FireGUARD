@@ -421,7 +421,7 @@ def open_local_db():
     @return psycopg2 connection to database
     """
     logging.debug("Opening local database connection")
-    return psycopg2.connect(dbname='FireGUARD', port=5432, user=DB_USER, password=DB_PASSWORD, host='172.18.0.2')
+    return psycopg2.connect(dbname='FireGUARD', port=5432, user=DB_USER, password=DB_PASSWORD, host='172.18.0.200')
 
 
 def save_data(table, wx, delete_all=False, dbname=None):
