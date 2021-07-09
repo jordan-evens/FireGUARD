@@ -33,7 +33,7 @@ from Settings import Settings
 from scipy import ndimage as nd
 
 import sys
-SCRIPTS_DIR = os.path.join(os.path.dirname(sys.executable), 'Scripts')
+SCRIPTS_DIR = os.path.join(os.path.dirname(sys.executable))
 sys.path.append(SCRIPTS_DIR)
 import gdal_merge as gm
 

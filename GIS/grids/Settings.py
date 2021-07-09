@@ -1,10 +1,10 @@
 import os
-import ConfigParser
+import configparser
 
 class Settings:
     def __init__(self):
         from_file = 'settings.ini'
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         if os.path.exists(from_file):
             config.read(from_file)
         else:
@@ -13,7 +13,7 @@ class Settings:
             config.set('GIS', 'latitude_max', 57.0)
             config.set('GIS', 'longitude_min', -96.0)
             config.set('GIS', 'longitude_max', -73.0)
-        with open(from_file, 'wb') as to_file:
+        with open(from_file, 'w') as to_file:
             config.write(to_file)
         self.latitude_min = float(config.get('GIS', 'latitude_min'))
         self.latitude_max = float(config.get('GIS', 'latitude_max'))

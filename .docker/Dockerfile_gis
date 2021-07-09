@@ -1,0 +1,16 @@
+# syntax=docker/dockerfile:1
+FROM thinkwhere/gdal-python
+WORKDIR /FireGUARD
+COPY .docker/requirements_gis.txt requirements_gis.txt
+WORKDIR /FireGUARD/GIS/
+RUN python -m pip install --upgrade pip \
+	&& pip install -r /FireGUARD/requirements_gis.txt \
+	&& rm -rf \
+      /usr/share/man/* \
+      /usr/includes/* \
+      /var/cache/apk/* \
+      /root/.npm/* \
+      /usr/lib/node_modules/npm/man/* \
+      /usr/lib/node_modules/npm/doc/* \
+      /usr/lib/node_modules/npm/html/* \
+      /usr/lib/node_modules/npm/scripts/*

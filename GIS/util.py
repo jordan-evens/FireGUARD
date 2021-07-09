@@ -3,8 +3,8 @@
 import os
 import fnmatch
 
-import urllib2
-from urlparse import urlparse
+import urllib.request as urllib2
+from urllib.parse import urlparse
 
 # for downloading files
 import time

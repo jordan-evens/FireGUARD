@@ -1,5 +1,5 @@
 import os
-import urllib2
+import urllib.request as urllib2
 import zipfile
 
 def download(url, to_dir='.', to_file=None):

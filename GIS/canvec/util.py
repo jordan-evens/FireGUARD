@@ -6,8 +6,8 @@ import logging
 import os
 import fnmatch
 
-import urllib2
-from urlparse import urlparse
+import urllib.request as urllib2
+from urllib.parse import urlparse
 
 # for downloading files
 import time
@@ -41,8 +41,7 @@ def find_files(folder, file_mask='*'):
     paths = []
     for root, dirs, files in os.walk(folder):
         for file in fnmatch.filter(files, file_mask):
-            real_folder = apply(os.path.join, root.split('/'))
-            path = os.path.join(real_folder, file)
+            path = os.path.join(root, file)
             paths.append(path)
     return paths
 

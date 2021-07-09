@@ -16,7 +16,7 @@ class ArcpyHandler(logging.StreamHandler):
     """Overrides emit so that output is visible in ArcMap"""
     def emit(self, record):
         """Use print to output record since StreamHandler doesn't want to work in ArcMap"""
-        print formatter.format(record)
+        print(formatter.format(record))
 
 
 def removeHandlers():

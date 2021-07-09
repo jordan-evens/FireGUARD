@@ -12,6 +12,9 @@ goto :end
 @REM wxcli python container
 docker compose run --rm wxcli /bin/bash
 
+@REM gis python container
+docker compose run --rm gis /bin/bash
+
 @REM database access
 docker exec -it fireguard-db psql -U docker -h localhost -d FireGUARD -p 5432
 

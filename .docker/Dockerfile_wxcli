@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM python:3.6-slim
 WORKDIR /FireGUARD
-COPY .docker/requirements_wxcli.txt requirements.txt
+COPY .docker/requirements_wxcli.txt requirements_wxcli.txt
 WORKDIR /FireGUARD/WeatherSHIELD/
-RUN pip install -r /FireGUARD/requirements.txt \
+RUN pip install -r /FireGUARD/requirements_wxcli.txt \
 	&& apt-get update \
 	&& apt-get install -y gcc make gfortran wget \
 	&& wget ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.0.2 \

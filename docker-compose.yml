@@ -81,14 +81,36 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile_wxcli
-    image: python
+    image: python:3.6-slim
     volumes:
+      - type: bind
+        source: ./settings.ini
+        target: /FireGUARD/settings.ini
       - type: bind
         source: ./data
         target: /FireGUARD/data
       - type: bind
         source: ./WeatherSHIELD
         target: /FireGUARD/WeatherSHIELD
+      - type: bind
+        source: ./util
+        target: /FireGUARD/util
+
+  gis:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile_gis
+    image: thinkwhere/gdal-python
+    volumes:
+      - type: bind
+        source: ./settings.ini
+        target: /FireGUARD/settings.ini
+      - type: bind
+        source: ./data
+        target: /FireGUARD/data
+      - type: bind
+        source: ./GIS
+        target: /FireGUARD/GIS
       - type: bind
         source: ./util
         target: /FireGUARD/util

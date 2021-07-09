@@ -1,13 +1,13 @@
 """Handles configuration for all scripts"""
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import os
 import sys
-from urlparse import urlparse
-import StringIO
+from urllib.parse import urlparse
+from io import StringIO
 import re
 
 # File listing values to use for various options
-ROOT = r'C:\FireGUARD\GIS'
+ROOT = r'/FireGUARD/GIS'
 CONFIG_FILE = os.path.join(ROOT, "canvec", "config.ini")
 
 def read_config(file_name):
@@ -29,15 +29,15 @@ def read_config(file_name):
     note("Root directory")
     value("ROOT", ROOT)
     note("Source directory")
-    value("SOURCE", "%(root)s\\canvec")
+    value("SOURCE", "%(root)s/canvec")
     note("Data directory")
-    value("DATA", "%(root)s\\..\\data")
+    value("DATA", "%(root)s/../data")
     note("Extracted files directory")
-    value("EXTRACTED", "%(data)s\\extracted")
+    value("EXTRACTED", "%(data)s/extracted")
     note("Intermediate files directory - don't want to clutter final gdb but want to keep intermediate calculation")
-    value("INTERMEDIATE", "%(data)s\\intermediate")
+    value("INTERMEDIATE", "%(data)s/intermediate")
     note("FTP download directory")
-    value("FTP", "%(data)s\\download\\ftp")
+    value("FTP", "%(data)s/download/ftp")
     # this is in a separate folder to make robocopy easier
     # [CANVEC]
     config.add_section("CANVEC")
@@ -68,7 +68,7 @@ def read_config(file_name):
         
         # HACK: write out the config right away so it's got defaults and everything
         # HACK: go through output first to get rid of ' = None' at end of comments in DEFAULT section
-        fakefile = StringIO.StringIO()
+        fakefile = StringIO()
         config.write(fakefile)
         with open(file_name, "w") as out:
             for line in fakefile.getvalue().split('\n'):
@@ -141,6 +141,6 @@ CONFIG = read_config(CONFIG_FILE)
 
 if __name__ == "__main__":
     for key, value in sorted(CONFIG.iteritems()):
-        print key
-        print " " + str(value)
+        print(key)
+        print(" " + str(value))
 
