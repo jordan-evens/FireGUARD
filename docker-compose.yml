@@ -115,6 +115,25 @@ services:
         source: ./util
         target: /FireGUARD/util
 
+  firestarr:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile_firestarr
+    image: gcc:10.3
+    volumes:
+      - type: bind
+        source: ./settings.ini
+        target: /FireGUARD/settings.ini
+      - type: bind
+        source: ./data
+        target: /FireGUARD/data
+      - type: bind
+        source: ./FireSTARR
+        target: /FireGUARD/FireSTARR
+      - type: bind
+        source: ./util
+        target: /FireGUARD/util
+
 networks:
   default:
     external: true

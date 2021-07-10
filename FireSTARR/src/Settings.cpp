@@ -201,7 +201,7 @@ public:
    * \brief Maximum time simulation can run before it is ended and whatever results it has are used (s)
    * \return Maximum time simulation can run before it is ended and whatever results it has are used (s)
    */
-  [[nodiscard]] constexpr __int64 maximumTimeSeconds() const noexcept
+  [[nodiscard]] constexpr int64_t maximumTimeSeconds() const noexcept
   {
     return maximum_time_seconds_;
   }
@@ -296,7 +296,7 @@ private:
   /**
    * \brief Maximum time simulation can run before it is ended and whatever results it has are used (s)
    */
-  __int64 maximum_time_seconds_;
+  int64_t maximum_time_seconds_;
   /**
    * \brief Weight to give to Scenario part of thresholds
    */
@@ -553,7 +553,7 @@ double Settings::confidenceLevel() noexcept
 {
   return SettingsImplementation::instance().confidenceLevel();
 }
-__int64 Settings::maximumTimeSeconds() noexcept
+int64_t Settings::maximumTimeSeconds() noexcept
 {
   return SettingsImplementation::instance().maximumTimeSeconds();
 }

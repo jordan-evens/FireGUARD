@@ -11,6 +11,7 @@ goto :end
 
 @REM wxcli python container
 docker compose run --rm wxcli /bin/bash
+docker compose run --rm wxcli python update.py
 
 @REM gis python container
 docker compose run --rm gis /bin/bash
@@ -20,6 +21,9 @@ docker exec -it fireguard-db psql -U docker -h localhost -d FireGUARD -p 5432
 
 @REM wxshield web page
 docker compose exec wxshield /bin/bash
+
+@REM firestarr cli
+docker compose run --rm firestarr /bin/bash
 
 
 :end

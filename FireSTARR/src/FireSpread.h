@@ -21,55 +21,11 @@
 #include "Point.h"
 #include "Settings.h"
 #include "Util.h"
+#include "InnerPos.h"
 namespace firestarr
 {
 namespace sim
 {
-/**
- * \brief The position within a Cell that a spreading point has.
- */
-struct InnerPos
-{
-  /**
-   * \brief X coordinate
-   */
-  double x;
-  /**
-   * \brief Y coordinate
-   */
-  double y;
-  /**
-   * \brief Constructor
-   * \param x X coordinate
-   * \param y Y coordinate
-   */
-  InnerPos(const double x, const double y) noexcept
-    : x(x), y(y)
-  {
-  }
-  /**
-   * \brief Less than operator
-   * \param rhs InnerPos to compare to
-   * \return Whether or not this is less than the other
-   */
-  bool operator<(const InnerPos& rhs) const noexcept
-  {
-    if (x == rhs.x)
-    {
-      return y < rhs.y;
-    }
-    return x < rhs.x;
-  }
-  /**
-   * \brief Equality operator
-   * \param rhs InnerPos to compare to
-   * \return Whether or not this is equivalent to the other
-   */
-  bool operator==(const InnerPos& rhs) const noexcept
-  {
-    return abs(x - rhs.x) < COMPARE_LIMIT && abs(y - rhs.y) < COMPARE_LIMIT;
-  }
-};
 class Scenario;
 /**
  * \brief Possible results of an attempt to spread.

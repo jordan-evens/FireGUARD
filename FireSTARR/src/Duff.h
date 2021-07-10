@@ -67,7 +67,7 @@ public:
    * \param mc_pct Moisture content (%)
    * \return Chance of survival (% / 100)
    */
-  [[nodiscard]] virtual double probabilityOfSurvival(double mc_pct) const noexcept = NULL;
+  [[nodiscard]] virtual double probabilityOfSurvival(double mc_pct) const noexcept = 0;
   // from kerry's paper
   // static const Duff FeatherMossUpper;
   // static const Duff FeatherMossLower;

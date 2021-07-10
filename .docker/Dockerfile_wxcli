@@ -14,7 +14,7 @@ RUN pip install -r /FireGUARD/requirements_wxcli.txt \
 	&& export FC=gfortran \
 	&& export COMP_SYS=gnu_linux \
 	&& make \
-	&& mv wgrib2/wgrib2 ../wgrib2 \
+	&& mv wgrib2/wgrib2 /FireGUARD/wgrib2 \
 	&& make clean \
 	&& apt-get purge -y --auto-remove gcc make gfortran \
 	&& apt-get install -y libgfortran5 libgomp1 \
@@ -28,6 +28,4 @@ RUN pip install -r /FireGUARD/requirements_wxcli.txt \
       /usr/lib/node_modules/npm/doc/* \
       /usr/lib/node_modules/npm/html/* \
       /usr/lib/node_modules/npm/scripts/* \
-	  /FireGUARD/WeatherSHIELD/grib2 \
-	&& mkdir /FireGUARD/data
-
+      /FireGUARD/WeatherSHIELD/grib2

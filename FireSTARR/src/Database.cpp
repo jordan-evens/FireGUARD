@@ -31,11 +31,11 @@ int Database::getInteger() noexcept
 }
 TIMESTAMP_STRUCT Database::getTimestamp() noexcept
 {
-  return getValue<TIMESTAMP_STRUCT>(SQL_C_TIMESTAMP);
+  return getValue<TIMESTAMP_STRUCT>(SQL_TIMESTAMP);
 }
 #pragma warning (push)
 #pragma warning (disable: 26447)
-wstring Database::getString() noexcept
+string Database::getString() noexcept
 {
   try
   {
@@ -49,11 +49,11 @@ wstring Database::getString() noexcept
                                &cch_display),
                "Cannot determine size of column %d",
                cur_column_);
-    const auto value = new WCHAR[static_cast<size_t>(cch_display) + 1]{0};
+    const auto value = new char[static_cast<size_t>(cch_display) + 1]{0};
     getValue<void>(value,
                    SQL_C_TCHAR,
-                   (cch_display + 1) * static_cast<SQLLEN>(sizeof(WCHAR)));
-    auto result = wstring(value);
+                   (cch_display + 1) * static_cast<SQLLEN>(sizeof(char)));
+    auto result = string(value);
     delete[] value;
     return result;
   }
@@ -74,16 +74,16 @@ void Database::checkError(const RETCODE result, const char* format, ...) noexcep
 #pragma warning (pop)
 }
 map<wx::WeatherModel, map<int, vector<wx::Weather>>, wx::ModelCompare>
-Database::readModel(wstring query)
+Database::readModel(string query)
 {
   SQLSMALLINT num_results;
-  logging::check_fatal(SQLExecDirect(h_stmt_, &query[0], SQL_NTS) != SQL_SUCCESS,
+  logging::check_fatal(SQLExecDirect(h_stmt_, (SQLCHAR*)&query[0], SQL_NTS) != SQL_SUCCESS,
                        "Could not read from database");
   SQLNumResultCols(h_stmt_, &num_results);
   assert(num_results > 0);
   map<wx::WeatherModel, map<int, vector<wx::Weather>>, wx::ModelCompare> results{};
   auto ret_code = SQLFetch(h_stmt_);
-  while (ret_code != SQL_NO_DATA_FOUND)
+  while (ret_code != SQL_NO_DATA)
   {
     cur_column_ = 1;
     auto k = wx::WeatherModel(this);
@@ -108,10 +108,10 @@ Database::readModel(wstring query)
   SQLFreeStmt(h_stmt_, SQL_CLOSE);
   return results;
 }
-Database::Database(const wstring& dsn)
+Database::Database(const string& dsn)
 // ReSharper disable StringLiteralTypo
   : connection_(
-    wstring(L"DSN=HINDCAST;DATABASE=" + dsn + L";UID=wx_readonly;PWD=wx_r34d0nly!;"))
+    string("DSN=HINDCAST;DATABASE=" + dsn + ";UID=wx_readonly;PWD=wx_r34d0nly!;"))
 // ReSharper restore StringLiteralTypo
 {
   checkError(SQLAllocHandle(SQL_HANDLE_ENV, nullptr, &h_env_),
@@ -129,18 +129,17 @@ Database::Database(const wstring& dsn)
   // Allocate a connection
   checkError(SQLAllocHandle(SQL_HANDLE_DBC, h_env_, &h_dbc_),
              "Unable to allocate handle for database");
-  auto err = widestring_to_string(dsn);
   // HACK: checkError doesn't seem to work with err being converted from widestring
   logging::check_fatal(SQL_ERROR == SQLDriverConnect(h_dbc_,
                                                      nullptr,
-                                                     &connection_[0],
+                                                     (SQLCHAR*)(&connection_[0]),
                                                      SQL_NTS,
                                                      nullptr,
                                                      0,
                                                      nullptr,
                                                      SQL_DRIVER_COMPLETE),
                                                      "Unable to open connection to database '%s'",
-                                                     err.c_str());
+                                                     dsn.c_str());
   checkError(SQLAllocHandle(SQL_HANDLE_STMT, h_dbc_, &h_stmt_),
              "Unable to allocate handle for statement");
 }

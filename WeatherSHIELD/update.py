@@ -2,7 +2,7 @@
 
 import logging
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 from gefsloader import GefsLoader
 from gepsloader import GepsLoader

@@ -18,12 +18,12 @@
 #include "stdafx.h"
 #include "Startup.h"
 #include "Database.h"
-#include "Time.h"
+#include "TimeUtil.h"
 namespace firestarr
 {
 namespace wx
 {
-Startup::Startup(wstring station,
+Startup::Startup(string station,
                  const TIMESTAMP_STRUCT& generated,
                  const topo::Point& point,
                  const double distance_from,
@@ -50,11 +50,10 @@ Startup read_startup(util::Database* db)
   const auto gen_utc = db->getTimestamp();
   tm utc{};
   util::to_tm_gm(gen_utc, &utc);
-  const auto local_t = mktime(&utc);
-  tm local{};
-  localtime_s(&local, &local_t);
+  const time_t local_t = mktime(&utc);
+  auto local = localtime(&local_t);
   TIMESTAMP_STRUCT result;
-  util::to_ts(local, &result);
+  util::to_ts(*local, &result);
   const auto generated = result;
   const auto latitude = db->getDouble();
   const auto longitude = db->getDouble();

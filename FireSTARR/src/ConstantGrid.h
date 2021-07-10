@@ -89,15 +89,15 @@ public:
                const double yllcorner,
                string&& proj4,
                vector<T>&& data)
-    : GridData(cell_size,
-               rows,
-               columns,
-               no_data,
-               nodata,
-               xllcorner,
-               yllcorner,
-               std::forward<string>(proj4),
-               std::move(data))
+    : GridData<T, V, const vector<T>>(cell_size,
+                                      rows,
+									  columns,
+									  no_data,
+									  nodata,
+									  xllcorner,
+									  yllcorner,
+									  std::forward<string>(proj4),
+									  std::move(data))
   {
   }
   /**

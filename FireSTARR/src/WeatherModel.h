@@ -37,7 +37,7 @@ public:
    * \brief Name of this model
    * \return Name of this model
    */
-  [[nodiscard]] constexpr const wstring& name() const { return name_; }
+  [[nodiscard]] constexpr const string& name() const { return name_; }
   /**
    * \brief Point this model represents
    * \return Point this model represents
@@ -56,7 +56,7 @@ public:
    * \param distance_from Distance model data was from Point
    */
   WeatherModel(const TIMESTAMP_STRUCT& generated,
-               wstring&& name,
+               string&& name,
                const topo::Point& point,
                double distance_from) noexcept;
   /**
@@ -98,7 +98,7 @@ private:
   /**
    * \brief Name of this
    */
-  wstring name_;
+  string name_;
   /**
    * \brief Point this represents
    */

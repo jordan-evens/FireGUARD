@@ -26,9 +26,11 @@
 #include "Model.h"
 #include "Scenario.h"
 #include "Test.h"
-#include "Time.h"
+#include "TimeUtil.h"
 #include "Util.h"
 #include "WxShield.h"
+#include "InnerPos.h"
+#include "Log.h"
 using firestarr::logging::Log;
 using firestarr::sim::Settings;
 void show_usage_and_exit(const char* name)

@@ -21,7 +21,7 @@
 #include "IntensityMap.h"
 #include "Model.h"
 #include "Statistics.h"
-#include "Time.h"
+#include "TimeUtil.h"
 #include "Util.h"
 namespace firestarr
 {
@@ -171,7 +171,7 @@ void ProbabilityMap::saveAll(const Model& model,
   auto ticks = mktime(&t);
   const auto day = static_cast<int>(round(time));
   ticks += (static_cast<size_t>(day) - t.tm_yday - 1) * DAY_SECONDS;
-  localtime_s(&t, &ticks);
+  t = *localtime(&ticks);
   // t.tm_yday = day + 1;
   TIMESTAMP_STRUCT for_time{};
   util::to_ts(t, &for_time);
@@ -180,14 +180,13 @@ void ProbabilityMap::saveAll(const Model& model,
     constexpr auto mask = "%s_%03d_%04d-%02d-%02d";
     static constexpr size_t OutLength = 100;
     char tmp[OutLength];
-    sprintf_s(tmp,
-              OutLength,
-              mask,
-              name,
-              day,
-              for_time.year,
-              for_time.month,
-              for_time.day);
+    sprintf(tmp,
+            mask,
+            name,
+            day,
+            for_time.year,
+            for_time.month,
+            for_time.day);
     return string(tmp);
   };
   vector<std::future<void>> results{};

@@ -19,7 +19,7 @@
 #include "Weather.h"
 #include "Database.h"
 #include "Log.h"
-#include "Time.h"
+#include "TimeUtil.h"
 namespace firestarr
 {
 namespace wx
@@ -38,11 +38,10 @@ TIMESTAMP_STRUCT read_timestamp(util::Database* db) noexcept
   const auto db_utc = db->getTimestamp();
   tm utc{};
   util::to_tm_gm(db_utc, &utc);
-  const auto utc_t = _mkgmtime(&utc);
-  tm local{};
-  localtime_s(&local, &utc_t);
+  const auto utc_t = mktime(&utc);
+  auto local = localtime(&utc_t);
   TIMESTAMP_STRUCT result;
-  util::to_ts(local, &result);
+  util::to_ts(*local, &result);
   if (result.hour != 13)
   {
     // HACK: not sure what to do with time zones yet, so just set it as 13:00

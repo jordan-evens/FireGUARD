@@ -36,6 +36,7 @@ constexpr auto PRECISION = 0.001;
 static atomic<size_t> COUNT = 0;
 static atomic<size_t> COMPLETED = 0;
 static util::MemoryPool<BurnedData> POOL_BURNED_DATA{};
+void IObserver_deleter::operator()(IObserver* ptr) const { delete ptr; }
 void Scenario::clear() noexcept
 {
   scheduler_.clear();
@@ -66,7 +67,7 @@ static void make_threshold(vector<double>* thresholds,
 {
   const auto total_weight = Settings::thresholdScenarioWeight() +
     Settings::thresholdDailyWeight() + Settings::thresholdHourlyWeight();
-  const uniform_real_distribution<double> rand(0.0, 1.0);
+  uniform_real_distribution<double> rand(0.0, 1.0);
   const auto general = rand(*mt);
   for (size_t i = start_day; i < MAX_DAYS; ++i)
   {
@@ -236,7 +237,7 @@ void Scenario::saveStats(const double time) const
 }
 void Scenario::registerObserver(IObserver* observer)
 {
-  observers_.push_back(unique_ptr<IObserver>(observer));
+  observers_.push_back(unique_ptr<IObserver, IObserver_deleter>(observer));
 }
 void Scenario::notify(const Event& event) const
 {
@@ -258,20 +259,18 @@ void Scenario::saveObservers(const double time) const
   char buffer[BufferSize + 1] = {0};
   if (id() == ACTUALS)
   {
-    sprintf_s(buffer,
-              BufferSize,
-              "actuals_%06lld_%03d",
-              simulation(),
-              static_cast<int>(time));
+    sprintf(buffer,
+            "actuals_%06lld_%03d",
+            simulation(),
+            static_cast<int>(time));
   }
   else
   {
-    sprintf_s(buffer,
-              BufferSize,
-              "%03zu_%06lld_%03d",
-              id(),
-              simulation(),
-              static_cast<int>(time));
+    sprintf(buffer,
+            "%03zu_%06lld_%03d",
+            id(),
+            simulation(),
+            static_cast<int>(time));
   }
   saveObservers(string(buffer));
 }

@@ -17,6 +17,8 @@
 
 #pragma once
 #include <map>
+#include <odbcinst.h>
+#include <odbcinstext.h>
 #include <vector>
 #include "Log.h"
 #include "Util.h"
@@ -40,7 +42,7 @@ public:
    * \brief Create a Database for the given Data Source Name
    * \param dsn Data Source Name to use
    */
-  explicit Database(const wstring& dsn);
+  explicit Database(const string& dsn);
   ~Database();
   /**
    * \brief Move constructor
@@ -92,9 +94,9 @@ public:
   [[nodiscard]] TIMESTAMP_STRUCT getTimestamp() noexcept;
   /**
    * \brief Read a wstring from the current column of the current query
-   * \return wstring from the current column of the current query
+   * \return string from the current column of the current query
    */
-  [[nodiscard]] wstring getString() noexcept;
+  [[nodiscard]] string getString() noexcept;
   /**
    * \brief Check if the result is an error and output message if so
    * \param result RETCODE to check for error status 
@@ -140,7 +142,7 @@ public:
    * \return vector of T based on performing the given query
    */
   template <class T>
-  [[nodiscard]] vector<T> readList(wstring query)
+  [[nodiscard]] vector<T> readList(unsigned char* query)
   {
     SQLSMALLINT num_results;
     logging::check_fatal(SQLExecDirect(h_stmt_, &query[0], SQL_NTS) != SQL_SUCCESS,
@@ -150,7 +152,7 @@ public:
     vector<T> results{};
     results.reserve(static_cast<size_t>(num_results));
     auto ret_code = SQLFetch(h_stmt_);
-    while (ret_code != SQL_NO_DATA_FOUND)
+    while (ret_code != SQL_NO_DATA)
     {
       cur_column_ = 1;
       results.emplace_back(this);
@@ -165,7 +167,7 @@ public:
    * \return 
    */
   [[nodiscard]] map<wx::WeatherModel, map<int, vector<wx::Weather>>, wx::ModelCompare>
-  readModel(wstring query);
+  readModel(string query);
 private:
   /**
    * \brief Handle to environment
@@ -182,7 +184,7 @@ private:
   /**
    * \brief Connection string for accessing database
    */
-  wstring connection_;
+  string connection_;
 #pragma warning (push)
 #pragma warning (disable: 4820)
   /**

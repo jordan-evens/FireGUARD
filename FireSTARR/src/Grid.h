@@ -29,7 +29,7 @@ using firestarr::topo::Location;
  * \brief Provides hash function for Location.
  */
 template <>
-struct hash<Location>
+struct std::hash<Location>
 {
   /**
    * \brief Get hash value for a Location
@@ -215,7 +215,7 @@ public:
    * \param location Location to get value for.
    * \return Value at grid Location.
    */
-  [[nodiscard]] virtual T at(const Location& location) const = NULL;
+  [[nodiscard]] virtual T at(const Location& location) const = 0;
   // NOTE: use set instead of at to avoid issues with bool
   /**
    * \brief Set value for grid at given Location.
@@ -223,7 +223,7 @@ public:
    * \param value Value to set at grid Location.
    * \return None
    */
-  virtual void set(const Location& location, T value) = NULL;
+  virtual void set(const Location& location, T value) = 0;
 protected:
   /**
    * \brief Constructor
@@ -312,15 +312,15 @@ public:
            const double yllcorner,
            string&& proj4,
            D&& data)
-    : Grid(cell_size,
-           rows,
-           columns,
-           no_data,
-           nodata,
-           xllcorner,
-           yllcorner,
-           std::forward<string>(proj4)),
-      data(std::forward<D>(data))
+    : Grid<T, V>(cell_size,
+                 rows,
+				 columns,
+				 no_data,
+				 nodata,
+				 xllcorner,
+				 yllcorner,
+				 std::forward<string>(proj4)),
+				 data(std::forward<D>(data))
   {
   }
   ~GridData() = default;
@@ -329,7 +329,7 @@ public:
    * \param rhs GridData to copy from
    */
   explicit GridData(const GridData& rhs)
-    : Grid(rhs), data(rhs.data)
+    : Grid<T, V>(rhs), data(rhs.data)
   {
   }
   /**
@@ -337,7 +337,7 @@ public:
    * \param rhs GridData to move from
    */
   explicit GridData(GridData&& rhs) noexcept
-    : Grid(rhs), data(std::move(rhs.data))
+    : Grid<T, V>(rhs), data(std::move(rhs.data))
   {
   }
   /**

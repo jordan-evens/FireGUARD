@@ -162,8 +162,8 @@ unique_ptr<Coordinates> GridBase::findCoordinates(const topo::Point& point,
   {
     actual_y = static_cast<double>(this->rows_) - actual_y;
   }
-  const auto column = static_cast<INT64>(actual_x);
-  const auto row = static_cast<INT64>(round(actual_y - 0.5));
+  const auto column = static_cast<int64_t>(actual_x);
+  const auto row = static_cast<int64_t>(round(actual_y - 0.5));
   if (0 > column || column >= columns_ || 0 > row || row >= rows_)
   {
     return nullptr;

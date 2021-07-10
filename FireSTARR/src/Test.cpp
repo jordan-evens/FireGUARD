@@ -293,15 +293,14 @@ int test(const int argc, const char* const argv[])
                               aspect,
                               wind_direction,
                               wind_speed);
-                sprintf_s(out,
-                          out_length,
-                          mask,
-                          output_directory.c_str(),
-                          simple_fuel_name.c_str(),
-                          slope,
-                          aspect,
-                          wind_direction,
-                          wind_speed);
+                sprintf(out,
+                        mask,
+                        output_directory.c_str(),
+                        simple_fuel_name.c_str(),
+                        slope,
+                        aspect,
+                        wind_direction,
+                        wind_speed);
                 result += run_test(out,
                                    fuel_lookup,
                                    fuel,

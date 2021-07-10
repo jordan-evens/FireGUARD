@@ -128,32 +128,32 @@ public:
    * \return Crown Fraction Burned (CFB) [ST-X-3 eq 58]
    */
   [[nodiscard]] virtual double crownFractionBurned(double rss, double rso) const noexcept
-  = NULL;
+  = 0;
   /**
    * \brief Calculate probability of burning [Anderson eq 1]
    * \param mc_fraction moisture content (% / 100)
    * \return Calculate probability of burning [Anderson eq 1]
    */
-  [[nodiscard]] virtual double probabilityPeat(double mc_fraction) const noexcept = NULL;
+  [[nodiscard]] virtual double probabilityPeat(double mc_fraction) const noexcept = 0;
   /**
    * \brief Survival probability calculated using probability of ony survival based on multiple formulae
    * \param wx FwiWeather to calculate survival probability for
    * \return Chance of survival (% / 100)
    */
   [[nodiscard]] virtual double survivalProbability(
-    const wx::FwiWeather& wx) const noexcept = NULL;
+    const wx::FwiWeather& wx) const noexcept = 0;
   /**
    * \brief BUI Effect on surface fire rate of spread [ST-X-3 eq 54]
    * \param bui Build-up Index
    * \return BUI Effect on surface fire rate of spread [ST-X-3 eq 54]
    */
-  [[nodiscard]] virtual double buiEffect(double bui) const = NULL;
+  [[nodiscard]] virtual double buiEffect(double bui) const = 0;
   /**
    * \brief Crown Fuel Consumption (CFC) (kg/m^2) [ST-X-3 eq 66]
    * \param cfb Crown Fraction Burned (CFB) [ST-X-3 eq 58]
    * \return Crown Fuel Consumption (CFC) (kg/m^2) [ST-X-3 eq 66]
    */
-  [[nodiscard]] virtual double crownConsumption(double cfb) const = NULL;
+  [[nodiscard]] virtual double crownConsumption(double cfb) const = 0;
   /**
    * \brief Calculate rate of spread (m/min)
    * \param nd Difference between date and the date of minimum foliar moisture content
@@ -163,7 +163,7 @@ public:
    */
   [[nodiscard]] virtual double calculateRos(int nd,
                                             const wx::FwiWeather& wx,
-                                            double isi) const = NULL;
+                                            double isi) const = 0;
   /**
    * \brief Calculate ISI with slope influence and zero wind (ISF) [ST-X-3 eq 41/42]
    * \param spread SpreadInfo to use
@@ -171,20 +171,20 @@ public:
    * \return ISI with slope influence and zero wind (ISF) [ST-X-3 eq 41/42]
    */
   [[nodiscard]] virtual double calculateIsf(const SpreadInfo& spread,
-                                            double isi) const = NULL;
+                                            double isi) const = 0;
   /**
    * \brief Surface fuel consumption (SFC) (kg/m^2) [ST-X-3 eq 9-25]
    * \param spread SpreadInfo to use
    * \return Surface fuel consumption (SFC) (kg/m^2) [ST-X-3 eq 9-25]
    */
   [[nodiscard]] virtual double surfaceFuelConsumption(
-    const SpreadInfo& spread) const = NULL;
+    const SpreadInfo& spread) const = 0;
   /**
    * \brief Length to Breadth ratio [ST-X-3 eq 79]
    * \param ws Wind Speed (km/h)
    * \return Length to Breadth ratio [ST-X-3 eq 79]
    */
-  [[nodiscard]] virtual double lengthToBreadth(double ws) const = NULL;
+  [[nodiscard]] virtual double lengthToBreadth(double ws) const = 0;
   /**
    * \brief Final rate of spread (m/min)
    * \param spread SpreadInfo to use
@@ -196,14 +196,14 @@ public:
   [[nodiscard]] virtual double finalRos(const SpreadInfo& spread,
                                         double isi,
                                         double cfb,
-                                        double rss) const = NULL;
+                                        double rss) const = 0;
   /**
    * \brief Critical Surface Fire Intensity (CSI) [ST-X-3 eq 56]
    * \param spread SpreadInfo to use in calculation
    * \return Critical Surface Fire Intensity (CSI) [ST-X-3 eq 56]
    */
   [[nodiscard]] virtual double criticalSurfaceIntensity(
-    const SpreadInfo& spread) const = NULL;
+    const SpreadInfo& spread) const = 0;
   /**
    * \brief Name of the fuel
    * \return Name of the fuel

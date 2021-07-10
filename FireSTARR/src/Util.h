@@ -179,25 +179,6 @@ std::basic_istream<Elem, Traits>& getline(
   return getline(*stream, *str, delimiter);
 }
 /**
- * \brief Convert string to wstring
- * \param s string to convert
- * \return wstring after conversion
- */
-[[nodiscard]] wstring string_to_widestring(const string& s);
-/**
- * \brief Convert wstring to string
- * \param s wstring to convert
- * \return string after conversion
- */
-[[nodiscard]] string widestring_to_string(const wstring& s);
-/**
- * \brief Output wstring to the given stream
- * \param os Stream to output to
- * \param s wstring to output
- * \return Stream that was output to
- */
-[[nodiscard]] ostream& operator<<(ostream& os, const wstring& s);
-/**
  * \brief Check if a directory exists
  * \param dir Directory to check existence of
  * \return Whether or not the directory exists
@@ -275,7 +256,7 @@ template <unsigned int N>
   // HACK: this can't actually make the value be the precision we want due to
   // floating point storage, but we can round it to what it would be if it were
   // that precision
-  static const auto b = pow_int<N, __int64>(10);
+  static const auto b = pow_int<N, int64_t>(10);
   return round(value * b) / b;
 }
 /**
@@ -346,32 +327,6 @@ void insert_unique(std::vector<T>* vec, T const& item)
 }
 }
 /**
- * \brief Check lower and upper limits before doing binary search over function for T that results in value
- * \tparam T Type of input values
- * \tparam V Result type of fct
- * \param lower Lower bound to check
- * \param upper Upper bound to check
- * \param value Value to look for
- * \param fct Function taking T and returning V
- * \return T value that results in closest to value
- */
-template <typename T, typename V>
-T binary_find_checked(const T lower,
-                      const T upper,
-                      const double value,
-                      const std::function<V(T)>& fct)
-{
-  if (fct(lower) < value)
-  {
-    return lower;
-  }
-  if (fct(upper) >= value)
-  {
-    return upper;
-  }
-  return binary_find(lower, upper, value, fct);
-}
-/**
  * \brief Do binary search over function for T that results in value
  * \tparam T Type of input values
  * \tparam V Result type of fct
@@ -398,5 +353,31 @@ T binary_find(const T lower,
     return binary_find(lower, mid, value, fct);
   }
   return binary_find(mid + 1, upper, value, fct);
+}
+/**
+ * \brief Check lower and upper limits before doing binary search over function for T that results in value
+ * \tparam T Type of input values
+ * \tparam V Result type of fct
+ * \param lower Lower bound to check
+ * \param upper Upper bound to check
+ * \param value Value to look for
+ * \param fct Function taking T and returning V
+ * \return T value that results in closest to value
+ */
+template <typename T, typename V>
+T binary_find_checked(const T lower,
+                      const T upper,
+                      const double value,
+                      const std::function<V(T)>& fct)
+{
+  if (fct(lower) < value)
+  {
+    return lower;
+  }
+  if (fct(upper) >= value)
+  {
+    return upper;
+  }
+  return binary_find(lower, upper, value, fct);
 }
 }

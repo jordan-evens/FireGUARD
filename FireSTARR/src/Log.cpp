@@ -44,16 +44,15 @@ void Log::output(const char* name, const char* format, va_list* args) noexcept
 {
   try
   {
-    const auto now = time(nullptr);
-    tm buf{};
-    localtime_s(&buf, &now);
+    const time_t now = time(nullptr);
+    auto buf = localtime(&now);
     // NOTE: create string first so that entire line writes
     // (otherwise threads might mix lines)
     const string tmp;
     stringstream iss(tmp);
-    iss << put_time(&buf, "[%F %T] ") << name;
+    iss << put_time(buf, "[%F %T] ") << name;
     static char buffer[1024]{0};
-    vsprintf_s(buffer, 1024, format, *args);
+    vsprintf(buffer, format, *args);
     iss << buffer << "\n";
     cout << iss.str();
   }

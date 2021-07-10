@@ -157,7 +157,7 @@ public:
    * \param rhs GridMap to move from
    */
   GridMap(GridMap&& rhs) noexcept
-    : GridData(std::move(rhs))
+    : GridData<T, V, unordered_map<Location, T>>(std::move(rhs))
   {
     this->data = std::move(rhs.data);
   }
@@ -166,7 +166,7 @@ public:
    * \param rhs GridMap to copy from
    */
   explicit GridMap(const GridMap& rhs)
-    : GridData(rhs)
+    : GridData<T, V, unordered_map<Location, T>>(rhs)
   {
     this->data = rhs.data;
   }

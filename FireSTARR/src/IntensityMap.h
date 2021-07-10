@@ -56,12 +56,12 @@ public:
    * \brief Number of rows in this extent
    * \return Number of rows in this extent
    */
-  [[nodiscard]] constexpr Idx rows() const { return map_->rows(); }
+  [[nodiscard]] Idx rows() { return map_->rows(); }
   /**
    * \brief Number of columns in this extent
    * \return Number of columns in this extent
    */
-  [[nodiscard]] constexpr Idx columns() const { return map_->columns(); }
+  [[nodiscard]] Idx columns() { return map_->columns(); }
   /**
    * \brief Set cells in the map to be burned based on Perimeter
    * \param perimeter Perimeter to burn cells based on

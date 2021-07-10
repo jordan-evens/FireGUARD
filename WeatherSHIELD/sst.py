@@ -1,7 +1,7 @@
 """Gets ocean temperature indices and collates them"""
 
 import sys
-sys.path.append('..\util')
+sys.path.append('../util')
 import common
 import csv
 import netCDF4
@@ -9,7 +9,7 @@ import pandas as pd
 import datetime
 import os
 import numpy
-import pyodbc
+import psycopg2
 import math
 import logging
 

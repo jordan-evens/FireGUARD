@@ -39,15 +39,16 @@
 #pragma warning (disable: 5027)
 #pragma warning (disable: 5039)
 #pragma warning (disable: 5045)
+#include <ctime>
+#include <chrono>
 #include <algorithm>
 #include <array>
 #include <atomic>
 #include <cassert>
-#include <chrono>
+#include <cerrno>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
-#include <execution>
 #include <fstream>
 #include <functional>
 #include <future>
@@ -55,27 +56,32 @@
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <list>
+#include <postgresql/libpq-fe.h>
 #include <locale>
 #include <map>
 #include <memory>
+#include <odbcinst.h>
+#include <odbcinstext.h>
 #include <random>
 #include <set>
+#include <sql.h>
+#include <sqlext.h>
+#include <sqltypes.h>
 #include <sstream>
+#include <stdint.h>
 #include <string>
+#include <string.h>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include "geo_normalize.h"
-#include "geotiff.h"
-#include "geovalues.h"
+#include <geotiff/geo_normalize.h>
+#include <geotiff/geotiff.h>
+#include <geotiff/geovalues.h>
 #include "tiff.h"
-#include "tiffio.h"
-#include "xtiffio.h"
-#include <Windows.h>
-#include <basetsd.h>
-#include <direct.h>
-#include <sql.h>
-#include <sqlext.h>
+#include <tiffio.h>
+#include <geotiff/xtiffio.h>
 #include <sys/stat.h>
 #pragma warning (pop)
 // unreferenced inline function has been removed
@@ -174,7 +180,7 @@ namespace firestarr
 /**
  * \brief Size of the hash of a Cell
  */
-using HashSize = unsigned __int32;
+using HashSize = uint32_t;
 /**
  * \brief Size of the index for a Cell
  */

@@ -43,19 +43,19 @@ public:
    * \param event Event to handle
    * \return None
    */
-  virtual void handleEvent(const Event& event) = NULL;
+  virtual void handleEvent(const Event& event) = 0;
   /**
    * \brief Save observations
    * \param dir Directory to save to
    * \param base_name Base file name to save to
    * \return None
    */
-  virtual void save(const string& dir, const string& base_name) const = NULL;
+  virtual void save(const string& dir, const string& base_name) const = 0;
   /**
    * \brief Clear all observations
    * \return None
    */
-  virtual void reset() = NULL;
+  virtual void reset() = 0;
   /**
    * \brief Make name to save file as
    * \param base_name Base file name
@@ -95,7 +95,7 @@ public:
    * \param event 
    * \return 
    */
-  [[nodiscard]] virtual T getValue(const Event& event) const = NULL;
+  [[nodiscard]] virtual T getValue(const Event& event) const = 0;
   /**
    * \brief Handle given event
    * \param event Event to handle

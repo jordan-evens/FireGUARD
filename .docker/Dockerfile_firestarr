@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+FROM gcc:10.3
+WORKDIR /FireGUARD/FireSTARR/
+RUN apt-get update \
+	&& apt-get install -y gcc make git curl zip unzip tar \
+		libtiff-dev libgeotiff-dev g++ cmake sqlite3 libsqlite3-dev libpq-dev \
+		unixodbc-dev odbc-postgresql \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/* \
+	&& rm -rf \
+      /usr/share/man/* \
+      /usr/includes/* \
+      /var/cache/apk/* \
+      /root/.npm/* \
+      /usr/lib/node_modules/npm/man/* \
+      /usr/lib/node_modules/npm/doc/* \
+      /usr/lib/node_modules/npm/html/* \
+      /usr/lib/node_modules/npm/scripts/*

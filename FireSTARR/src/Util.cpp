@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Queen's Printer for Ontario
+	// Copyright (C) 2020  Queen's Printer for Ontario
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -18,65 +18,35 @@
 #include "stdafx.h"
 #include "Util.h"
 #include "Log.h"
+#include <regex>
+#include <filesystem>
+namespace fs = std::filesystem;
+
 namespace firestarr
 {
 namespace util
 {
-//https://codereview.stackexchange.com/questions/419/converting-between-stdwstring-and-stdstring
-wstring string_to_widestring(const string& s)
+void read_directory(const string& name, vector<string>* v, const string& match)
 {
-  const auto string_length = static_cast<int>(s.length()) + 1;
-  const auto len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), string_length, nullptr, 0);
-  const auto buf = new wchar_t[static_cast<size_t>(len)];
-  MultiByteToWideChar(CP_ACP, 0, s.c_str(), string_length, buf, len);
-  wstring r(buf);
-  delete[] buf;
-  return r;
-}
-string widestring_to_string(const wstring& s)
-{
-  const auto string_length = static_cast<int>(s.length()) + 1;
-  const auto len = WideCharToMultiByte(CP_ACP,
-                                       0,
-                                       s.c_str(),
-                                       string_length,
-                                       nullptr,
-                                       0,
-                                       nullptr,
-                                       nullptr);
-  const auto buf = new char[static_cast<size_t>(len)];
-  WideCharToMultiByte(CP_ACP, 0, s.c_str(), string_length, buf, len, nullptr, nullptr);
-  string r(buf);
-  delete[] buf;
-  return r;
-}
-ostream& operator<<(ostream& os, const wstring& s)
-{
-  os << widestring_to_string(s);
-  return os;
-}
-void read_directory(const wstring& name, vector<string>* v, const wstring& match)
-{
-  auto pattern(name);
-  pattern.append(match);
-  WIN32_FIND_DATA data;
-  HANDLE h_find;
-  if ((h_find = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE)
+  string full_match = ".*/" + match;
+  logging::info(("Matching '" + full_match + "'").c_str());
+  static const std::regex re(full_match, std::regex_constants::icase);
+  for (const auto &entry : fs::directory_iterator(name))
   {
-    while (true)
+    logging::debug(("Checking if file: " + entry.path().string()).c_str());
+	  if (fs::is_regular_file(entry))
     {
-      v->push_back(widestring_to_string(name + wstring(data.cFileName)));
-      if (0 == FindNextFile(h_find, &data))
+      logging::info(("Checking regex match: " + entry.path().string()).c_str());
+      if (std::regex_match(entry.path().string(), re))
       {
-        break;
+        v->push_back(entry.path());
       }
     }
-    FindClose(h_find);
   }
 }
-void read_directory(const wstring& name, vector<string>* v)
+void read_directory(const string& name, vector<string>* v)
 {
-  read_directory(name, v, L"\\*");
+  read_directory(name, v, "/*");
 }
 vector<string> find_rasters(const string& dir, const int year)
 {
@@ -85,7 +55,7 @@ vector<string> find_rasters(const string& dir, const int year)
                              ? by_year
                              : dir + "/default/";
   vector<string> results{};
-  read_directory(string_to_widestring(raster_root), &results, L"fuel*.TIF");
+  read_directory(raster_root, &results, "fuel.*\\.tif");
   return results;
 }
 bool directory_exists(const char* dir) noexcept
@@ -95,7 +65,7 @@ bool directory_exists(const char* dir) noexcept
 }
 void make_directory(const char* dir) noexcept
 {
-  if (-1 == _mkdir(dir) && errno != EEXIST)
+  if (-1 == mkdir(dir, 0777) && errno != EEXIST)
   {
     struct stat dir_info{};
     if (stat(dir, &dir_info) != 0)

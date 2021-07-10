@@ -610,7 +610,7 @@ def read_grib(file, match):
     """
     # logging.debug(file)
     CWD = os.path.join(os.path.dirname(file))
-    cmd = '/FireGUARD/WeatherSHIELD/wgrib2'
+    cmd = '/FireGUARD/wgrib2'
     bounds = '{}:{} {}:{}'.format(BOUNDS['longitude']['min'],
                                   BOUNDS['longitude']['max'],
                                   BOUNDS['latitude']['min'],

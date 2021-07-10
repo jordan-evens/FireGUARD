@@ -34,7 +34,7 @@ public:
    * \brief Station providing the Startup values
    * \return Station providing the Startup values
    */
-  [[nodiscard]] constexpr const wstring& station() const noexcept { return station_; }
+  [[nodiscard]] constexpr const 	string& station() const noexcept { return station_; }
   /**
    * \brief Time the Startup value is for
    * \return Time the Startup value is for
@@ -93,7 +93,7 @@ public:
  * \param apcp_0800 Accumulated Precipitation at 0800 (mm)
  * \param overridden whether or not any Startup values were overridden
  */
-  Startup(wstring station,
+  Startup(string station,
           const TIMESTAMP_STRUCT& generated,
           const topo::Point& point,
           double distance_from,
@@ -137,7 +137,7 @@ private:
   /**
    * \brief Station indices are from
    */
-  wstring station_;
+  string station_;
   /**
    * \brief When these indices were observed
    */

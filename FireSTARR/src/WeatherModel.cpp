@@ -17,7 +17,7 @@
 
 #include "stdafx.h"
 #include "WeatherModel.h"
-#include "Time.h"
+#include "TimeUtil.h"
 namespace firestarr
 {
 using util::operator<;
@@ -25,11 +25,11 @@ using util::operator==;
 namespace wx
 {
 WeatherModel::WeatherModel(const TIMESTAMP_STRUCT& generated,
-                           wstring&& name,
+                           string&& name,
                            const topo::Point& point,
                            const double distance_from) noexcept
   : generated_(generated),
-    name_(std::forward<wstring>(name)),
+    name_(std::forward<string>(name)),
     point_(point),
     distance_from_(distance_from)
 {

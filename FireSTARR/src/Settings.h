@@ -157,7 +157,7 @@ public:
    * \brief Maximum time simulation can run before it is ended and whatever results it has are used (s)
    * \return Maximum time simulation can run before it is ended and whatever results it has are used (s)
    */
-  [[nodiscard]] static __int64 maximumTimeSeconds() noexcept;
+  [[nodiscard]] static int64_t maximumTimeSeconds() noexcept;
   /**
    * \brief Weight to give to Scenario part of thresholds
    * \return Weight to give to Scenario part of thresholds

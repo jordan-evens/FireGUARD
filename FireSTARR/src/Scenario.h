@@ -28,14 +28,18 @@
 #include "Model.h"
 #include "Settings.h"
 #include "StartPoint.h"
+#include "InnerPos.h"
 namespace firestarr
 {
 namespace sim
 {
-struct InnerPos;
 class IObserver;
 class Event;
 using PointSet = vector<InnerPos>;
+/**
+* \brief Deleter for IObserver to get around incomplete class with unique_ptr
+*/
+struct IObserver_deleter { void operator()(IObserver*) const; };
 /**
  * \brief A single Scenario in an Iteration using a specific FireWeather stream.
  */
@@ -183,7 +187,7 @@ public:
    * \brief Simulation number
    * \return Simulation number
    */
-  [[nodiscard]] constexpr __int64 simulation() const { return simulation_; }
+  [[nodiscard]] constexpr int64_t simulation() const { return simulation_; }
   /**
    * \brief StartPoint that provides sunrise/sunset times
    * \return StartPoint
@@ -475,7 +479,7 @@ protected:
   /**
    * \brief Observers to be notified when cells burn
    */
-  list<unique_ptr<IObserver>> observers_{};
+  list<unique_ptr<IObserver, IObserver_deleter>> observers_{};
   /**
    * \brief List of times to save simulation
    */
@@ -571,7 +575,7 @@ protected:
   /**
    * \brief Simulation number
    */
-  __int64 simulation_;
+  int64_t simulation_;
   /**
    * \brief First day of simulation
    */

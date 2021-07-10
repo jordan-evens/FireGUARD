@@ -22,7 +22,7 @@
 #include "Log.h"
 #include "Score.h"
 #include "Settings.h"
-#include "Time.h"
+#include "TimeUtil.h"
 #include "Util.h"
 namespace firestarr
 {
@@ -37,14 +37,14 @@ readForecastByOffset(
 {
   auto db = getWxDb(start_date);
   return db.readModel(
-    L"SELECT [Generated],"
+    "SELECT [Generated],"
     " [Model], [Latitude], [Longitude], [DISTANCE_FROM], [Member],"
     " [ForTime],"
     " [TMP], [RH], [WS], [WD], [APCP]"
-    " FROM [INPUTS].[FCT_Forecast_By_Offset](" + to_wstring(offset)
-    + L", " + to_wstring(point.latitude())
-    + L", " + to_wstring(point.longitude())
-    + L", " + to_wstring(num_days) + L")"
+    " FROM [INPUTS].[FCT_Forecast_By_Offset](" + to_string(offset)
+    + ", " + to_string(point.latitude())
+    + ", " + to_string(point.longitude())
+    + ", " + to_string(num_days) + ")"
     " order by [Model], [Member], [ForTime]\n");
 }
 map<WeatherModel, map<int, vector<Weather>>, ModelCompare> WxShield::
@@ -53,30 +53,30 @@ readHindcastByOffset(
   const int offset,
   const size_t num_days)
 {
-  return util::Database(L"HINDCAST").readModel(
-    L"SELECT [Generated],"
+  return util::Database("HINDCAST").readModel(
+    "SELECT [Generated],"
     " [Model], [Latitude], [Longitude], [DISTANCE_FROM], [Member],"
     " [ForTime],"
     " [TMP], [RH], [WS], [WD], [APCP]"
-    " FROM [HINDCAST].[FCT_Hindcast_By_Offset](" + to_wstring(offset)
-    + L", " + to_wstring(point.latitude())
-    + L", " + to_wstring(point.longitude())
-    + L", " + to_wstring(num_days) + L")"
+    " FROM [HINDCAST].[FCT_Hindcast_By_Offset](" + to_string(offset)
+    + ", " + to_string(point.latitude())
+    + ", " + to_string(point.longitude())
+    + ", " + to_string(num_days) + ")"
     " order by [Model], [Member], [ForTime]\n");
 }
 unique_ptr<FwiWeather> WxShield::readYesterday(const topo::Point& point,
                                                const TIMESTAMP_STRUCT& start_date,
                                                const int offset)
 {
-  auto y = getDfossDb(start_date).readList<FwiWeather>(
-    L"SELECT [ForTime],"
-    " [TMP], [RH], [WS], [WD], [APCP], "
-    " [FFMC], [DMC], [DC], [ISI], [BUI], [FWI]"
-    " FROM [INPUTS].[FCT_Actuals](" + to_wstring(offset - 1)
-    + L", " + to_wstring(1)
-    + L", " + to_wstring(point.latitude())
-    + L", " + to_wstring(point.longitude())
-    + L", DEFAULT) order by [ForTime]\n");
+  string qry = "SELECT [ForTime],"
+               " [TMP], [RH], [WS], [WD], [APCP], "
+			   " [FFMC], [DMC], [DC], [ISI], [BUI], [FWI]"
+			   " FROM [INPUTS].[FCT_Actuals](" + to_string(offset - 1)
+			   + ", " + to_string(1)
+			   + ", " + to_string(point.latitude())
+			   + ", " + to_string(point.longitude())
+			   + ", DEFAULT) order by [ForTime]\n";
+  auto y = getDfossDb(start_date).readList<FwiWeather>((unsigned char*)qry.c_str());
   return y.empty() ? nullptr : make_unique<FwiWeather>(y.at(0));
 }
 unique_ptr<FwiWeather> WxShield::readYesterday() const
@@ -88,14 +88,14 @@ vector<Weather> WxShield::readActualsByOffset(const topo::Point& point,
                                               const int offset,
                                               const size_t num_days)
 {
-  auto result = getDfossDb(start_date).readList<Weather>(
-    L"SELECT [ForTime],"
-    " [TMP], [RH], [WS], [WD], [APCP]"
-    " FROM [INPUTS].[FCT_Actuals](" + to_wstring(offset)
-    + L", " + to_wstring(num_days)
-    + L", " + to_wstring(point.latitude())
-    + L", " + to_wstring(point.longitude())
-    + L", DEFAULT) order by [ForTime]\n");
+  string qry = "SELECT [ForTime],"
+               " [TMP], [RH], [WS], [WD], [APCP]"
+               " FROM [INPUTS].[FCT_Actuals](" + to_string(offset)
+               + ", " + to_string(num_days)
+               + ", " + to_string(point.latitude())
+               + ", " + to_string(point.longitude())
+               + ", DEFAULT) order by [ForTime]\n";
+  auto result = getDfossDb(start_date).readList<Weather>((unsigned char*)qry.c_str());
   // HACK: assume weather is missing at start of period if in first half of year
   if (start_date.month < 6)
   {
@@ -125,34 +125,32 @@ WxShield& WxShield::operator=(const WxShield& rhs)
 }
 vector<Score> WxShield::readScoreByOffset(const int offset)
 {
-  return util::Database(L"HINDCAST").readList<Score>(
-    L"SELECT [Year], [AVG_VALUE], [GRADE]"
-    " FROM [HINDCAST].[FCT_HistoricMatch_By_Offset]"
-    "(" + to_wstring(offset) + L")"
-    " ORDER BY [GRADE] DESC\n");
+  string qry = "SELECT [Year], [AVG_VALUE], [GRADE]"
+               " FROM [HINDCAST].[FCT_HistoricMatch_By_Offset]"
+               "(" + to_string(offset) + ")"
+               " ORDER BY [GRADE] DESC\n";
+  return util::Database("HINDCAST").readList<Score>((unsigned char*)qry.c_str());
 }
 util::Database WxShield::getWxDb(const TIMESTAMP_STRUCT& start_date)
 {
-  WCHAR buf[10];
-  swprintf_s(buf, 10, L"WX_%04d%02d", start_date.year, start_date.month);
-  return util::Database(wstring(buf));
+  return util::Database("FireGUARD");
 }
 util::Database WxShield::getDfossDb(const TIMESTAMP_STRUCT& start_date)
 {
-  return util::Database(L"DFOSS_" + to_wstring(start_date.year));
+  return util::Database("FireGUARD");
 }
 unique_ptr<Startup> WxShield::readStartupByOffset(const topo::Point& point,
                                                   const TIMESTAMP_STRUCT& start_date,
                                                   const int offset)
 {
-  auto rows = getDfossDb(start_date).readList<Startup>(
-    L"SELECT [Member], [Generated], [Latitude], [Longitude],"
-    " [DISTANCE_FROM], [FFMC], [DMC], [DC], ISNULL([APCP_0800], 0)"
-    " FROM [INPUTS].[FCT_FWIObserved_By_Offset]("
-    + to_wstring(offset - 1)
-    + L", " + to_wstring(point.latitude())
-    + L", " + to_wstring(point.longitude()) +
-    L", DEFAULT)\n");
+  string qry = "SELECT [Member], [Generated], [Latitude], [Longitude],"
+               " [DISTANCE_FROM], [FFMC], [DMC], [DC], ISNULL([APCP_0800], 0)"
+               " FROM [INPUTS].[FCT_FWIObserved_By_Offset]("
+               + to_string(offset - 1)
+               + ", " + to_string(point.latitude())
+               + ", " + to_string(point.longitude()) +
+               ", DEFAULT)\n";
+  auto rows = getDfossDb(start_date).readList<Startup>((unsigned char*)qry.c_str());
   logging::check_fatal(rows.size() > 1,
                        "Too many rows returned when looking for startup indices");
   return 1 == rows.size() ? make_unique<Startup>(rows.at(0)) : nullptr;
@@ -162,14 +160,13 @@ string to_string(const TIMESTAMP_STRUCT& ts)
   char buf[100] = {0};
   assert(0 == ts.fraction);
   assert(0 == ts.second);
-  sprintf_s(buf,
-            100,
-            "%04d-%02d-%02d %02d:%02d",
-            ts.year,
-            ts.month,
-            ts.day,
-            ts.hour,
-            ts.minute);
+  sprintf(buf,
+          "%04d-%02d-%02d %02d:%02d",
+          ts.year,
+          ts.month,
+          ts.day,
+          ts.hour,
+          ts.minute);
   return string(buf);
 }
 ostream& operator<<(ostream& os, const TIMESTAMP_STRUCT& ts)
@@ -183,13 +180,12 @@ TIMESTAMP_STRUCT date_by_offset(T offset) noexcept
   TIMESTAMP_STRUCT result{};
   const auto t = time(nullptr) + DAY_SECONDS * static_cast<time_t>(offset);
   // convert to local time
-  tm local{};
-  localtime_s(&local, &t);
+  auto local = localtime(&t);
   // HACK: always use 13:00
-  local.tm_hour = 13;
-  local.tm_min = 0;
-  local.tm_sec = 0;
-  util::to_ts(local, &result);
+  local->tm_hour = 13;
+  local->tm_min = 0;
+  local->tm_sec = 0;
+  util::to_ts(*local, &result);
   return result;
 }
 int offset_by_date(const TIMESTAMP_STRUCT& d) noexcept
@@ -285,7 +281,7 @@ size_t find_min_bounds(map<WeatherModel, map<M, vector<V>>, ModelCompare> models
   for (const auto& kv : models)
   {
     const WeatherModel& m = kv.first;
-    if (m.name() != L"AFFES")
+    if (m.name() != "AFFES")
     {
       for (const auto& member : kv.second)
       {
@@ -363,13 +359,8 @@ ostream& operator<<(ostream& os, const FwiWeather& w)
     << DecimalFormatter(w.fwi().asDouble(), 1);
   return os;
 }
-// HACK: was getting a not found error
-[[nodiscard]] ostream& operator<<(ostream& os, const wstring& s)
-{
-  return util::operator<<(os, s);
-}
 ostream& operator<<(ostream& os,
-                    const tuple<wstring, FwiStream, vector<TIMESTAMP_STRUCT>>&
+                    const tuple<string, FwiStream, vector<TIMESTAMP_STRUCT>>&
                     member)
 {
   for (size_t d = 0; d < get<1>(member).wx().size(); ++d)
@@ -389,8 +380,8 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
                                 vector<int>& years,
                                 const size_t end_of_ensemble)
 {
-  map<wstring, FwiStream> scenarios{};
-  map<wstring, FwiStream> reanalysis{};
+  map<string, FwiStream> scenarios{};
+  map<string, FwiStream> reanalysis{};
   // HACK: override the APCP_0800 since the actuals are already counting the whole day
   const auto actuals_startup = nullptr == startup_
                                  ? nullptr
@@ -410,7 +401,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
   for (const auto& kv : forecasts)
   {
     const auto model = kv.first;
-    if (model.name() == L"AFFES")
+    if (model.name() == "AFFES")
     {
       logging::check_fatal(kv.second.size() != 1,
                            "There should only be one AFFES forecast");
@@ -419,7 +410,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
       break;
     }
   }
-  wstring first;
+  string first;
   auto i = 0;
   // vector<vector<Weather*>> affes_members;
   // static const auto EnsembleMembers = 42;
@@ -427,7 +418,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
   for (const auto& kv : forecasts)
   {
     const auto model = kv.first;
-    if (model.name() == L"AFFES")
+    if (model.name() == "AFFES")
     {
       continue;
     }
@@ -447,11 +438,11 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
           vector<Weather> m{member.size() + count};
           m.reserve(dates_.size());
           std::copy(member.begin(), member.end(), m.begin());
-          std::copy_n(h->begin() + static_cast<__int64>(end_of_ensemble),
-                      static_cast<__int64>(count),
-                      m.begin() + static_cast<__int64>(member.size()));
-          const auto mem_id = L"0" + to_wstring(member_id);
-          const auto fake_name = model.name() + L"x" + to_wstring(year) + L"x"
+          std::copy_n(h->begin() + static_cast<int64_t>(end_of_ensemble),
+                      static_cast<int64_t>(count),
+                      m.begin() + static_cast<int64_t>(member.size()));
+          const string mem_id = "0" + std::to_string(member_id);
+          const auto fake_name = model.name() + "x" + std::to_string(year) + "x"
             + mem_id.substr(mem_id.size() - 2);
           scenarios.emplace(fake_name, processMember(&(*startup_), point_.latitude(), m));
           if (first.empty())
@@ -470,8 +461,8 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
             // std::copy_n(affes->begin(), cur_days, affes_m.begin());
             std::copy_n(affes->begin(), affes_days, affes_m.begin());
             // ReSharper disable once StringLiteralTypo
-            const auto affes_fake_name = L"AFFESX" + model.name() + L"x" +
-              to_wstring(year) + L"x"
+            const auto affes_fake_name = "AFFESX" + model.name() + "x" +
+              std::to_string(year) + "x"
               + mem_id.substr(mem_id.size() - 2);
             scenarios.emplace(affes_fake_name,
                               processMember(&(*startup_), point_.latitude(), affes_m));
@@ -499,8 +490,8 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
         const auto count = dates_.size();
         vector<Weather> m{count};
         m.reserve(dates_.size());
-        std::copy_n(h->begin(), static_cast<__int64>(count), m.begin());
-        reanalysis.emplace(to_wstring(year),
+        std::copy_n(h->begin(), static_cast<int64_t>(count), m.begin());
+        reanalysis.emplace(std::to_string(year),
                            processMember(&(*startup_), point_.latitude(), m));
       }
     }
@@ -513,7 +504,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
     for (const auto& s : scenarios)
     {
       auto k = s.first;
-      if (0 == k.find(L"AFFES"))
+      if (0 == k.find("AFFES"))
       {
         auto v = s.second;
         FwiVector wx{affes_days};
@@ -529,7 +520,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
         logging::note("AFFES indices are:");
         iss << IndicesHeader << endl;
         const FwiStream fwi_wx(std::move(wx));
-        iss << make_tuple(L"AFFES", fwi_wx, dates);
+        iss << make_tuple("AFFES", fwi_wx, dates);
         cout << iss.str();
         break;
       }
@@ -539,11 +530,11 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
   ofstream out;
   out.open(save_to_);
   out << IndicesHeader << endl;
-  out << make_tuple(L"actual", fix_actuals, dates_);
+  out << make_tuple("actual", fix_actuals, dates_);
   i = 0;
   for (const auto& kv : scenarios)
   {
-    out << make_tuple(to_wstring(--i), kv.second, dates_);
+    out << make_tuple(std::to_string(--i), kv.second, dates_);
   }
   if (!reanalysis.empty())
   {
@@ -557,7 +548,7 @@ void WxShield::processEnsembles(const vector<Weather>& actuals,
     }
     for (auto year = min_year; year <= max_year; ++year)
     {
-      const auto y = to_wstring(year);
+      const auto y = std::to_string(year);
       out << make_tuple(y, reanalysis.at(y), dates_);
     }
   }
@@ -593,7 +584,7 @@ static vector<TIMESTAMP_STRUCT> make_dates(const int offset, const size_t num_da
   }
   return dates;
 }
-static const Startup STARTUP_ZERO(L"INVALID",
+static const Startup STARTUP_ZERO("INVALID",
                                   TIMESTAMP_STRUCT{},
                                   topo::Point{0, 0},
                                   0.0,
@@ -616,7 +607,7 @@ static unique_ptr<Startup> override_startup(const topo::Point& point,
     return startup;
   }
   const auto& base = (nullptr == startup) ? STARTUP_ZERO : *startup;
-  return make_unique<Startup>(Startup(L"N/A",
+  return make_unique<Startup>(Startup("N/A",
                                       {},
                                       (nullptr == startup) ? point : base.point(),
                                       0.0,

@@ -108,12 +108,12 @@ public:
                          const LogValue log_q,
                          const Duff* duff_ffmc,
                          const Duff* duff_dmc) noexcept
-    : FuelBase(code,
-               name,
-               can_crown,
-               duff_ffmc,
-               duff_dmc),
-      log_q_(log_q)
+    : FuelBase<BulkDensity, InorganicPercent, DuffDepth>(code,
+                                                         name,
+														 can_crown,
+														 duff_ffmc,
+														 duff_dmc),
+														 log_q_(log_q)
   {
   }
   /**

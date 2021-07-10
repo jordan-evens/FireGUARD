@@ -36,7 +36,7 @@ FwiStream::FwiStream(const vector<TIMESTAMP_STRUCT>& dates,
   auto started = (nullptr != startup) ||
     (month > 9 || (9 == month && 15 <= dates.at(0).day));
   auto shutdown = !started;
-  static auto fake_startup = Startup(L"",
+  static auto fake_startup = Startup("",
                                      TIMESTAMP_STRUCT{},
                                      topo::Point(0, 0),
                                      0,

@@ -158,12 +158,12 @@ protected:
                         const LogValue log_q,
                         const Duff* duff_ffmc,
                         const Duff* duff_dmc)
-    : FuelNonMixed(code,
-                   name,
-                   true,
-                   log_q,
-                   duff_ffmc,
-                   duff_dmc)
+    : FuelNonMixed<A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth>(code,
+                                                                                      name,
+                                                                                      true,
+                                                                                      log_q,
+                                                                                      duff_ffmc,
+                                                                                      duff_dmc)
   {
   }
   /**
@@ -367,12 +367,12 @@ public:
   constexpr FuelMixed(const FuelCodeSize& code,
                       const char* name,
                       const LogValue log_q)
-    : StandardFuel(code,
-                   name,
-                   true,
-                   log_q,
-                   &Duff::Peat,
-                   &Duff::Peat)
+    : StandardFuel<A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth>(code,
+                                                                                   name,
+																				   true,
+																				   log_q,
+																				   &Duff::Peat,
+																				   &Duff::Peat)
   {
   }
   /**
@@ -483,9 +483,9 @@ public:
   constexpr FuelMixedDead(const FuelCodeSize& code,
                           const char* name,
                           const LogValue log_q)
-    : FuelMixed(code,
-                name,
-                log_q)
+    : FuelMixed<A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75>(code,
+                                                                          name,
+																		  log_q)
   {
   }
 };
@@ -512,9 +512,9 @@ public:
    */
   constexpr FuelMixedWood(const FuelCodeSize& code,
                           const char* name)
-    : FuelMixed(code,
-                name,
-                data::LOG_0_8)
+    : FuelMixed<110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50>(code,
+                                                                           name,
+																		   data::LOG_0_8)
   {
   }
   /**
@@ -586,12 +586,13 @@ public:
                       const char* name,
                       const LogValue log_q)
   // HACK: grass assumes no duff (total duff depth == ffmc depth => dmc depth is 0)
-    : StandardFuel(code,
-                   name,
-                   false,
-                   log_q,
-                   &Duff::PeatMuck,
-                   &Duff::PeatMuck)
+    : StandardFuel<A, B, C, 1, 0, 0, 0, 0,
+                   static_cast<int>(DUFF_FFMC_DEPTH * 10.0)>(code,
+                                                             name,
+															 false,
+															 log_q,
+															 &Duff::PeatMuck,
+															 &Duff::PeatMuck)
   {
   }
   /**
@@ -935,7 +936,7 @@ public:
    * \param name Name of the fuel
    */
   constexpr FuelM1(const FuelCodeSize& code, const char* name)
-    : FuelMixedWood(code, name)
+    : FuelMixedWood<10, PercentConifer>(code, name)
   {
   }
 };
@@ -959,7 +960,7 @@ public:
    * \param name Name of the fuel
    */
   constexpr FuelM2(const FuelCodeSize& code, const char* name)
-    : FuelMixedWood(code, name)
+    : FuelMixedWood<2, PercentConifer>(code, name)
   {
   }
 };
@@ -983,9 +984,9 @@ public:
    * \param name Name of the fuel
    */
   constexpr FuelM3(const FuelCodeSize& code, const char* name)
-    : FuelMixedDead(code,
-                    name,
-                    data::LOG_0_8)
+    : FuelMixedDead<120, 572, 140, 50, 10, PercentDeadFir>(code,
+                                                           name,
+														   data::LOG_0_8)
   {
   }
 };
@@ -1009,9 +1010,9 @@ public:
    * \param name Name of the fuel
    */
   constexpr FuelM4(const FuelCodeSize& code, const char* name)
-    : FuelMixedDead(code,
-                    name,
-                    data::LOG_0_8)
+    : FuelMixedDead<100, 404, 148, 50, 2, PercentDeadFir>(code,
+                                                          name,
+														  data::LOG_0_8)
   {
   }
 };
@@ -1094,11 +1095,11 @@ public:
                       const LogValue log_q,
                       const Duff* duff_ffmc,
                       const Duff* duff_dmc)
-    : FuelConifer(code,
-                  name,
-                  log_q,
-                  duff_ffmc,
-                  duff_dmc)
+    : FuelConifer<A, B, C, Bui0, 0, 0, BulkDensity, 15, 74>(code,
+                                                            name,
+															log_q,
+															duff_ffmc,
+															duff_dmc)
   {
   }
   /**
@@ -1472,7 +1473,7 @@ public:
                      const char* name,
                      const FuelM1<PercentConifer>* m1,
                      const FuelM2<PercentConifer>* m2)
-    : FuelVariable(code, name, true, m1, m2)
+    : FuelVariable<FuelM1<PercentConifer>, FuelM2<PercentConifer>>(code, name, true, m1, m2)
   {
   }
 };
@@ -1501,7 +1502,7 @@ public:
                      const char* name,
                      const FuelM3<PercentDeadFir>* m3,
                      const FuelM4<PercentDeadFir>* m4)
-    : FuelVariable(code, name, true, m3, m4)
+    : FuelVariable<FuelM3<PercentDeadFir>, FuelM4<PercentDeadFir>>(code, name, true, m3, m4)
   {
   }
 };
