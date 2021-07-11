@@ -121,9 +121,10 @@ void Model::readWeather(const fuel::FuelLookup& fuel_lookup,
     str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
     constexpr auto expected_header =
       "Scenario,Date,APCP,TMP,RH,WS,WD,FFMC,DMC,DC,ISI,BUI,FWI";
-    logging::check_fatal(str != expected_header,
-                         "Input CSV must have columns in this order:\n%s",
-                         expected_header);
+    logging::check_fatal(!str.compare(expected_header),
+                         "Input CSV must have columns in this order:\n'%s'\n but got:\n'%s'",
+                         expected_header,
+                         str.c_str());
     while (getline(in, str))
     {
       istringstream iss(str);
