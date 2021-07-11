@@ -520,7 +520,7 @@ def makeTiles():
     import itertools
     # HACK: this adds CREATION_OPTIONS items with a '-co' in front of each
     run_what = list(itertools.chain.from_iterable(([['python', SCRIPTS_DIR + '/gdal_retile.py']] +
-                                                    map(lambda x: ['-co', x], CREATION_OPTIONS) +
+                                                    list(map(lambda x: ['-co', x], CREATION_OPTIONS)) +
                                                     [['-v', '-ps', '32000', '32000', '-overlap', '16000', '-targetDir', TILED_DIR]])))
     CWD = os.path.realpath(DIR)
     print(run_what)
@@ -529,11 +529,10 @@ def makeTiles():
         process = subprocess.Popen(run_what + [os.path.join(DIR, file)],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,
-                                   creationflags=0x08000000,
                                    cwd=CWD)
         stdout, stderr = process.communicate()
         if process.returncode != 0:
-            raise Exception('Error processing merge: ' + stderr)
+            raise Exception('Error processing retile: ' + stderr)
     # HACK: for some reason nodata values aren't set?
     for file in os.listdir(TILED_DIR):
         print(file)
