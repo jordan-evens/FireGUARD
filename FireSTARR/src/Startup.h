@@ -34,7 +34,7 @@ public:
    * \brief Station providing the Startup values
    * \return Station providing the Startup values
    */
-  [[nodiscard]] constexpr const 	string& station() const noexcept { return station_; }
+  [[nodiscard]] constexpr const string& station() const noexcept { return station_; }
   /**
    * \brief Time the Startup value is for
    * \return Time the Startup value is for

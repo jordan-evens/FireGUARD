@@ -192,6 +192,7 @@ Environment Environment::loadEnvironment(const fuel::FuelLookup& lookup,
     if ((nullptr == for_info || cur_info->meridian() == for_info->meridian())
       && cur_x <= best_x)
     {
+      logging::debug("SWITCH X");
       if (cur_x != best_x)
       {
         // if we're switching zones then we need to reset this
@@ -202,13 +203,20 @@ Environment Environment::loadEnvironment(const fuel::FuelLookup& lookup,
       const auto coordinates = cur_info->findCoordinates(point, false);
       if (nullptr != coordinates)
       {
+        logging::debug("CHECK Y");
         const auto cur_y = static_cast<Idx>(abs(
           std::get<0>(*coordinates) - cur_info->rows() / static_cast<Idx>(2)));
+        logging::debug(("Current y value is " + std::to_string(cur_y)).c_str());
         if (cur_y < best_y)
         {
+          logging::debug("SWITCH Y");
           env_info = std::move(cur_info);
           best_y = cur_y;
         }
+      }
+      else
+      {
+        logging::debug("NULLPTR");
       }
     }
   }

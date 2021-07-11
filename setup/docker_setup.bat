@@ -24,6 +24,8 @@ docker compose exec wxshield /bin/bash
 
 @REM firestarr cli
 docker compose run --rm firestarr /bin/bash
+@REM test firestarr
+docker compose run --rm firestarr ./FireSTARR ./Data/output 2017-08-27 52.01 -89.024 12:15 -v --wx Data/output/wx.csv --ffmc 90 --dmc 40 --dc 300 --apcp_0800 0
 
 
 :end

@@ -153,6 +153,7 @@ unique_ptr<Coordinates> GridBase::findCoordinates(const topo::Point& point,
                 this->zone(),
                 x,
                 y);
+  logging::debug("Lower left is (%f, %f)", this->xllcorner_, this->yllcorner_);
   // convert coordinates into cell position
   // use INT64 so we can see if coordinates are out of bounds
   const auto actual_x = (x - this->xllcorner_) / this->cell_size_;
@@ -166,6 +167,11 @@ unique_ptr<Coordinates> GridBase::findCoordinates(const topo::Point& point,
   const auto row = static_cast<int64_t>(round(actual_y - 0.5));
   if (0 > column || column >= columns_ || 0 > row || row >= rows_)
   {
+    logging::debug("Returning nullptr fromfindCoordinates() for (%f, %f) => (%d, %d)",
+                   actual_x,
+                   actual_y,
+                   column,
+                   row);
     return nullptr;
   }
   const auto sub_x = static_cast<SubSize>((actual_x - column) * 1000);

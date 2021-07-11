@@ -413,10 +413,13 @@ template <typename T>
     double y = rows;
     logging::check_fatal(!GTIFImageToPCS(gtif, &x, &y),
                          "Unable to translate image to PCS coordinates.");
-    const auto is_geographic = definition.Model == ModelTypeGeographic ||
+    logging::debug("Lower left original for header is (%f, %f)", x, y);
+    const auto is_geographic = definition.Model == ModelTypeProjected ||
       GTIFProj4ToLatLong(&definition, 1, &x, &y);
+    logging::debug("Lower left second for header is (%f, %f)", x, y);
     const auto yllcorner = is_geographic ? stod(GTIFDecToDMS(y, "Lat", 2)) : y;
     const auto xllcorner = is_geographic ? stod(GTIFDecToDMS(x, "Long", 2)) : x;
+    logging::debug("Lower left for header is (%f, %f)", xllcorner, yllcorner);
     double adf_coefficient[6] = {0};
     x = 0.5;
     y = 0.5;
