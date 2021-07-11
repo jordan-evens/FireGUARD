@@ -17,7 +17,6 @@
 
 #pragma once
 #include "stdafx.h"
-#include "Database.h"
 namespace firestarr
 {
 namespace wx
@@ -51,28 +50,6 @@ public:
    */
   constexpr Score(const int year, const double average, const double grade) noexcept
     : average_(average), grade_(grade), year_(year)
-  {
-  }
-  /**
-   * \brief Construct a Score by reading from Database
-   * \param db Database to read from
-   * \return Score that has been read
-   */
-  [[nodiscard]] static Score readScore(util::Database* db) noexcept
-  {
-    // HACK: do it this way so that we know database calls are in this order
-    const auto yr = db->getInteger();
-    const auto avg = db->getDouble();
-    const auto grd = db->getDouble<4>();
-    return {yr, avg, grd};
-  }
-#pragma warning(suppress: 26495)
-  /**
-   * \brief Construct by reading from Database
-   * \param db Database to read from
-   */
-  explicit Score(util::Database* db) noexcept
-    : Score(readScore(db))
   {
   }
 private:

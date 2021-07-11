@@ -18,7 +18,6 @@
 #include "stdafx.h"
 #include "FireWeather.h"
 #include "FuelType.h"
-#include "WxShield.h"
 namespace firestarr
 {
 namespace wx

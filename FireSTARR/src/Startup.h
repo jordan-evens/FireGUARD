@@ -103,11 +103,6 @@ public:
           const AccumulatedPrecipitation& apcp_0800,
           bool overridden) noexcept;
   /**
-   * \brief Construct by reading from Database
-   * \param db Database to read from
-   */
-  explicit Startup(util::Database* db);
-  /**
    * \brief Move constructor
    * \param rhs Startup to move from
    */

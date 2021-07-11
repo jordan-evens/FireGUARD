@@ -16,7 +16,6 @@
 // Last Updated 2020-04-07 <Evens, Jordan (MNRF)>
 
 #pragma once
-#include "Database.h"
 #include "Point.h"
 namespace firestarr
 {
@@ -63,11 +62,6 @@ public:
    * \brief Destructor
    */
   ~WeatherModel() = default;
-  /**
-   * \brief Construct by reading from Database
-   * \param db Database to read from
-   */
-  explicit WeatherModel(util::Database* db) noexcept;
   /**
    * \brief Move constructor
    * \param rhs WeatherModel to move from

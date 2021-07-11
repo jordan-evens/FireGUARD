@@ -34,24 +34,7 @@ WeatherModel::WeatherModel(const TIMESTAMP_STRUCT& generated,
     distance_from_(distance_from)
 {
 }
-WeatherModel read_weather_model(util::Database* db) noexcept
-{
-  // HACK: do it this way so that we know database calls are in this order
-  const auto generated = db->getTimestamp();
-  auto name = db->getString();
-  const auto latitude = db->getDouble();
-  const auto longitude = db->getDouble();
-  const auto distance_from = db->getDouble<0>();
-  return WeatherModel(generated,
-                      std::move(name),
-                      topo::Point(latitude, longitude),
-                      distance_from);
-}
 #pragma warning(suppress: 26495)
-WeatherModel::WeatherModel(util::Database* db) noexcept
-  : WeatherModel(read_weather_model(db))
-{
-}
 WeatherModel& WeatherModel::operator=(const WeatherModel& rhs)
 {
   if (this != &rhs)

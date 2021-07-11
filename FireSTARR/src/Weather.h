@@ -16,7 +16,6 @@
 // Last Updated 2020-04-07 <Evens, Jordan (MNRF)>
 
 #pragma once
-#include "Database.h"
 #include "Index.h"
 #include "Util.h"
 namespace firestarr
@@ -297,11 +296,6 @@ public:
    * \brief Constructor with no initialization
    */
   constexpr Weather() noexcept = default;
-  /**
-   * \brief Construct by reading from Database
-   * \param db Database to read from
-   */
-  explicit Weather(util::Database* db) noexcept;
   /**
    * \brief Construct with given indices
    * \param tmp Temperature (Celcius)

@@ -17,7 +17,6 @@
 
 #include "stdafx.h"
 #include "FWI.h"
-#include "Database.h"
 #include "Log.h"
 #include "Weather.h"
 #define CHECK_CALCULATION 1
@@ -667,25 +666,8 @@ FwiWeather::FwiWeather(const FwiWeather& wx, const Speed& ws, const Ffmc& ffmc) 
   : FwiWeather(wx, Wind(wx.wind().direction(), ws), ffmc)
 {
 }
-FwiWeather read_fwi_weather(util::Database* db) noexcept
-{
-  const Weather wx(db);
-  // HACK: do it this way so that we know database calls are in this order
-  const Ffmc ffmc(db->getDouble<2>());
-  const Dmc dmc(db->getDouble<2>());
-  const Dc dc(db->getDouble<2>());
-  const Isi isi(db->getDouble<2>(), wx.wind().speed(), ffmc);
-  const Bui bui(db->getDouble<2>(), dmc, dc);
-  const Fwi fwi(db->getDouble<2>(), isi, bui);
-  return {wx.tmp(), wx.rh(), wx.wind(), wx.apcp(), ffmc, dmc, dc, isi, bui, fwi};
-}
 FwiWeather::FwiWeather() noexcept
   : FwiWeather(Zero)
-{
-}
-#pragma warning(suppress: 26495)
-FwiWeather::FwiWeather(util::Database* db) noexcept
-  : FwiWeather(read_fwi_weather(db))
 {
 }
 }

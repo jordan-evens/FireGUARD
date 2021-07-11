@@ -17,7 +17,6 @@
 
 #include "stdafx.h"
 #include "Weather.h"
-#include "Database.h"
 #include "Log.h"
 #include "TimeUtil.h"
 namespace firestarr
@@ -31,48 +30,5 @@ const Speed Speed::Zero = Speed(0);
 const Wind Wind::Zero = Wind(Direction(0, false), Speed(0));
 const AccumulatedPrecipitation AccumulatedPrecipitation::Zero =
   AccumulatedPrecipitation(0);
-static bool WARNED_ABOUT_BAD_TIME_ZONE = false;
-TIMESTAMP_STRUCT read_timestamp(util::Database* db) noexcept
-{
-  // HACK: do it this way so that we know database calls are in this order
-  const auto db_utc = db->getTimestamp();
-  tm utc{};
-  util::to_tm_gm(db_utc, &utc);
-  const auto utc_t = mktime(&utc);
-  auto local = localtime(&utc_t);
-  TIMESTAMP_STRUCT result;
-  util::to_ts(*local, &result);
-  if (result.hour != 13)
-  {
-    // HACK: not sure what to do with time zones yet, so just set it as 13:00
-    if (!WARNED_ABOUT_BAD_TIME_ZONE)
-    {
-      logging::warning(
-        "Overriding hour to be 13:00 even though it's being converted to %02d:00",
-        result.hour);
-      WARNED_ABOUT_BAD_TIME_ZONE = true;
-    }
-    result.hour = 13;
-  }
-  return result;
-}
-Weather read_weather(util::Database* db) noexcept
-{
-  // HACK: read and throw out the date
-  /* const auto for_time = */
-  read_timestamp(db);
-  const Temperature tmp(db->getDouble<2>());
-  const RelativeHumidity rh(db->getDouble<2>());
-  const Speed ws(db->getDouble<2>());
-  const Direction wd(db->getDouble<2>(), false);
-  const Wind wind(wd, ws);
-  const AccumulatedPrecipitation apcp(db->getDouble<2>());
-  return Weather(tmp, rh, wind, apcp);
-}
-#pragma warning(suppress: 26495)
-Weather::Weather(util::Database* db) noexcept
-  : Weather(read_weather(db))
-{
-}
 }
 }

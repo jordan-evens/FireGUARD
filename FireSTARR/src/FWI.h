@@ -224,11 +224,6 @@ public:
    */
   FwiWeather() noexcept;
   /**
-   * \brief Construct by reading from a Database
-   * \param db Database to read from
-   */
-  explicit FwiWeather(util::Database* db) noexcept;
-  /**
    * \brief Construct by reading from istringstream
    * \param iss Stream to parse
    * \param str string to read into

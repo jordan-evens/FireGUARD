@@ -28,7 +28,6 @@
 #include "Test.h"
 #include "TimeUtil.h"
 #include "Util.h"
-#include "WxShield.h"
 #include "InnerPos.h"
 #include "Log.h"
 using firestarr::logging::Log;
@@ -391,48 +390,23 @@ int main(const int argc, const char* const argv[])
       {
         firestarr::util::make_directory_recursive(output_directory.c_str());
       }
-      unique_ptr<firestarr::wx::FwiWeather> y = nullptr;
-      if (wx_file_name.empty())
-      {
-          wx_file_name = output_directory + Settings::weatherFile();
-          firestarr::wx::WxShield wx(start_date,
-              start_point,
-              num_days,
-              wx_file_name,
-              ffmc,
-              dmc,
-              dc,
-              apcp_0800,
-              full_wx);
-          y = wx.readYesterday();
-      }
-      else
-      {
-        // HACK: just use the date that was passed on the command line
-        firestarr::logging::note("Initialized WxShield with date %s", date.c_str());
-      }
-      if (is_wx_only)
-      {
-        return 0;
-      }
-      auto yesterday{nullptr == y ? firestarr::wx::FwiWeather::Zero : *y};
-      // replace any overridden indices
-      const auto ffmc_fixed = nullptr == ffmc ? yesterday.ffmc() : *ffmc;
-      const auto dmc_fixed = nullptr == dmc ? yesterday.dmc() : *dmc;
-      const auto dc_fixed = nullptr == dc ? yesterday.dc() : *dc;
-      const auto isi_fixed = firestarr::wx::Isi(yesterday.wind().speed(), ffmc_fixed);
+      const auto ffmc_fixed = *ffmc;
+      const auto dmc_fixed = *dmc;
+      const auto dc_fixed = *dc;
+      // HACK: ISI for yesterday really doesn't matter so just use any wind
+      const auto isi_fixed = firestarr::wx::Isi(firestarr::wx::Speed(0), ffmc_fixed);
       const auto bui_fixed = firestarr::wx::Bui(dmc_fixed, dc_fixed);
       const auto fwi_fixed = firestarr::wx::Fwi(isi_fixed, bui_fixed);
-      yesterday = firestarr::wx::FwiWeather(yesterday.tmp(),
-                                            yesterday.rh(),
-                                            yesterday.wind(),
-                                            yesterday.apcp(),
-                                            ffmc_fixed,
-                                            dmc_fixed,
-                                            dc_fixed,
-                                            isi_fixed,
-                                            bui_fixed,
-                                            fwi_fixed);
+      const auto yesterday = firestarr::wx::FwiWeather(firestarr::wx::Temperature(0),
+                                                       firestarr::wx::RelativeHumidity(0),
+                                                       firestarr::wx::Wind(firestarr::wx::Direction(0, false), firestarr::wx::Speed(0)),
+                                                       firestarr::wx::AccumulatedPrecipitation(0),
+                                                       ffmc_fixed,
+                                                       dmc_fixed,
+                                                       dc_fixed,
+                                                       isi_fixed,
+                                                       bui_fixed,
+                                                       fwi_fixed);
       firestarr::util::to_tm(start_date, &start);
       // HACK: make sure we have the same start hour
       start.tm_hour = start_date.hour;

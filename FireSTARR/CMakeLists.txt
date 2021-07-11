@@ -11,5 +11,5 @@ add_definitions(-D_POSIX_C_SOURCE=200809L)
 
 file(GLOB SOURCES src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC geotiff tiff pthread odbc)
+target_link_libraries(${PROJECT_NAME} PUBLIC geotiff tiff pthread)
 

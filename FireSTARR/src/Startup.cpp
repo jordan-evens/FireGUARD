@@ -17,7 +17,6 @@
 
 #include "stdafx.h"
 #include "Startup.h"
-#include "Database.h"
 #include "TimeUtil.h"
 namespace firestarr
 {
@@ -41,40 +40,6 @@ Startup::Startup(string station,
     dc_(dc),
     apcp_0800_(apcp_0800),
     is_overridden_(overridden)
-{
-}
-Startup read_startup(util::Database* db)
-{
-  // HACK: do it this way so that we know database calls are in this order
-  const auto station = db->getString();
-  const auto gen_utc = db->getTimestamp();
-  tm utc{};
-  util::to_tm_gm(gen_utc, &utc);
-  const time_t local_t = mktime(&utc);
-  auto local = localtime(&local_t);
-  TIMESTAMP_STRUCT result;
-  util::to_ts(*local, &result);
-  const auto generated = result;
-  const auto latitude = db->getDouble();
-  const auto longitude = db->getDouble();
-  const auto distance_from = db->getDouble<0>();
-  const Ffmc ffmc(db->getDouble<2>());
-  const Dmc dmc(db->getDouble<2>());
-  const Dc dc(db->getDouble<2>());
-  const AccumulatedPrecipitation apcp_0800(db->getDouble<2>());
-  return Startup(station,
-                 generated,
-                 topo::Point(latitude, longitude),
-                 distance_from,
-                 ffmc,
-                 dmc,
-                 dc,
-                 apcp_0800,
-                 false);
-}
-#pragma warning(suppress: 26495)
-Startup::Startup(util::Database* db)
-  : Startup(read_startup(db))
 {
 }
 }
