@@ -78,6 +78,11 @@ const char* get_arg(const char* const name,
 }
 int main(const int argc, const char* const argv[])
 {
+#ifndef NDEBUG
+  cout << "**************************************************\n";
+  cout << "******************* DEBUG MODE *******************\n";
+  cout << "**************************************************\n";
+#endif
   // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
   Log::setLogLevel(firestarr::logging::LOG_NOTE);
   auto bin = string(argv[0]);

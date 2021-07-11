@@ -260,7 +260,7 @@ protected:
         const auto f = fuel::FuelType::safeCode(fuel.at(h));
         const auto cell = Cell(h, s, a, f);
         values.at(h) = cell;
-#ifdef _DEBUG
+#ifndef NDEBUG
 #ifndef VLD_RPTHOOK_INSTALL
 					const topo::Location loc{ h };
 					const auto r = loc.row();

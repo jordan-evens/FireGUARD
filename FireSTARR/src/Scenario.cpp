@@ -344,7 +344,7 @@ Scenario& Scenario::operator=(Scenario&& rhs) noexcept
 }
 void Scenario::burn(const Event& event, const IntensitySize burn_intensity)
 {
-#ifdef _DEBUG
+#ifndef NDEBUG
 			logging::check_fatal(intensity_->hasBurned(event.cell()), "Re-burning cell");
 #endif
   // Observers only care about cells burning so do it here
