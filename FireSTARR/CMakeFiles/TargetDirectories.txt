@@ -1,0 +1,3 @@
+/FireGUARD/FireSTARR/CMakeFiles/rebuild_cache.dir
+/FireGUARD/FireSTARR/CMakeFiles/edit_cache.dir
+/FireGUARD/FireSTARR/CMakeFiles/FireSTARR.dir

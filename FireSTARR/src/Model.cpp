@@ -88,6 +88,7 @@ Model::Model(const topo::StartPoint& start_point,
     output_directory_(output_directory)
 {
   util::make_directory_recursive(output_directory_.c_str());
+  logging::debug("Calculating for (%f, %f)", start_point.latitude(), start_point.longitude());
   const auto nd_for_point =
     calculate_nd_for_point(env->elevation(), start_point);
   for (auto day = 0; day < MAX_DAYS; ++day)
@@ -111,6 +112,9 @@ void Model::readWeather(const fuel::FuelLookup& fuel_lookup,
   auto min_date = numeric_limits<Day>::max();
   ifstream in;
   in.open(filename);
+  logging::check_fatal(!in.is_open(),
+                       "Could not open input weather file %s",
+                       filename.c_str());
   if (in.is_open())
   {
     string str;

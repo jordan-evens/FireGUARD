@@ -41,6 +41,9 @@ EnvironmentInfo::EnvironmentInfo(string in_fuel,
     in_aspect_(std::move(in_aspect)),
     in_elevation_(std::move(in_elevation))
 {
+  logging::debug("fuel: %dx%d => (%f, %f)", fuel.columns(), fuel.rows(), fuel.xllcorner(), fuel.yllcorner());
+  logging::debug("slope: %dx%d => (%f, %f)", slope.columns(), slope.rows(), slope.xllcorner(), slope.yllcorner());
+  logging::debug("aspect: %dx%d => (%f, %f)", aspect.columns(), aspect.rows(), aspect.xllcorner(), aspect.yllcorner());
   logging::check_fatal(!(fuel.rows() == slope.rows()
                          && fuel.columns() == slope.columns()
                          && fuel.cellSize() == slope.cellSize()

@@ -409,16 +409,12 @@ template <typename T>
                          numeric_limits<Idx>::max());
     TIFFGetField(tif, GDAL_NODATA, &count, &data);
     const auto nodata = stoi(string(static_cast<char*>(data)));
-    auto x = 0.0;
+    double x = 0.0;
     double y = rows;
     logging::check_fatal(!GTIFImageToPCS(gtif, &x, &y),
                          "Unable to translate image to PCS coordinates.");
-    logging::debug("Lower left original for header is (%f, %f)", x, y);
-    const auto is_geographic = definition.Model == ModelTypeProjected ||
-      GTIFProj4ToLatLong(&definition, 1, &x, &y);
-    logging::debug("Lower left second for header is (%f, %f)", x, y);
-    const auto yllcorner = is_geographic ? stod(GTIFDecToDMS(y, "Lat", 2)) : y;
-    const auto xllcorner = is_geographic ? stod(GTIFDecToDMS(x, "Long", 2)) : x;
+    const auto yllcorner = y;
+    const auto xllcorner = x;
     logging::debug("Lower left for header is (%f, %f)", xllcorner, yllcorner);
     double adf_coefficient[6] = {0};
     x = 0.5;

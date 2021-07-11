@@ -356,7 +356,7 @@ public:
    * \brief Whether or not to run things asynchronously where possible
    * \return Whether or not to run things asynchronously where possible
    */
-  atomic<bool> run_async = false;
+  atomic<bool> run_async = true;
 };
 #pragma warning (pop)
 /**
