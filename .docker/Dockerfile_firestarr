@@ -15,3 +15,6 @@ RUN apt-get update \
       /usr/lib/node_modules/npm/doc/* \
       /usr/lib/node_modules/npm/html/* \
       /usr/lib/node_modules/npm/scripts/*
+#COPY ./FireSTARR/ /FireGUARD/FireSTARR/
+#RUN cmake --configure . \
+#  && cmake --build .

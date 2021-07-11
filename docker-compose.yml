@@ -131,8 +131,8 @@ services:
         source: ./FireSTARR
         target: /FireGUARD/FireSTARR
       - type: bind
-        source: ./util
-        target: /FireGUARD/util
+        source: ./data/generated/tiled
+        target: /FireGUARD/100m/default
 
 networks:
   default:
