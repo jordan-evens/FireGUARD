@@ -85,6 +85,7 @@ def read_config(force=False):
         CONFIG.set('FireGUARD', 'reanalysis_server_user', '')
         CONFIG.set('FireGUARD', 'reanalysis_server_password', '')
         CONFIG.set('FireGUARD', 'naefs_server', 'https://nomads.ncep.noaa.gov/cgi-bin/')
+        CONFIG.set('FireGUARD', 'hpfx_server', 'http://hpfx.collab.science.gc.ca/')
         try:
             with open(SETTINGS_FILE) as configfile:
                 CONFIG.readfp(configfile)
@@ -657,7 +658,10 @@ def read_grib(file, match):
     output.columns = output.columns.str.replace('value', variable)
     # HACK: Need to delete possible duplicates so concat works
     output = output.drop_duplicates(columns)
-    return output[columns + [variable]].set_index(columns)
+    output = output[columns + [variable]]
+    # HACK: still have duplicates for some reason
+    output = output.drop_duplicates()
+    return output.set_index(columns)
 
 
 def try_remove(file):
