@@ -13,15 +13,18 @@ import psycopg2
 import io
 import subprocess
 import shlex
-import pandas
+import pandas as pd
 import logging
 import configparser
 import re
-import numpy
+import numpy as np
 import shutil
 import certifi
 import ssl
 import sys
+#import pywgrib2_s as wgrib2
+import wgrib2
+import copy
 
 ## So HTTPS transfers work properly
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -373,20 +376,20 @@ def fix_None(x):
     @param x Value to convert from
     @return None or the original value
     """
-    # for some reason comparing to pandas.NaT doesn't work
-    return None if isinstance(x, type(pandas.NaT)) else None if 'nan' == str(x) else x
+    # for some reason comparing to pd.NaT doesn't work
+    return None if isinstance(x, type(pd.NaT)) else None if 'nan' == str(x) else x
 
 
 def fix_Types(x):
     """!
-    Convert to datetime if it's a numpy.datetime64, or None if it's a value for nothing
+    Convert to datetime if it's a np.datetime64, or None if it's a value for nothing
     @param x Value to convert from
     @return None, a datetime, or the original value
     """
     # for some reason the dates are giving too much precision for the database to use if seconds are specified
-    if isinstance(x, numpy.datetime64):
-        x = pandas.to_datetime(x, utc=True)
-    if isinstance(x, numpy.int64):
+    if isinstance(x, np.datetime64):
+        x = pd.to_datetime(x, utc=True)
+    if isinstance(x, np.int64):
         x = int(x)
     return fix_None(x)
 
@@ -531,14 +534,14 @@ def write_foreign(cnxn, schema, table, index, fct_insert, cur_df):
     sub_data = cur_df[index].drop_duplicates().set_index(index)
     fct_insert(cnxn, qualified_table, sub_data)
     # should be much quicker to read out the fk data and do a join on this end
-    fkData = pandas.read_sql("SELECT * FROM {}".format(qualified_table), cnxn)
+    fkData = pd.read_sql("SELECT * FROM {}".format(qualified_table), cnxn)
     print(fkData.columns)
     print(fkData.dtypes)
     for i in range(len(fkData.columns)):
         if fkData.dtypes[i] == 'datetime64[ns]':
             c = fkData.columns[i]
             print('Fixing ' + c)
-            fkData[c] = pandas.to_datetime(fkData[c], utc=True)
+            fkData[c] = pd.to_datetime(fkData[c], utc=True)
     print(fkData.dtypes)
     fkId = [x for x in fkData.columns if x not in index][0]
     fkColumns = [x for x in fkData.columns if x != fkId]
@@ -588,7 +591,7 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
         stmt_insert = make_insert_statement(table, data.reset_index().columns)
         trans_insert_data(cnxn, data, stmt_insert)
     if addStartDate:
-        df['startdate'] = pandas.to_datetime(df.reset_index()['fortime'].min(), utc=True)
+        df['startdate'] = pd.to_datetime(df.reset_index()['fortime'].min(), utc=True)
     try:
         cnxn = open_local_db()
         cur_df = df
@@ -601,68 +604,108 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
     finally:
         cnxn.close()
 
+def apply_wind(w):
+    return w.apply(calc_wind, axis=1)
 
-def read_grib(file, match):
+def filterXY(data):
+    data = data[data[:, :, 0] >= BOUNDS['latitude']['min']]
+    data = data[data[:, 0] <= BOUNDS['latitude']['max']]
+    data = data[data[:, 1] >= BOUNDS['longitude']['min']]
+    data = data[data[:, 1] <= BOUNDS['longitude']['max']]
+    return data
+
+def read_data(coords, mask, select, m):
+# def read_data(args):
+    # coords, mask, select, m = args
+    # logging.debug('{} => {}'.format(mask.format(m), select))
+    data = np.dstack([coords, wgrib2.get_data(mask.format(m), select=select)])
+    # logging.debug("Filter")
+    # HACK: this must drop a dimension becausethe ones after are only 2-d
+    data = filterXY(data)
+    # logging.debug("Slice")
+    return data[:, 2]
+
+
+k_to_c = np.vectorize(kelvin_to_celcius)
+
+
+import concurrent.futures
+
+# def read_member(mask, select, coords, member, apcp):
+def read_member(args):
+    mask, select, coords, member, apcp = args
+    logging.debug(select)
+    # n = 4
+    # pool = Pool(n)
+    # sub_args = zip([coords] * n, [mask] * n, [select] * n, ['TMP', 'RH', 'UGRD', 'VGRD'])
+    # results = pool.map(read_data, sub_args)
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+        # futures = [executor.submit(read_data, params) for params in sub_args]
+        # results = [f.result() for f in futures]
+    # temp, rh, ugrd, vgrd = results
+    temp = read_data(coords, mask, select, 'TMP')
+    rh = read_data(coords, mask, select, 'RH')
+    ugrd = read_data(coords, mask, select, 'UGRD')
+    vgrd = read_data(coords, mask, select, 'VGRD')
+    # logging.debug("Kelvin")
+    temp = k_to_c(temp)
+    # logging.debug("Speed")
+    u = ugrd
+    v = vgrd
+    u_2 = u * u
+    v_2 = v * v
+    sq = u_2 + v_2
+    ws = 3.6 * np.sqrt(sq)
+    # logging.debug("Direction")
+    a = np.arctan2(-u, -v)
+    wd = ((180 / math.pi * a) + 360) % 360
+    # logging.debug("Stack")
+    columns = ['latitude', 'longitude', 'TMP','RH', 'WS', 'WD']
+    if apcp:
+        pcp = read_data(coords, mask, select, 'APCP')
+        # pcp = read_data([coords, mask, select, 'APCP'])
+    coords = filterXY(coords)
+    # logging.debug("DataFrame")
+    wx = pd.DataFrame(coords, columns=['latitude', 'longitude'])
+    wx['TMP'] = temp
+    wx['RH'] = rh
+    wx['WS'] = ws
+    wx['WD'] = wd
+    wx['APCP'] = pcp if apcp else 0
+    wx['Member'] = member
+    # logging.debug("Done")
+    return wx
+
+from multiprocessing import Pool
+
+def read_grib(mask, apcp=True):
     """!
     Read grib data for desired time and field
-    @param file Path to source grib2 file to read
-    @param match Definition of time and field to look for
+    @param mask File mask for path to source grib2 file to read
     @return DataFrame with data read from file    
     """
-    # logging.debug(file)
-    CWD = os.path.join(os.path.dirname(file))
-    cmd = '/FireGUARD/wgrib2'
-    bounds = '{}:{} {}:{}'.format(BOUNDS['longitude']['min'],
-                                  BOUNDS['longitude']['max'],
-                                  BOUNDS['latitude']['min'],
-                                  BOUNDS['latitude']['max'])
-    args = ' '.join(map(lambda x: '-match "' + x + '"', match)) + ' -inv /dev/null -undefine out-box {} -set_ext_name 1 -csv'.format(bounds)
-    output = r'-'
-    # run generated command for parsing data
-    run_what = [cmd] + [os.path.basename(file)] + shlex.split(args) + [output]
-    logging.debug("Running:\n{}".format(' '.join(run_what)))
-    process = subprocess.Popen(run_what,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               cwd=CWD)
-    stdout, stderr = process.communicate()
-    if process.returncode != 0:
-        raise Exception('Error processing grib data: ' + stderr)
-    # convert into pandas DataFrame
-    output = pandas.read_csv(io.BytesIO(stdout),
-                             header=None,
-                             names=['generated', 'fortime', 'field', 'level', 'longitude', 'latitude', 'value'],
-                             converters=dict((x,
-                                              lambda x: None if (not x) else float(x)) \
-                                             for x in ['longitude',
-                                                       'latitude',
-                                                       'value']),
-                             parse_dates=['generated', 'fortime'],
-                             encoding='utf8',
-                             date_parser=lambda x: pandas.to_datetime(x, utc=True, errors='coerce'))
-    variable = output[:1]['field'][0]
-    columns = ['generated', 'fortime', 'longitude', 'latitude']
-    def parse_ensemble(x):
-        """!
-        Change ensemble name into a number
-        @param x Data to parse
-        @return Number representing ensemble name
-        """
-        result = 0 if -1 != x.find('low-res_ctl') else int(x[x.find('=') + 1:])
-        return result
-    if -1 != variable.find('.'):
-        variable = variable[:variable.find('.')]
-        output['member'] = output[['field']].apply(
-            lambda x: parse_ensemble(x[0]), axis=1)
-        columns += ['member']
-    output.columns = output.columns.str.replace('value', variable)
-    # HACK: Need to delete possible duplicates so concat works
-    output = output.drop_duplicates(columns)
-    output = output[columns + [variable]]
-    # HACK: still have duplicates for some reason
-    output = output.drop_duplicates()
-    return output.set_index(columns)
-
+    columns = ['latitude', 'longitude']
+    matches = wgrib2.match(mask.format('TMP'))
+    members = list(map(lambda x: 0 if -1 != x.find('low-res ctl') else int(x[x.find('ENS=') + 4:]), matches))
+    matches = list(map(lambda x: x[x.rfind(':'):], matches))
+    coords = wgrib2.coords(mask.format('TMP'))
+    n = len(members)
+    args = zip([mask] * n, matches, [coords] * n, members, [apcp] * n)
+    results = list(map(read_member, args))
+    # pool = Pool(n)
+    # results = pool.map(read_member, args)
+    # pool.map_async(read_member, args)
+    # pool.join()
+    # results = pool.get()
+    #for i in range(len(matches)):
+    #    # logging.debug("Loop")
+    #    results.append(read_member(mask, matches[i], coords, members[i], apcp))
+    output = pd.concat(results)
+    # logging.debug(output)
+    output = output.set_index(['latitude', 'longitude', 'Member'])
+    output = output[['TMP', 'RH', 'WS', 'WD', 'APCP']]
+    # need to add fortime and generated
+    return output
 
 def try_remove(file):
     """!

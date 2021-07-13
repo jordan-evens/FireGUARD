@@ -8,7 +8,7 @@
 
 from ctypes import *
 import os
-import numpy
+import numpy as np
 import logging
 import common
 
@@ -51,7 +51,7 @@ data = None
 lat = None
 lon = None
 matched = []
-use_numpy_nan = True
+use_np_nan = True
 names='ncep'
 # UNDEFINED values from wgrib2.h
 UNDEFINED = 9.999e20
@@ -70,7 +70,7 @@ def wgrib2(arg):
     #
     #    uses C calling convention: 1st arg is name of program
     #
-    global debug, names
+    print("wgrib2")
     arg_length = len(arg) + 3
     select_type = (c_char_p * arg_length)
     select = select_type()
@@ -164,7 +164,7 @@ def inq(gfile,
     # based on grb2_inq() from ftn wgrib2api
 
     global nx, ny, ndata, nmatch, msgno, submsgno, matched, data, lat, lon
-    global use_numpy_nan, UNDEFINED_LOW, UNDEFINED_HIGH, debug
+    global use_np_nan, UNDEFINED_LOW, UNDEFINED_HIGH, debug
 
     data = None
     lat = None
@@ -314,20 +314,20 @@ def inq(gfile,
         if (Data != False):
             err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
             if (err == 0):
-                data = numpy.reshape(numpy.array(array), (nx, ny), order='F')
-                if use_numpy_nan:
-                    data[numpy.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = numpy.nan
+                data = np.reshape(np.array(array), (nx, ny), order='F')
+                if use_np_nan:
+                    data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
         if (Latlon != False):
             err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 14)
             if (err == 0):
-                lon = numpy.reshape(numpy.array(array), (nx, ny), order='F')
-                if use_numpy_nan:
-                    lon[numpy.logical_and((lon > UNDEFINED_LOW), (lon < UNDEFINED_HIGH))] = numpy.nan
+                lon = np.reshape(np.array(array), (nx, ny), order='F')
+                if use_np_nan:
+                    lon[np.logical_and((lon > UNDEFINED_LOW), (lon < UNDEFINED_HIGH))] = np.nan
             err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 15)
             if (err == 0):
-                lat = numpy.reshape(numpy.array(array), (nx, ny), order='F')
-                if use_numpy_nan:
-                    lat[numpy.logical_and((lat > UNDEFINED_LOW), (lat < UNDEFINED_HIGH))] = numpy.nan
+                lat = np.reshape(np.array(array), (nx, ny), order='F')
+                if use_np_nan:
+                    lat[np.logical_and((lat > UNDEFINED_LOW), (lat < UNDEFINED_HIGH))] = np.nan
     # logging.debug("Done")
     if Matched != False:
         size = my_wgrib2.wgrib2_get_mem_buffer_size(11)
@@ -342,6 +342,226 @@ def inq(gfile,
         print("msg=", msgno, submsgno)
         print("has_data=", data is not None)
     return nmatch
+
+
+
+#####################################################################
+
+def get_data(gfile,
+             *matches,
+             select='',
+             Regex=False):
+    # logging.debug("Start")
+    # based on grb2_inq() from ftn wgrib2api
+
+    data = None
+    lat = None
+    lon = None
+    matched = []
+    match_option = '-fgrep'
+    
+    if select != '':  # selected field, use -d, sequential not valid
+        cmds = [
+            gfile, "-d", select, "-ftn_api_fn0", "-last0", "@mem:10",
+            "-inv", "/dev/null"
+        ]
+    else:  # no inventory
+        cmds = [
+            gfile, "-ftn_api_fn0", "-last0", "@mem:10", "-inv", "/dev/null"
+        ]
+        cmds.append('-rewind_init')
+        cmds.append(gfile)
+        for m in matches:
+            cmds.append(match_option)
+            cmds.append(m)
+
+    cmds.append("-no_header")
+    cmds.append("-rpn")
+    cmds.append("sto_13")
+    err = wgrib2(cmds)
+
+    if err > 0:
+        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+        nmatch = -1
+        return -1
+
+    if mem_size(10) == 0:
+        if debug: print("no match")
+        nmatch = 0
+        return 0
+
+    string = get_str_mem(10)
+    x = string.split()
+    nmatch = int(x[0])
+    ndata = int(x[1])
+    nx = int(x[2])
+    ny = int(x[3])
+    msgno = int(x[4])
+    submsgno = int(x[5])
+    if (nmatch == 0):
+        if debug: print("inq ",gfile," found no matches")
+        return None
+
+# for weird grids nx=-1/0 ny=-1/0
+    if (nx * ny != ndata):
+        nx = ndata
+        ny = 1
+    # logging.debug("Load")
+# get data, lat/lon
+    array_type = (c_float * ndata)
+    array = array_type()
+
+    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
+    if (err == 0):
+        data = np.reshape(np.array(array), (nx, ny), order='F')
+        if use_np_nan:
+            data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
+    # logging.debug("Done")
+
+    if debug:
+        print("inq nmatch=", nmatch)
+        print("ndata=", ndata, nx, ny)
+        print("msg=", msgno, submsgno)
+        print("has_data=", data is not None)
+    return data
+
+
+
+#####################################################################
+
+def match(gfile):
+    # logging.debug("Start")
+    # based on grb2_inq() from ftn wgrib2api
+
+    data = None
+    lat = None
+    lon = None
+    matched = []
+    match_option = '-match_fs'
+    cmds = [
+        gfile, "-last", "@mem:11", "-ftn_api_fn0", "-last0", "@mem:10",
+        "-inv", "/dev/null", "-print_out", ":",
+        "@mem:11", "-S", "-last", "@mem:11", "-nl_out", "@mem:11"
+    ]
+    cmds.append('-rewind_init')
+    cmds.append(gfile)
+    cmds.append("-no_header")
+    err = wgrib2(cmds)
+
+    if err > 0:
+        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+        nmatch = -1
+        return -1
+
+    if mem_size(10) == 0:
+        if debug: print("no match")
+        nmatch = 0
+        return 0
+
+    string = get_str_mem(10)
+    x = string.split()
+    nmatch = int(x[0])
+    ndata = int(x[1])
+    nx = int(x[2])
+    ny = int(x[3])
+    msgno = int(x[4])
+    submsgno = int(x[5])
+    if (nmatch == 0):
+        if debug: print("inq ",gfile," found no matches")
+        return 0
+
+# for weird grids nx=-1/0 ny=-1/0
+    if (nx * ny != ndata):
+        nx = ndata
+        ny = 1
+    # logging.debug("Load")
+    size = my_wgrib2.wgrib2_get_mem_buffer_size(11)
+    string = create_string_buffer(size)
+    err = my_wgrib2.wgrib2_get_mem_buffer(string, size, 11)
+    if (err == 0):
+        matched = string.value.decode("utf-8").rstrip().split('\n')
+
+    if debug:
+        print("inq nmatch=", nmatch)
+        print("ndata=", ndata, nx, ny)
+        print("msg=", msgno, submsgno)
+        print("has_data=", data is not None)
+    return matched
+
+
+#####################################################################
+fix180 = np.vectorize(lambda x: x if x <= 180 else x - 360)
+
+def coords(gfile):
+    # logging.debug("Start")
+    # based on grb2_inq() from ftn wgrib2api
+    data = None
+    lat = None
+    lon = None
+    matched = []
+    match_option = '-match_fs'
+    cmds = [
+            gfile, "-ftn_api_fn0", "-last0", "@mem:10", "-inv", "/dev/null"
+           ]
+    cmds.append('-rewind_init')
+    cmds.append(gfile)
+    cmds.append("-no_header")
+    cmds.append("-rpn")
+    cmds.append("rcl_lon:sto_14:rcl_lat:sto_15")
+    err = wgrib2(cmds)
+
+    if err > 0:
+        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+        nmatch = -1
+        return -1
+
+    if mem_size(10) == 0:
+        if debug: print("no match")
+        nmatch = 0
+        return 0
+
+    string = get_str_mem(10)
+    x = string.split()
+    nmatch = int(x[0])
+    ndata = int(x[1])
+    nx = int(x[2])
+    ny = int(x[3])
+    msgno = int(x[4])
+    submsgno = int(x[5])
+    if (nmatch == 0):
+        if debug: print("inq ",gfile," found no matches")
+        return None
+
+# for weird grids nx=-1/0 ny=-1/0
+    if (nx * ny != ndata):
+        nx = ndata
+        ny = 1
+    # logging.debug("Load")
+# get data, lat/lon
+    array_type = (c_float * ndata)
+    array = array_type()
+
+    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 14)
+    if (err == 0):
+        lon = np.reshape(np.array(array), (nx, ny), order='F')
+        if use_np_nan:
+            lon[np.logical_and((lon > UNDEFINED_LOW), (lon < UNDEFINED_HIGH))] = np.nan
+    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 15)
+    if (err == 0):
+        lat = np.reshape(np.array(array), (nx, ny), order='F')
+        if use_np_nan:
+            lat[np.logical_and((lat > UNDEFINED_LOW), (lat < UNDEFINED_HIGH))] = np.nan
+
+    if debug:
+        print("inq nmatch=", nmatch)
+        print("ndata=", ndata, nx, ny)
+        print("msg=", msgno, submsgno)
+        print("has_data=", data is not None)
+    lon = fix180(lon)
+    return np.dstack([lat, lon])
+
+#####################################################################
+
 
 #
 # write grib message
@@ -375,7 +595,7 @@ def write(gfile,
     #
     # write grib message (record)
     #
-    global use_numpy_nan, UNDEFINED, debug
+    global use_np_nan, UNDEFINED, debug
 
 #   if you only change metadata, no need to pack grid point data
     pack = False
@@ -435,9 +655,9 @@ def write(gfile,
     
     if new_data is not None:
         asize = new_data.size
-        a = new_data.astype(dtype=numpy.float32).reshape((asize),order='F')
-        if use_numpy_nan:
-            a[numpy.isnan(a)] = UNDEFINED
+        a = new_data.astype(dtype=np.float32).reshape((asize),order='F')
+        if use_np_nan:
+            a[np.isnan(a)] = UNDEFINED
         a_p = a.ctypes.data_as(c_void_p)
         err = my_wgrib2.wgrib2_set_reg(a_p, asize, 10)
         cmds.append("-rpn")
@@ -579,7 +799,7 @@ def get_bytes_mem(arg):
     return array
 
 def get_flt_mem(mem_no):
-    # return contents of mem file as numpy array (vector)
+    # return contents of mem file as np array (vector)
     global debug
     i = c_int(mem_no)
     size = my_wgrib2.wgrib2_get_mem_buffer_size(i)
@@ -593,15 +813,15 @@ def get_flt_mem(mem_no):
     if err != 0:
         if debug: print("*** ERROR: get_flt_mem, could not read @mem",mem_no)
         return None
-    data = numpy.array(array)
-    if use_numpy_nan:
-        data[numpy.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = numpy.nan
+    data = np.array(array)
+    if use_np_nan:
+        data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
     if debug: print("get_flt_mem ", arg)
     return data
 
 
 def set_mem(mem_no,data):
-    global debug, use_numpy_nan
+    global debug, use_np_nan
     i = c_int(mem_no)
 
     # data can be type bytes, str or something else in future
@@ -616,12 +836,12 @@ def set_mem(mem_no,data):
         size = c_int(len(data))
         a = data.encode('utf-8')
         err = my_wgrib2.wgrib2_set_mem_buffer(a, size, i)
-    elif isinstance(data, numpy.ndarray):
+    elif isinstance(data, np.ndarray):
         asize = data.size
         size = c_int(4*asize)
-        a = data.astype(dtype=numpy.float32).reshape(asize)
-        if use_numpy_nan:
-            a[numpy.isnan(a)] = UNDEFINED
+        a = data.astype(dtype=np.float32).reshape(asize)
+        if use_np_nan:
+            a[np.isnan(a)] = UNDEFINED
         a_p = a.ctypes.data_as(c_void_p)
         err = my_wgrib2.wgrib2_set_mem_buffer(a_p, size, i)
     else:
@@ -643,11 +863,11 @@ def reg_size(regno):
     return size
 
 def get_reg(regno):
-    # return register(arg) as numpy array (vector)
+    # return register(arg) as np array (vector)
     #
     # get size of register
     #
-    global use_numpy_nan, debug
+    global use_np_nan, debug
     i = c_int(regno)
     size = my_wgrib2.wgrib2_get_reg_size(i)
     array_type = (c_float * size)
@@ -657,9 +877,9 @@ def get_reg(regno):
        if debug: print("wgrib2_get_reg reg",i," err=", err)
        return None
     # don't know dimensions of register
-    data = numpy.array(array)
-    if use_numpy_nan:
-        data[numpy.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = numpy.nan
+    data = np.array(array)
+    if use_np_nan:
+        data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
     if debug: print("get_reg ",regno)
     return data
 
@@ -667,16 +887,16 @@ def set_reg(regno, array):
     #
     # set register(regno) = array
     #
-    global use_numpy_nan, debug
+    global use_np_nan, debug
     i = c_int(regno)
     if debug:
         print("set_reg ",i)
     asize = array.size
 
     # convert array to 32-bit float, linear
-    a = array.astype(dtype=numpy.float32).reshape((asize))
-    if use_numpy_nan:
-        a[numpy.isnan(a)] = UNDEFINED
+    a = array.astype(dtype=np.float32).reshape((asize))
+    if use_np_nan:
+        a[np.isnan(a)] = UNDEFINED
     a_p = a.ctypes.data_as(c_void_p)
 
     err = my_wgrib2.wgrib2_set_reg(a_p, asize, i)
