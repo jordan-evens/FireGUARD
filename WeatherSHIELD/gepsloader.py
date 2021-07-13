@@ -11,7 +11,7 @@ import sys
 sys.path.append('../util')
 import common
 import os
-import pandas
+import pandas as pd
 import logging
 import socket
 import time
@@ -50,7 +50,7 @@ class HPFXLoader(WeatherLoader):
         @param for_run Which run of model to use
         @param for_date Which date of model to use
         @param name Name of index to read
-        @return Index data as a pandas dataframe
+        @return Index data as a pd dataframe
         """
         def get_match_files(weather_index):
             """!
@@ -106,19 +106,19 @@ class HPFXLoader(WeatherLoader):
         file = get_match_files(weather_index)
         if download_only:
             return None
-        result = common.read_grib(file, weather_index.match)
-        index = result.index.names
-        columns = result.columns
-        result = result.reset_index()
-        result['model'] = self.name
-        return result.set_index(index + ['model'])[columns]
+        # result = common.read_grib(file, weather_index.name)
+        # index = result.index.names
+        # columns = result.columns
+        # result = result.reset_index()
+        # result['model'] = self.name
+        # return result.set_index(index + ['model'])[columns]
     def read_wx(self, for_run, for_date, download_only=False):
         """!
         Read all weather for given day
         @param self Pointer to self
         @param for_run Which run of model to use
         @param for_date Which date of model to use
-        @return Weather as a pandas dataframe
+        @return Weather as a pd dataframe
         """
         print("for_date=" + str(for_date))
         print("for_run=" + str(for_run))
@@ -130,38 +130,32 @@ class HPFXLoader(WeatherLoader):
             return self.read_grib(for_run, for_date, 'VGRD', download_only)
         def read_rh():
             return self.read_grib(for_run, for_date, 'RH', download_only)
-        def calc_wind(x):
-            """ Calculate wind indices from Series """
-            return pandas.Series([common.calc_ws(x['UGRD'], x['VGRD']),
-                                  common.calc_wd(x['UGRD'], x['VGRD'])],
-                                 index=['WS', 'WD'])
         def read_precip():
-            if 0 == for_run.hour:
+            if 0 == for_date.hour:
                 return None
-            pcp = self.read_grib(for_run, for_date, 'APCP', download_only)
-            if download_only:
-                return None
-            pcp[pcp['APCP'] < 0] = 0
-            pcp[pcp['APCP'] != pcp['APCP']] = 0
-            return pcp
+            return self.read_grib(for_run, for_date, 'APCP', download_only)
         temp = read_temp()
         rh = read_rh()
         ugrd = read_ugrd()
         vgrd = read_vgrd()
         rain = read_precip()
         if download_only:
-            return None    
-        wx = pandas.concat([temp,
-                            rh,
-                            pandas.concat([ugrd, vgrd], axis=1).apply(calc_wind, axis=1)],
-                           axis=1)
-        if rain is None:
-            wx['APCP'] = 0
-        else:
-            wx = pandas.concat([wx, rain], axis=1)
-        # set this separately because we're overwriting the column data
-        wx['TMP'] = wx[['TMP']].apply(lambda x: common.kelvin_to_celcius(x['TMP']), axis=1)
-        return wx
+            return None
+        diff = for_date - for_run
+        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+        date = for_run.strftime(r'%Y%m%d')
+        time = int(for_run.strftime(r'%H'))
+        save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
+        result = common.read_grib(os.path.join(self.DIR_DATA, save_as), 0 != for_date.hour)
+        # need to add fortime and generated
+        result['generated'] = pd.to_datetime(for_run, utc=True)
+        result['fortime'] = pd.to_datetime(for_date, utc=True)
+        index = result.index.names
+        columns = result.columns
+        result = result.reset_index()
+        result['model'] = self.name
+        print(result)
+        return result.set_index(index + ['model'])[columns]
     def get_nearest_run(self, interval):
         """!
         Find time of most recent run with given update interval
@@ -212,7 +206,7 @@ class HPFXLoader(WeatherLoader):
             exists = self.check_exists(for_run)
             if exists:
                 logging.debug('Data already loaded - aborting')
-                return pandas.Timestamp(for_run)
+                return pd.Timestamp(for_run)
         results = []
         # HACK: +1 so last hour is included
         total_hours = max(self.for_days) * 24
@@ -225,11 +219,11 @@ class HPFXLoader(WeatherLoader):
             actual_date = for_run + datetime.timedelta(hours=hour)
             results.append(self.read_wx(for_run, actual_date))
         # don't save data until everything is loaded
-        wx = pandas.concat(results)
+        wx = pd.concat(results)
         self.save_data(wx)
         # return the run that we ended up loading data for
         # HACK: Timestamp format is nicer than datetime's
-        return pandas.Timestamp(for_run)
+        return pd.Timestamp(for_run)
     def load_records(self, max_retries=15, force=False):
         """!
         Load the latest records using the specified interval to determine run
