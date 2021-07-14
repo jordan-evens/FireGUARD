@@ -10,6 +10,7 @@ import dateutil.parser
 import datetime
 import os
 import psycopg2
+import psycopg2.extras 
 import io
 import subprocess
 import shlex
@@ -402,7 +403,8 @@ def fix_execute(cursor, stmt, data):
     @return None
     """
     try:
-        cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
+        psycopg2.extras.execute_batch(cursor, stmt, data)
+        #cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
     except psycopg2.Error as e:
         logging.error(e)
         for vals in (tuple(map(fix_Types, x)) for x in data):
@@ -599,8 +601,7 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
         cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['model', modelFK, 'startdate'] if addStartDate else ['model', modelFK], trans_save_data, cur_df)
         cur_df = write_foreign(cnxn, schema, 'DAT_LocationModel', ['modelgeneratedid', 'locationid'], do_insert_only, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
-        cur_df.to_sql(final_table, cnxn, schema=schema)
-        # do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
+        do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
         cnxn.commit()
     finally:
         cnxn.close()
