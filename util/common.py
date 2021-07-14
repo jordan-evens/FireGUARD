@@ -599,7 +599,8 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
         cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['model', modelFK, 'startdate'] if addStartDate else ['model', modelFK], trans_save_data, cur_df)
         cur_df = write_foreign(cnxn, schema, 'DAT_LocationModel', ['modelgeneratedid', 'locationid'], do_insert_only, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
-        do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
+        cur_df.to_sql(final_table, cnxn, schema=schema)
+        # do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
         cnxn.commit()
     finally:
         cnxn.close()
@@ -614,19 +615,20 @@ def filterXY(data):
     data = data[data[:, 1] <= BOUNDS['longitude']['max']]
     return data
 
-def read_data(coords, mask, matches, m):
+def read_all_data(coords, mask, matches, indices):
 # def read_data(args):
     # coords, mask, select, m = args
     # logging.debug('{} => {}'.format(mask.format(m), select))
-    logging.debug(m)
-    results = wgrib2.get_data(mask.format(m), matches)
+    results = wgrib2.get_all_data(mask, indices, matches)
     # now we have an array of all the ensemble members
-    final = []
-    for r in results:
-        data = np.dstack([coords, r])
-        data = filterXY(data)
-        final.append(data[:, 2])
-    # logging.debug("Slice")
+    final = {}
+    for m in results.keys():
+        final[m] = []
+        for r in results[m]:
+            data = np.dstack([coords, r])
+            data = filterXY(data)
+            final[m].append(data[:, 2])
+        # logging.debug("Slice")
     return final
 
 
@@ -637,10 +639,18 @@ import concurrent.futures
 
 # def read_member(mask, select, coords, member, apcp):
 def read_members(mask, matches, coords, members, apcp):
-    temp = read_data(coords, mask, matches, 'TMP')
-    rh = read_data(coords, mask, matches, 'RH')
-    ugrd = read_data(coords, mask, matches, 'UGRD')
-    vgrd = read_data(coords, mask, matches, 'VGRD')
+    indices = ['TMP', 'RH', 'UGRD', 'VGRD']
+    if apcp:
+        indices = indices + ['APCP']
+    results = read_all_data(coords, mask, matches, indices)
+    temp = results['TMP']
+    rh = results['RH']
+    ugrd = results['UGRD']
+    vgrd = results['VGRD']
+    # temp = read_data(coords, mask, matches, 'TMP')
+    # rh = read_data(coords, mask, matches, 'RH')
+    # ugrd = read_data(coords, mask, matches, 'UGRD')
+    # vgrd = read_data(coords, mask, matches, 'VGRD')
     # logging.debug("Kelvin")
     temp = k_to_c(temp)
     ws = []
@@ -657,7 +667,8 @@ def read_members(mask, matches, coords, members, apcp):
     # logging.debug("Stack")
     columns = ['latitude', 'longitude', 'TMP','RH', 'WS', 'WD']
     if apcp:
-        pcp = read_data(coords, mask, matches, 'APCP')
+        # pcp = read_data(coords, mask, matches, 'APCP')
+        pcp = results['APCP']
     coords = filterXY(coords)
     # logging.debug("DataFrame")
     results = []

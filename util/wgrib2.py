@@ -414,6 +414,82 @@ def get_data(gfile,
     return results
 
 
+def get_all_data(mask,
+                 indices,
+                 matches,
+                 Regex=False):
+    # logging.debug("Start")
+    # based on grb2_inq() from ftn wgrib2api
+
+    data = None
+    lat = None
+    lon = None
+    matched = []
+    match_option = '-fgrep'
+    
+    cmds = [
+        'XXXX', "-d", 'XXXX', "-ftn_api_fn0", "-last0", "@mem:10",
+        "-inv", "/dev/null"
+    ]
+
+    cmds.append("-no_header")
+    cmds.append("-rpn")
+    cmds.append("sto_13")
+    def do_get(gfile, select):
+        cmds[0] = gfile
+        # logging.debug(select)
+        cmds[2] = select
+        err = wgrib2(cmds)
+
+        if err > 0:
+            if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+            nmatch = -1
+            return -1
+
+        if mem_size(10) == 0:
+            if debug: print("no match")
+            nmatch = 0
+            return 0
+
+        string = get_str_mem(10)
+        x = string.split()
+        nmatch = int(x[0])
+        ndata = int(x[1])
+        nx = int(x[2])
+        ny = int(x[3])
+        msgno = int(x[4])
+        submsgno = int(x[5])
+        if (nmatch == 0):
+            if debug: print("inq ",gfile," found no matches")
+            return None
+
+    # for weird grids nx=-1/0 ny=-1/0
+        if (nx * ny != ndata):
+            nx = ndata
+            ny = 1
+        # logging.debug("Load")
+    # get data, lat/lon
+        array_type = (c_float * ndata)
+        array = array_type()
+
+        err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
+        if (err == 0):
+            data = np.reshape(np.array(array), (nx, ny), order='F')
+            if use_np_nan:
+                data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
+        # logging.debug("Done")
+        return data
+    results = {}
+    for i in range(len(indices)):
+        m = indices[i]
+        gfile = mask.format(m)
+        logging.debug(m)
+        results[m] = []
+        for select in matches:
+            results[m].append(do_get(gfile, select))
+    # results = list(map(do_get, matches))
+    return results
+
 
 #####################################################################
 
