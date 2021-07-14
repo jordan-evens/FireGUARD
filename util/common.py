@@ -694,7 +694,6 @@ def read_grib(mask, apcp=True):
     @param mask File mask for path to source grib2 file to read
     @return DataFrame with data read from file    
     """
-    columns = ['latitude', 'longitude']
     matches = wgrib2.match(mask.format('TMP'))
     members = list(map(lambda x: 0 if -1 != x.find('low-res ctl') else int(x[x.find('ENS=') + 4:]), matches))
     matches = list(map(lambda x: x[x.rfind(':'):], matches))
