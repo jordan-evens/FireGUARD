@@ -65,67 +65,6 @@ class HPFXLoader(WeatherLoader):
         'RH': WeatherIndex('RH', [':RH', ':2 m above ground:'], 'TGL_2m'),
         'APCP': WeatherIndex('APCP', [':APCP', ':surface:'], 'SFC_0')
     }
-    def save_grib(self, for_run, for_date, name, download_only=False):
-        """!
-        Read grib data for desired time and field
-        @param self Pointer to this
-        @param for_run Which run of model to use
-        @param for_date Which date of model to use
-        @param name Name of index to read
-        @return Index data as a pd dataframe
-        """
-        diff = for_date - for_run
-        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
-        # logging.debug("real_hour=" + str(real_hour))
-        date = for_run.strftime(r'%Y%m%d')
-        time = int(for_run.strftime(r'%H'))
-        def get_match_files(weather_index):
-            """!
-            Generate URL containing data
-            @param weather_index WeatherIndex to get files for
-            """
-            # Get full url for the file that has the data we're asking for
-            #mask = r'CMC_geps-raw_{}_{}_latlon0p5x0p5_{}{:02d}_P{:03d}_allmbrs.grib2'
-            file = self.mask.format(weather_index.name, weather_index.layer, date, time, real_hour)
-            #dir = r'{}/WXO-DD/ensemble/geps/grib2/raw/{:02d}/{:03d}/'
-            dir = self.dir.format(date, time, real_hour)
-            partial_url = r'{}{}{}'.format(self.host, dir, file)
-            def get_local_name():
-                """!
-                Return file name that will be saved locally
-                @return Path to save to locally when using URL to retrieve
-                """
-                save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, weather_index.name, real_hour)
-                return os.path.join(self.DIR_DATA, save_as)
-            def save_file(partial_url):
-                """!
-                Save the given url
-                @param partial_url Partial url to use for determining name
-                @return Path saved to when using URL to retrieve
-                """
-                out_file = get_local_name()
-                if os.path.isfile(out_file):
-                    # HACK: no timestamp so don't download if exists
-                    return out_file
-                logging.debug("Downloading {}".format(out_file))
-                urls = [partial_url]
-                results = common.download_many(urls, fct=common.download)
-                try:
-                    # logging.debug("Writing file")
-                    with open(out_file, "wb") as f:
-                        for result in results:
-                            f.write(result)
-                except:
-                    # get rid of file that's there if there was an error
-                    common.try_remove(out_file)
-                    raise
-                return out_file
-            if self.no_download:
-                # return file that would have been saved without actually trying to save it
-                return get_local_name(partial_url)
-            return common.try_save(save_file, partial_url)
-        weather_index = self.indices[name]
-        file = get_match_files(weather_index)
     def save_wx(self, for_run, for_date):
         """!
         Read all weather for given day
@@ -141,12 +80,51 @@ class HPFXLoader(WeatherLoader):
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
         save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
-        self.save_grib(for_run, for_date, 'TMP')
-        self.save_grib(for_run, for_date, 'UGRD')
-        self.save_grib(for_run, for_date, 'VGRD')
-        self.save_grib(for_run, for_date, 'RH')
+        def do_save(name):
+            """!
+            Generate URL containing data
+            @param weather_index WeatherIndex to get files for
+            """
+            weather_index = self.indices[name]
+            # Get full url for the file that has the data we're asking for
+            #mask = r'CMC_geps-raw_{}_{}_latlon0p5x0p5_{}{:02d}_P{:03d}_allmbrs.grib2'
+            # file = self.mask.format(weather_index.name, weather_index.layer, date, time, real_hour)
+            #dir = r'{}/WXO-DD/ensemble/geps/grib2/raw/{:02d}/{:03d}/'
+            # dir = self.dir.format(date, time, real_hour)
+            # partial_url = r'{}{}{}'.format(self.host, dir, file)
+            partial_url = r'{}{}{}'.format(self.host,
+                                           self.dir.format(date, time, real_hour),
+                                           self.mask.format('{}', '{}', date, time, real_hour))
+            partial_url = partial_url.format(weather_index.name, weather_index.layer)
+            def save_file(partial_url):
+                """!
+                Save the given url
+                @param partial_url Partial url to use for determining name
+                @return Path saved to when using URL to retrieve
+                """
+                out_file = os.path.join(self.DIR_DATA, save_as.format(weather_index.name))
+                if os.path.isfile(out_file):
+                    # HACK: no timestamp so don't download if exists
+                    return out_file
+                logging.debug("Downloading {}".format(out_file))
+                try:
+                    common.save_http(self.DIR_DATA, partial_url, save_as=out_file)
+                except:
+                    # get rid of file that's there if there was an error
+                    common.try_remove(out_file)
+                    raise
+                return out_file
+            return common.try_save(save_file, partial_url)
+        indices = ['TMP', 'UGRD', 'VGRD', 'RH']
+        do_save('TMP')
+        do_save('UGRD')
+        do_save('VGRD')
+        do_save('RH')
         if 0 != real_hour:
-            self.save_grib(for_run, for_date, 'APCP')
+            do_save('APCP')
+            indices = indices + ['APCP']
+        print(indices)
+        # map(do_save, indices)
     def get_nearest_run(self, interval):
         """!
         Find time of most recent run with given update interval
