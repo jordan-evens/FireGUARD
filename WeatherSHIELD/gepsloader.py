@@ -16,6 +16,27 @@ import logging
 import socket
 import time
 
+
+def read_wx(args):
+    dir, name, for_run, for_date = args
+    print("for_date=" + str(for_date))
+    print("for_run=" + str(for_run))
+    diff = for_date - for_run
+    real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+    date = for_run.strftime(r'%Y%m%d')
+    time = int(for_run.strftime(r'%H'))
+    save_as = '{}_{}{:02d}_{}_{:03d}'.format(name, date, time, "{}", real_hour)
+    result = common.read_grib(os.path.join(dir, save_as), 0 != real_hour)
+    # need to add fortime and generated
+    result['generated'] = pd.to_datetime(for_run, utc=True)
+    result['fortime'] = pd.to_datetime(for_date, utc=True)
+    index = result.index.names
+    columns = result.columns
+    result = result.reset_index()
+    result['model'] = name
+    print(result)
+    return result.set_index(index + ['model'])[columns]
+
 class HPFXLoader(WeatherLoader):
     """Loads NAEFS data from NOMADS"""
     # Provide mapping between fields we're looking for and the file names that contain them
@@ -43,7 +64,7 @@ class HPFXLoader(WeatherLoader):
         'RH': WeatherIndex('RH', [':RH', ':2 m above ground:'], 'TGL_2m'),
         'APCP': WeatherIndex('APCP', [':APCP', ':surface:'], 'SFC_0')
     }
-    def read_grib(self, for_run, for_date, name, download_only=False):
+    def save_grib(self, for_run, for_date, name, download_only=False):
         """!
         Read grib data for desired time and field
         @param self Pointer to this
@@ -104,15 +125,7 @@ class HPFXLoader(WeatherLoader):
             return common.try_save(save_file, partial_url)
         weather_index = self.indices[name]
         file = get_match_files(weather_index)
-        if download_only:
-            return None
-        # result = common.read_grib(file, weather_index.name)
-        # index = result.index.names
-        # columns = result.columns
-        # result = result.reset_index()
-        # result['model'] = self.name
-        # return result.set_index(index + ['model'])[columns]
-    def read_wx(self, for_run, for_date, download_only=False):
+    def save_wx(self, for_run, for_date):
         """!
         Read all weather for given day
         @param self Pointer to self
@@ -127,35 +140,12 @@ class HPFXLoader(WeatherLoader):
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
         save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
-        def read_temp():
-            return self.read_grib(for_run, for_date, 'TMP', download_only)
-        def read_ugrd():
-            return self.read_grib(for_run, for_date, 'UGRD', download_only)
-        def read_vgrd():
-            return self.read_grib(for_run, for_date, 'VGRD', download_only)
-        def read_rh():
-            return self.read_grib(for_run, for_date, 'RH', download_only)
-        def read_precip():
-            if 0 == real_hour:
-                return None
-            return self.read_grib(for_run, for_date, 'APCP', download_only)
-        temp = read_temp()
-        rh = read_rh()
-        ugrd = read_ugrd()
-        vgrd = read_vgrd()
-        rain = read_precip()
-        if download_only:
-            return None
-        result = common.read_grib(os.path.join(self.DIR_DATA, save_as), 0 != real_hour)
-        # need to add fortime and generated
-        result['generated'] = pd.to_datetime(for_run, utc=True)
-        result['fortime'] = pd.to_datetime(for_date, utc=True)
-        index = result.index.names
-        columns = result.columns
-        result = result.reset_index()
-        result['model'] = self.name
-        print(result)
-        return result.set_index(index + ['model'])[columns]
+        self.save_grib(for_run, for_date, 'TMP')
+        self.save_grib(for_run, for_date, 'UGRD')
+        self.save_grib(for_run, for_date, 'VGRD')
+        self.save_grib(for_run, for_date, 'RH')
+        if 0 != real_hour:
+            self.save_grib(for_run, for_date, 'APCP')
     def get_nearest_run(self, interval):
         """!
         Find time of most recent run with given update interval
@@ -220,14 +210,24 @@ class HPFXLoader(WeatherLoader):
         for hour in hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
             actual_date = for_run + datetime.timedelta(hours=hour)
-            self.read_wx(for_run, actual_date, download_only=True)
-        for hour in hours:
-            logging.info("Loading {} records from {} run for hour {}".format(self.name, for_run, hour))
-            actual_date = for_run + datetime.timedelta(hours=hour)
-            results.append(self.read_wx(for_run, actual_date))
+            self.save_wx(for_run, actual_date)
+        actual_dates = list(map(lambda hour: for_run + datetime.timedelta(hours=hour), hours))
+        from multiprocessing import Pool
+        n = len(actual_dates)
+        pool = Pool(n)
+        results = list(pool.map(read_wx,
+                               zip([self.DIR_DATA] * n,
+                                   [self.name] * n,
+                                   [for_run] * n,
+                                   actual_dates)))
+        # for hour in hours:
+            # logging.info("Loading {} records from {} run for hour {}".format(self.name, for_run, hour))
+            # actual_date = for_run + datetime.timedelta(hours=hour)
+            # results.append(self.read_wx(for_run, actual_date))
         # don't save data until everything is loaded
         wx = pd.concat(results)
         self.save_data(wx)
+        logging.debug("Done")
         # return the run that we ended up loading data for
         # HACK: Timestamp format is nicer than datetime's
         return pd.Timestamp(for_run)

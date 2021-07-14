@@ -27,13 +27,22 @@ import common
 import site
 dir=site.getsitepackages()[0]
 lib = os.path.join(dir,'libwgrib2.so')
+stdlib = ctypes.CDLL("")
+dll_close = stdlib.dlclose
+dll_close.argtypes = [ctypes.c_void_p]
 
-try:
-    my_wgrib2 = ctypes.CDLL(lib)
-except Exception as e:
-    print("*** Problem ",e)
-    print("*** Will load wgrib2 library in RTLD_LAZY mode")
-    my_wgrib2 = ctypes.CDLL(lib, mode=os.RTLD_LAZY)
+def open():
+    try:
+        my_wgrib2 = ctypes.CDLL(lib)
+    except Exception as e:
+        print("*** Problem ",e)
+        print("*** Will load wgrib2 library in RTLD_LAZY mode")
+        my_wgrib2 = ctypes.CDLL(lib, mode=os.RTLD_LAZY)
+    return my_wgrib2
+
+def close(my_wgrib2):
+    dll_close(my_wgrib2._handle)
+    del my_wgrib2
 
 print("finished loading libraries")
 
@@ -61,7 +70,7 @@ __version__='0.0.11'
 print("pywgrib2_s v"+__version__+" 1-15-2021 w. ebisuzaki")
 
 
-def wgrib2(arg):
+def wgrib2(my_wgrib2, arg):
     #
     #    call wgrib2
     #        ex.  pywgrib2.wgrib2(["in.grb","-inv","@mem.0"])
@@ -70,7 +79,7 @@ def wgrib2(arg):
     #
     # print("wgrib2")
     arg_length = len(arg) + 3
-    select_type = (c_char_p * arg_length)
+    select_type = (ctypes.c_char_p * arg_length)
     select = select_type()
     item = "pywgrib2"
     select[0] = item.encode('utf-8')
@@ -88,7 +97,8 @@ def wgrib2(arg):
 
 #####################################################################
 
-def get_all_data(mask,
+def get_all_data(my_wgrib2,
+                 mask,
                  indices,
                  matches,
                  Regex=False):
@@ -113,19 +123,19 @@ def get_all_data(mask,
         cmds[0] = gfile
         # logging.debug(select)
         cmds[2] = select
-        err = wgrib2(cmds)
+        err = wgrib2(my_wgrib2, cmds)
 
         if err > 0:
             if debug: print("inq ",gfile,": wgrib2 failed err=", err)
             nmatch = -1
             return -1
 
-        if mem_size(10) == 0:
+        if mem_size(my_wgrib2, 10) == 0:
             if debug: print("no match")
             nmatch = 0
             return 0
 
-        string = get_str_mem(10)
+        string = get_str_mem(my_wgrib2, 10)
         x = string.split()
         nmatch = int(x[0])
         ndata = int(x[1])
@@ -143,10 +153,10 @@ def get_all_data(mask,
             ny = 1
         # logging.debug("Load")
     # get data, lat/lon
-        array_type = (c_float * ndata)
+        array_type = (ctypes.c_float * ndata)
         array = array_type()
 
-        err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
+        err = my_wgrib2.wgrib2_get_reg_data(ctypes.byref(array), ndata, 13)
         if (err == 0):
             data = np.reshape(np.array(array), (nx, ny), order='F')
             if use_np_nan:
@@ -166,7 +176,7 @@ def get_all_data(mask,
 
 #####################################################################
 
-def match(gfile):
+def match(my_wgrib2, gfile):
     # logging.debug("Start")
     # based on grb2_inq() from ftn wgrib2api
 
@@ -183,19 +193,19 @@ def match(gfile):
     cmds.append('-rewind_init')
     cmds.append(gfile)
     cmds.append("-no_header")
-    err = wgrib2(cmds)
+    err = wgrib2(my_wgrib2, cmds)
 
     if err > 0:
         if debug: print("inq ",gfile,": wgrib2 failed err=", err)
         nmatch = -1
         return -1
 
-    if mem_size(10) == 0:
+    if mem_size(my_wgrib2, 10) == 0:
         if debug: print("no match")
         nmatch = 0
         return 0
 
-    string = get_str_mem(10)
+    string = get_str_mem(my_wgrib2, 10)
     x = string.split()
     nmatch = int(x[0])
     ndata = int(x[1])
@@ -213,7 +223,7 @@ def match(gfile):
         ny = 1
     # logging.debug("Load")
     size = my_wgrib2.wgrib2_get_mem_buffer_size(11)
-    string = create_string_buffer(size)
+    string = ctypes.create_string_buffer(size)
     err = my_wgrib2.wgrib2_get_mem_buffer(string, size, 11)
     if (err == 0):
         matched = string.value.decode("utf-8").rstrip().split('\n')
@@ -228,7 +238,7 @@ def match(gfile):
 #####################################################################
 fix180 = np.vectorize(lambda x: x if x <= 180 else x - 360)
 
-def coords(gfile):
+def coords(my_wgrib2, gfile):
     # logging.debug("Start")
     # based on grb2_inq() from ftn wgrib2api
     data = None
@@ -244,19 +254,19 @@ def coords(gfile):
     cmds.append("-no_header")
     cmds.append("-rpn")
     cmds.append("rcl_lon:sto_14:rcl_lat:sto_15")
-    err = wgrib2(cmds)
+    err = wgrib2(my_wgrib2, cmds)
 
     if err > 0:
         if debug: print("inq ",gfile,": wgrib2 failed err=", err)
         nmatch = -1
         return -1
 
-    if mem_size(10) == 0:
+    if mem_size(my_wgrib2, 10) == 0:
         if debug: print("no match")
         nmatch = 0
         return 0
 
-    string = get_str_mem(10)
+    string = get_str_mem(my_wgrib2, 10)
     x = string.split()
     nmatch = int(x[0])
     ndata = int(x[1])
@@ -274,15 +284,15 @@ def coords(gfile):
         ny = 1
     # logging.debug("Load")
 # get data, lat/lon
-    array_type = (c_float * ndata)
+    array_type = (ctypes.c_float * ndata)
     array = array_type()
 
-    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 14)
+    err = my_wgrib2.wgrib2_get_reg_data(ctypes.byref(array), ndata, 14)
     if (err == 0):
         lon = np.reshape(np.array(array), (nx, ny), order='F')
         if use_np_nan:
             lon[np.logical_and((lon > UNDEFINED_LOW), (lon < UNDEFINED_HIGH))] = np.nan
-    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 15)
+    err = my_wgrib2.wgrib2_get_reg_data(ctypes.byref(array), ndata, 15)
     if (err == 0):
         lat = np.reshape(np.array(array), (nx, ny), order='F')
         if use_np_nan:
@@ -303,25 +313,25 @@ def coords(gfile):
 #
 
 
-def mem_size(arg):
+def mem_size(my_wgrib2, arg):
     #
     #     return size of @mem:arg
     #
     global debug
-    i = c_int(arg)
+    i = ctypes.c_int(arg)
     size = my_wgrib2.wgrib2_get_mem_buffer_size(i)
     if debug: print("mem_buffer ",arg," size=", size)
     return size
 
 
-def get_str_mem(arg):
+def get_str_mem(my_wgrib2, arg):
     #
     #    return a string of contents of @mem:arg
     #
     global debug
-    i = c_int(arg)
+    i = ctypes.c_int(arg)
     size = my_wgrib2.wgrib2_get_mem_buffer_size(i)
-    string = create_string_buffer(size)
+    string = ctypes.create_string_buffer(size)
     err = my_wgrib2.wgrib2_get_mem_buffer(string, size, i)
     if debug: print("get_str_mem ",arg," err=", err)
     s = string.value.decode("utf-8")
