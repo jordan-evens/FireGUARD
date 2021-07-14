@@ -614,16 +614,20 @@ def filterXY(data):
     data = data[data[:, 1] <= BOUNDS['longitude']['max']]
     return data
 
-def read_data(coords, mask, select, m):
+def read_data(coords, mask, matches, m):
 # def read_data(args):
     # coords, mask, select, m = args
     # logging.debug('{} => {}'.format(mask.format(m), select))
-    data = np.dstack([coords, wgrib2.get_data(mask.format(m), select=select)])
-    # logging.debug("Filter")
-    # HACK: this must drop a dimension becausethe ones after are only 2-d
-    data = filterXY(data)
+    logging.debug(m)
+    results = wgrib2.get_data(mask.format(m), matches)
+    # now we have an array of all the ensemble members
+    final = []
+    for r in results:
+        data = np.dstack([coords, r])
+        data = filterXY(data)
+        final.append(data[:, 2])
     # logging.debug("Slice")
-    return data[:, 2]
+    return final
 
 
 k_to_c = np.vectorize(kelvin_to_celcius)
@@ -632,49 +636,43 @@ k_to_c = np.vectorize(kelvin_to_celcius)
 import concurrent.futures
 
 # def read_member(mask, select, coords, member, apcp):
-def read_member(args):
-    mask, select, coords, member, apcp = args
-    logging.debug(select)
-    # n = 4
-    # pool = Pool(n)
-    # sub_args = zip([coords] * n, [mask] * n, [select] * n, ['TMP', 'RH', 'UGRD', 'VGRD'])
-    # results = pool.map(read_data, sub_args)
-    # with concurrent.futures.ThreadPoolExecutor() as executor:
-        # futures = [executor.submit(read_data, params) for params in sub_args]
-        # results = [f.result() for f in futures]
-    # temp, rh, ugrd, vgrd = results
-    temp = read_data(coords, mask, select, 'TMP')
-    rh = read_data(coords, mask, select, 'RH')
-    ugrd = read_data(coords, mask, select, 'UGRD')
-    vgrd = read_data(coords, mask, select, 'VGRD')
+def read_members(mask, matches, coords, members, apcp):
+    temp = read_data(coords, mask, matches, 'TMP')
+    rh = read_data(coords, mask, matches, 'RH')
+    ugrd = read_data(coords, mask, matches, 'UGRD')
+    vgrd = read_data(coords, mask, matches, 'VGRD')
     # logging.debug("Kelvin")
     temp = k_to_c(temp)
-    # logging.debug("Speed")
-    u = ugrd
-    v = vgrd
-    u_2 = u * u
-    v_2 = v * v
-    sq = u_2 + v_2
-    ws = 3.6 * np.sqrt(sq)
-    # logging.debug("Direction")
-    a = np.arctan2(-u, -v)
-    wd = ((180 / math.pi * a) + 360) % 360
+    ws = []
+    wd = []
+    for u, v in zip(ugrd, vgrd):
+        # logging.debug("Speed")
+        u_2 = u * u
+        v_2 = v * v
+        sq = u_2 + v_2
+        ws.append(3.6 * np.sqrt(sq))
+        # logging.debug("Direction")
+        a = np.arctan2(-u, -v)
+        wd.append(((180 / math.pi * a) + 360) % 360)
     # logging.debug("Stack")
     columns = ['latitude', 'longitude', 'TMP','RH', 'WS', 'WD']
     if apcp:
-        pcp = read_data(coords, mask, select, 'APCP')
-        # pcp = read_data([coords, mask, select, 'APCP'])
+        pcp = read_data(coords, mask, matches, 'APCP')
     coords = filterXY(coords)
     # logging.debug("DataFrame")
-    wx = pd.DataFrame(coords, columns=['latitude', 'longitude'])
-    wx['TMP'] = temp
-    wx['RH'] = rh
-    wx['WS'] = ws
-    wx['WD'] = wd
-    wx['APCP'] = pcp if apcp else 0
-    wx['Member'] = member
+    results = []
+    for i in range(len(members)):
+        member = members[i]
+        wx = pd.DataFrame(coords, columns=['latitude', 'longitude'])
+        wx['TMP'] = temp[i]
+        wx['RH'] = rh[i]
+        wx['WS'] = ws[i]
+        wx['WD'] = wd[i]
+        wx['APCP'] = pcp[i] if apcp else 0
+        wx['Member'] = member
+        results.append(wx)
     # logging.debug("Done")
-    return wx
+    return pd.concat(results)
 
 from multiprocessing import Pool
 
@@ -689,20 +687,9 @@ def read_grib(mask, apcp=True):
     members = list(map(lambda x: 0 if -1 != x.find('low-res ctl') else int(x[x.find('ENS=') + 4:]), matches))
     matches = list(map(lambda x: x[x.rfind(':'):], matches))
     coords = wgrib2.coords(mask.format('TMP'))
-    n = len(members)
-    args = zip([mask] * n, matches, [coords] * n, members, [apcp] * n)
-    results = list(map(read_member, args))
-    # pool = Pool(n)
-    # results = pool.map(read_member, args)
-    # pool.map_async(read_member, args)
-    # pool.join()
-    # results = pool.get()
-    #for i in range(len(matches)):
-    #    # logging.debug("Loop")
-    #    results.append(read_member(mask, matches[i], coords, members[i], apcp))
-    output = pd.concat(results)
+    results = read_members(mask, matches, coords, members, apcp)
     # logging.debug(output)
-    output = output.set_index(['latitude', 'longitude', 'Member'])
+    output = results.set_index(['latitude', 'longitude', 'Member'])
     output = output[['TMP', 'RH', 'WS', 'WD', 'APCP']]
     # need to add fortime and generated
     return output

@@ -70,7 +70,7 @@ def wgrib2(arg):
     #
     #    uses C calling convention: 1st arg is name of program
     #
-    print("wgrib2")
+    # print("wgrib2")
     arg_length = len(arg) + 3
     select_type = (c_char_p * arg_length)
     select = select_type()
@@ -348,8 +348,7 @@ def inq(gfile,
 #####################################################################
 
 def get_data(gfile,
-             *matches,
-             select='',
+             matches,
              Regex=False):
     # logging.debug("Start")
     # based on grb2_inq() from ftn wgrib2api
@@ -360,70 +359,59 @@ def get_data(gfile,
     matched = []
     match_option = '-fgrep'
     
-    if select != '':  # selected field, use -d, sequential not valid
-        cmds = [
-            gfile, "-d", select, "-ftn_api_fn0", "-last0", "@mem:10",
-            "-inv", "/dev/null"
-        ]
-    else:  # no inventory
-        cmds = [
-            gfile, "-ftn_api_fn0", "-last0", "@mem:10", "-inv", "/dev/null"
-        ]
-        cmds.append('-rewind_init')
-        cmds.append(gfile)
-        for m in matches:
-            cmds.append(match_option)
-            cmds.append(m)
+    cmds = [
+        gfile, "-d", 'XXXX', "-ftn_api_fn0", "-last0", "@mem:10",
+        "-inv", "/dev/null"
+    ]
 
     cmds.append("-no_header")
     cmds.append("-rpn")
     cmds.append("sto_13")
-    err = wgrib2(cmds)
+    def do_get(select):
+        # logging.debug(select)
+        cmds[2] = select
+        err = wgrib2(cmds)
 
-    if err > 0:
-        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
-        nmatch = -1
-        return -1
+        if err > 0:
+            if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+            nmatch = -1
+            return -1
 
-    if mem_size(10) == 0:
-        if debug: print("no match")
-        nmatch = 0
-        return 0
+        if mem_size(10) == 0:
+            if debug: print("no match")
+            nmatch = 0
+            return 0
 
-    string = get_str_mem(10)
-    x = string.split()
-    nmatch = int(x[0])
-    ndata = int(x[1])
-    nx = int(x[2])
-    ny = int(x[3])
-    msgno = int(x[4])
-    submsgno = int(x[5])
-    if (nmatch == 0):
-        if debug: print("inq ",gfile," found no matches")
-        return None
+        string = get_str_mem(10)
+        x = string.split()
+        nmatch = int(x[0])
+        ndata = int(x[1])
+        nx = int(x[2])
+        ny = int(x[3])
+        msgno = int(x[4])
+        submsgno = int(x[5])
+        if (nmatch == 0):
+            if debug: print("inq ",gfile," found no matches")
+            return None
 
-# for weird grids nx=-1/0 ny=-1/0
-    if (nx * ny != ndata):
-        nx = ndata
-        ny = 1
-    # logging.debug("Load")
-# get data, lat/lon
-    array_type = (c_float * ndata)
-    array = array_type()
+    # for weird grids nx=-1/0 ny=-1/0
+        if (nx * ny != ndata):
+            nx = ndata
+            ny = 1
+        # logging.debug("Load")
+    # get data, lat/lon
+        array_type = (c_float * ndata)
+        array = array_type()
 
-    err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
-    if (err == 0):
-        data = np.reshape(np.array(array), (nx, ny), order='F')
-        if use_np_nan:
-            data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
-    # logging.debug("Done")
-
-    if debug:
-        print("inq nmatch=", nmatch)
-        print("ndata=", ndata, nx, ny)
-        print("msg=", msgno, submsgno)
-        print("has_data=", data is not None)
-    return data
+        err = my_wgrib2.wgrib2_get_reg_data(byref(array), ndata, 13)
+        if (err == 0):
+            data = np.reshape(np.array(array), (nx, ny), order='F')
+            if use_np_nan:
+                data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
+        # logging.debug("Done")
+        return data
+    results = list(map(do_get, matches))
+    return results
 
 
 

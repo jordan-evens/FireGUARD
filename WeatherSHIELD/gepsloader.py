@@ -52,21 +52,21 @@ class HPFXLoader(WeatherLoader):
         @param name Name of index to read
         @return Index data as a pd dataframe
         """
+        diff = for_date - for_run
+        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+        print("real_hour=" + str(real_hour))
+        date = for_run.strftime(r'%Y%m%d')
+        time = int(for_run.strftime(r'%H'))
         def get_match_files(weather_index):
             """!
             Generate URL containing data
             @param weather_index WeatherIndex to get files for
             """
             # Get full url for the file that has the data we're asking for
-            diff = for_date - for_run
-            real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
-            print("real_hour=" + str(real_hour))
-            date = for_run.strftime(r'%Y%m%d')
-            time = int(for_run.strftime(r'%H'))
             #mask = r'CMC_geps-raw_{}_{}_latlon0p5x0p5_{}{:02d}_P{:03d}_allmbrs.grib2'
-            file = self.mask.format(weather_index.name, weather_index.layer, date, time, for_run.hour)
+            file = self.mask.format(weather_index.name, weather_index.layer, date, time, real_hour)
             #dir = r'{}/WXO-DD/ensemble/geps/grib2/raw/{:02d}/{:03d}/'
-            dir = self.dir.format(date, time, for_run.hour)
+            dir = self.dir.format(date, time, real_hour)
             partial_url = r'{}{}{}'.format(self.host, dir, file)
             def get_local_name():
                 """!
@@ -122,6 +122,11 @@ class HPFXLoader(WeatherLoader):
         """
         print("for_date=" + str(for_date))
         print("for_run=" + str(for_run))
+        diff = for_date - for_run
+        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+        date = for_run.strftime(r'%Y%m%d')
+        time = int(for_run.strftime(r'%H'))
+        save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
         def read_temp():
             return self.read_grib(for_run, for_date, 'TMP', download_only)
         def read_ugrd():
@@ -131,7 +136,7 @@ class HPFXLoader(WeatherLoader):
         def read_rh():
             return self.read_grib(for_run, for_date, 'RH', download_only)
         def read_precip():
-            if 0 == for_date.hour:
+            if 0 == real_hour:
                 return None
             return self.read_grib(for_run, for_date, 'APCP', download_only)
         temp = read_temp()
@@ -141,12 +146,7 @@ class HPFXLoader(WeatherLoader):
         rain = read_precip()
         if download_only:
             return None
-        diff = for_date - for_run
-        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
-        date = for_run.strftime(r'%Y%m%d')
-        time = int(for_run.strftime(r'%H'))
-        save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
-        result = common.read_grib(os.path.join(self.DIR_DATA, save_as), 0 != for_date.hour)
+        result = common.read_grib(os.path.join(self.DIR_DATA, save_as), 0 != real_hour)
         # need to add fortime and generated
         result['generated'] = pd.to_datetime(for_run, utc=True)
         result['fortime'] = pd.to_datetime(for_date, utc=True)
@@ -208,13 +208,20 @@ class HPFXLoader(WeatherLoader):
                 logging.debug('Data already loaded - aborting')
                 return pd.Timestamp(for_run)
         results = []
-        # HACK: +1 so last hour is included
+        start_hours = 8 * 24
+        first_step = 3
+        first_hours = (list(map(lambda x : x * first_step, range(int(start_hours / first_step)))) + [start_hours])
+        last_step = 6
         total_hours = max(self.for_days) * 24
-        for hour in (list(map(lambda x : x * self.step, range(int(total_hours / self.step)))) + [total_hours]):
+        last_hours = (list(map(lambda x : x * last_step, range(int(total_hours / last_step)))) + [total_hours])
+        print(first_hours)
+        print(last_hours)
+        hours = list(dict.fromkeys(first_hours + last_hours))
+        for hour in hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
             actual_date = for_run + datetime.timedelta(hours=hour)
             self.read_wx(for_run, actual_date, download_only=True)
-        for hour in (list(map(lambda x : x * self.step, range(int(total_hours / self.step)))) + [total_hours]):
+        for hour in hours:
             logging.info("Loading {} records from {} run for hour {}".format(self.name, for_run, hour))
             actual_date = for_run + datetime.timedelta(hours=hour)
             results.append(self.read_wx(for_run, actual_date))
@@ -245,7 +252,7 @@ class HPFXLoader(WeatherLoader):
                     raise
                 for_run = for_run + datetime.timedelta(hours=-self.interval)
                 logging.error("**** Moving back 1 run since data is unavailable. Now looking for {}".format(for_run.strftime("%Y%m%d%H")))
-    def __init__(self, name, for_days, interval, step, mask, dir, num_members, no_download=False):
+    def __init__(self, name, for_days, interval, mask, dir, num_members, no_download=False):
         """!
         Instantiate class
         @param name Name for weather being loaded
@@ -260,8 +267,6 @@ class HPFXLoader(WeatherLoader):
         super(HPFXLoader, self).__init__(name, for_days, no_download)
         ## how often this data gets updated (hours)
         self.interval = interval
-        ## distance between time steps (hours)
-        self.step = step
         ## URL root to download from
         self.host = common.CONFIG.get('FireGUARD', 'hpfx_server')
         ## Mask to use for making URL to download
@@ -285,9 +290,8 @@ class GepsLoader(HPFXLoader):
         ## Subdirectory to download files from
         dir = r'{}/WXO-DD/ensemble/geps/grib2/raw/{:02d}/{:03d}/'
         super(GepsLoader, self).__init__(name=name,
-                                         for_days=range(1, 16),
-                                         interval=6,
-                                         step=3,
+                                         for_days=range(1, 17),
+                                         interval=12,
                                          mask=mask,
                                          dir=dir,
                                          num_members=21,
