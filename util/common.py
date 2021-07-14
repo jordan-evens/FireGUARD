@@ -403,8 +403,11 @@ def fix_execute(cursor, stmt, data):
     @return None
     """
     try:
-        psycopg2.extras.execute_batch(cursor, stmt, data)
-        #cursor.executemany(stmt, (tuple(map(fix_Types, x)) for x in data))
+        psycopg2.extras.execute_batch(cursor, stmt, data, page_size=100000)
+        # doesn't want to work
+        # cursor.execute("PREPARE stmt AS {}".format(stmt))
+        # execute_batch(cur, "EXECUTE stmt (%s)", params_list)
+        # cursor.execute("DEALLOCATE stmt")
     except psycopg2.Error as e:
         logging.error(e)
         for vals in (tuple(map(fix_Types, x)) for x in data):
@@ -510,7 +513,7 @@ def trans_insert_data(cnxn, wx, stmt_insert):
     all_wx = wx.reset_index()
     # HACK: this is returning int64 when we know they aren't
     for i in index:
-        print("Fixing column " + str(i))
+        # logging.debug("Fixing column " + str(i))
         if 'int64' in str(all_wx[i].dtype):
             all_wx[i] = all_wx[i].astype(int)
     logging.debug("Inserting {} rows into database".format(len(all_wx)))
@@ -537,14 +540,14 @@ def write_foreign(cnxn, schema, table, index, fct_insert, cur_df):
     fct_insert(cnxn, qualified_table, sub_data)
     # should be much quicker to read out the fk data and do a join on this end
     fkData = pd.read_sql("SELECT * FROM {}".format(qualified_table), cnxn)
-    print(fkData.columns)
-    print(fkData.dtypes)
+    # logging.debug(fkData.columns)
+    # logging.debug(fkData.dtypes)
     for i in range(len(fkData.columns)):
         if fkData.dtypes[i] == 'datetime64[ns]':
             c = fkData.columns[i]
-            print('Fixing ' + c)
+            # logging.debug('Fixing ' + c)
             fkData[c] = pd.to_datetime(fkData[c], utc=True)
-    print(fkData.dtypes)
+    # logging.debug(fkData.dtypes)
     fkId = [x for x in fkData.columns if x not in index][0]
     fkColumns = [x for x in fkData.columns if x != fkId]
     new_index = [fkId] + [x for x in new_index if x not in fkColumns]

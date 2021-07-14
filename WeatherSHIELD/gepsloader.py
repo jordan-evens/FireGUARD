@@ -19,10 +19,11 @@ import time
 
 def read_wx(args):
     dir, name, for_run, for_date = args
-    print("for_date=" + str(for_date))
-    print("for_run=" + str(for_run))
+    # logging.debug("for_date=" + str(for_date))
+    # logging.debug("for_run=" + str(for_run))
     diff = for_date - for_run
     real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+    logging.debug("{} {} + {:03d}h".format(name, for_run, real_hour))
     date = for_run.strftime(r'%Y%m%d')
     time = int(for_run.strftime(r'%H'))
     save_as = '{}_{}{:02d}_{}_{:03d}'.format(name, date, time, "{}", real_hour)
@@ -34,7 +35,7 @@ def read_wx(args):
     columns = result.columns
     result = result.reset_index()
     result['model'] = name
-    print(result)
+    # logging.debug(result)
     return result.set_index(index + ['model'])[columns]
 
 class HPFXLoader(WeatherLoader):
@@ -75,7 +76,7 @@ class HPFXLoader(WeatherLoader):
         """
         diff = for_date - for_run
         real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
-        print("real_hour=" + str(real_hour))
+        # logging.debug("real_hour=" + str(real_hour))
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
         def get_match_files(weather_index):
@@ -133,8 +134,8 @@ class HPFXLoader(WeatherLoader):
         @param for_date Which date of model to use
         @return Weather as a pd dataframe
         """
-        print("for_date=" + str(for_date))
-        print("for_run=" + str(for_run))
+        # logging.debug("for_date=" + str(for_date))
+        # logging.debug("for_run=" + str(for_run))
         diff = for_date - for_run
         real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
         date = for_run.strftime(r'%Y%m%d')
@@ -204,8 +205,8 @@ class HPFXLoader(WeatherLoader):
         last_step = 6
         total_hours = max(self.for_days) * 24
         last_hours = (list(map(lambda x : x * last_step, range(int(total_hours / last_step)))) + [total_hours])
-        print(first_hours)
-        print(last_hours)
+        # logging.debug(first_hours)
+        # logging.debug(last_hours)
         hours = list(dict.fromkeys(first_hours + last_hours))
         for hour in hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
@@ -214,7 +215,8 @@ class HPFXLoader(WeatherLoader):
         actual_dates = list(map(lambda hour: for_run + datetime.timedelta(hours=hour), hours))
         from multiprocessing import Pool
         n = len(actual_dates)
-        pool = Pool(n)
+        # more than the number of cpus doesn't seem to help
+        pool = Pool(os.cpu_count())
         results = list(pool.map(read_wx,
                                zip([self.DIR_DATA] * n,
                                    [self.name] * n,

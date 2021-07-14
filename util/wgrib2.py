@@ -1,3 +1,4 @@
+# this file is adapted from:
 #  pywgrib2 5/2020 public domain Wesley Ebisuzaki
 #
 # provides a simple python interface for reading/writing grib for python based 
@@ -15,14 +16,6 @@ import common
 # load gomp (gnu openmp), gfortran (gnu: IPOLATES, ftp_api), mvec (debian) and 
 # wgrib2 libraries, based on your system, run lld wgrib2/wgrib2
 
-# gomp = CDLL("/usr/lib/x86_64-linux-gnu/libgomp.so.1", mode=RTLD_GLOBAL)
-# print("loaded gomp library")
-# gfortran = CDLL("/lib/x86_64-linux-gnu/libgfortran.so.5", mode=RTLD_GLOBAL)
-# print("loaded gfortran library")
-# libmvec is needed for ubuntu
-# mvec = CDLL("/lib/x86_64-linux-gnu/libmvec.so.1", mode=RTLD_GLOBAL)
-# print("loaded mvec library")
-
 # libwgrib2.so must be in same dir as this file, can be link to file
 import site
 dir=site.getsitepackages()[0]
@@ -35,16 +28,14 @@ def open():
     try:
         my_wgrib2 = ctypes.CDLL(lib)
     except Exception as e:
-        print("*** Problem ",e)
-        print("*** Will load wgrib2 library in RTLD_LAZY mode")
+        logging.warning("*** Problem ",e)
+        logging.warning("*** Will load wgrib2 library in RTLD_LAZY mode")
         my_wgrib2 = ctypes.CDLL(lib, mode=os.RTLD_LAZY)
     return my_wgrib2
 
 def close(my_wgrib2):
     dll_close(my_wgrib2._handle)
     del my_wgrib2
-
-print("finished loading libraries")
 
 # default global variables
 
@@ -66,9 +57,6 @@ UNDEFINED_LOW = 9.9989e20
 UNDEFINED_HIGH = 9.9991e20
 
 debug = False
-__version__='0.0.11'
-print("pywgrib2_s v"+__version__+" 1-15-2021 w. ebisuzaki")
-
 
 def wgrib2(my_wgrib2, arg):
     #
@@ -77,7 +65,7 @@ def wgrib2(my_wgrib2, arg):
     #
     #    uses C calling convention: 1st arg is name of program
     #
-    # print("wgrib2")
+    # logging.debug("wgrib2")
     arg_length = len(arg) + 3
     select_type = (ctypes.c_char_p * arg_length)
     select = select_type()
@@ -90,9 +78,9 @@ def wgrib2(my_wgrib2, arg):
     for key, item in enumerate(arg):
         select[key + 3] = item.encode('utf-8')
 
-    if debug: print("wgrib2 args: ", arg)
+    if debug: logging.debug("wgrib2 args: ", arg)
     err = my_wgrib2.wgrib2(arg_length, select)
-    if debug: print("wgrib2 err=", err)
+    if debug: logging.debug("wgrib2 err=", err)
     return err
 
 #####################################################################
@@ -126,12 +114,12 @@ def get_all_data(my_wgrib2,
         err = wgrib2(my_wgrib2, cmds)
 
         if err > 0:
-            if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+            if debug: logging.error("inq ",gfile,": wgrib2 failed err=", err)
             nmatch = -1
             return -1
 
         if mem_size(my_wgrib2, 10) == 0:
-            if debug: print("no match")
+            if debug: logging.warning("no match")
             nmatch = 0
             return 0
 
@@ -144,7 +132,7 @@ def get_all_data(my_wgrib2,
         msgno = int(x[4])
         submsgno = int(x[5])
         if (nmatch == 0):
-            if debug: print("inq ",gfile," found no matches")
+            if debug: logging.warning("inq ",gfile," found no matches")
             return None
 
     # for weird grids nx=-1/0 ny=-1/0
@@ -163,11 +151,12 @@ def get_all_data(my_wgrib2,
                 data[np.logical_and((data > UNDEFINED_LOW), (data < UNDEFINED_HIGH))] = np.nan
         # logging.debug("Done")
         return data
+    if debug: logging.info(mask)
     results = {}
     for i in range(len(indices)):
         m = indices[i]
         gfile = mask.format(m)
-        logging.debug(m)
+        if debug: logging.debug(gfile)
         results[m] = []
         for select in matches:
             results[m].append(do_get(gfile, select))
@@ -196,12 +185,12 @@ def match(my_wgrib2, gfile):
     err = wgrib2(my_wgrib2, cmds)
 
     if err > 0:
-        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+        if debug: logging.error("inq ",gfile,": wgrib2 failed err=", err)
         nmatch = -1
         return -1
 
     if mem_size(my_wgrib2, 10) == 0:
-        if debug: print("no match")
+        if debug: logging.warning("no match")
         nmatch = 0
         return 0
 
@@ -214,7 +203,7 @@ def match(my_wgrib2, gfile):
     msgno = int(x[4])
     submsgno = int(x[5])
     if (nmatch == 0):
-        if debug: print("inq ",gfile," found no matches")
+        if debug: logging.warning("inq ",gfile," found no matches")
         return 0
 
 # for weird grids nx=-1/0 ny=-1/0
@@ -229,10 +218,10 @@ def match(my_wgrib2, gfile):
         matched = string.value.decode("utf-8").rstrip().split('\n')
 
     if debug:
-        print("inq nmatch=", nmatch)
-        print("ndata=", ndata, nx, ny)
-        print("msg=", msgno, submsgno)
-        print("has_data=", data is not None)
+        logging.debug("inq nmatch=", nmatch)
+        logging.debug("ndata=", ndata, nx, ny)
+        logging.debug("msg=", msgno, submsgno)
+        logging.debug("has_data=", data is not None)
     return matched
 
 #####################################################################
@@ -257,12 +246,12 @@ def coords(my_wgrib2, gfile):
     err = wgrib2(my_wgrib2, cmds)
 
     if err > 0:
-        if debug: print("inq ",gfile,": wgrib2 failed err=", err)
+        if debug: logging.error("inq ",gfile,": wgrib2 failed err=", err)
         nmatch = -1
         return -1
 
     if mem_size(my_wgrib2, 10) == 0:
-        if debug: print("no match")
+        if debug: logging.warning("no match")
         nmatch = 0
         return 0
 
@@ -275,7 +264,7 @@ def coords(my_wgrib2, gfile):
     msgno = int(x[4])
     submsgno = int(x[5])
     if (nmatch == 0):
-        if debug: print("inq ",gfile," found no matches")
+        if debug: logging.warning("inq ",gfile," found no matches")
         return None
 
 # for weird grids nx=-1/0 ny=-1/0
@@ -299,10 +288,10 @@ def coords(my_wgrib2, gfile):
             lat[np.logical_and((lat > UNDEFINED_LOW), (lat < UNDEFINED_HIGH))] = np.nan
 
     if debug:
-        print("inq nmatch=", nmatch)
-        print("ndata=", ndata, nx, ny)
-        print("msg=", msgno, submsgno)
-        print("has_data=", data is not None)
+        logging.debug("inq nmatch=", nmatch)
+        logging.debug("ndata=", ndata, nx, ny)
+        logging.debug("msg=", msgno, submsgno)
+        logging.debug("has_data=", data is not None)
     lon = fix180(lon)
     return np.dstack([lat, lon])
 
@@ -320,7 +309,7 @@ def mem_size(my_wgrib2, arg):
     global debug
     i = ctypes.c_int(arg)
     size = my_wgrib2.wgrib2_get_mem_buffer_size(i)
-    if debug: print("mem_buffer ",arg," size=", size)
+    if debug: logging.debug("mem_buffer ",arg," size=", size)
     return size
 
 
@@ -333,6 +322,6 @@ def get_str_mem(my_wgrib2, arg):
     size = my_wgrib2.wgrib2_get_mem_buffer_size(i)
     string = ctypes.create_string_buffer(size)
     err = my_wgrib2.wgrib2_get_mem_buffer(string, size, i)
-    if debug: print("get_str_mem ",arg," err=", err)
+    if debug: logging.debug("get_str_mem ",arg," err=", err)
     s = string.value.decode("utf-8")
     return s
