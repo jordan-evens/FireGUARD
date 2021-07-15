@@ -15,7 +15,10 @@ import pandas as pd
 import logging
 import socket
 import time
+from multiprocessing import Pool
 
+# don't set too high so we're nice about downloading things
+DOWNLOAD_THREADS = 6
 
 def read_wx(args):
     dir, name, for_run, for_date = args
@@ -37,6 +40,38 @@ def read_wx(args):
     result['model'] = name
     # logging.debug(result)
     return result.set_index(index + ['model'])[columns]
+
+def do_save(args):
+    """!
+    Generate URL containing data
+    @param weather_index WeatherIndex to get files for
+    """
+    host, dir, mask, save_dir, date, time, real_hour, save_as, weather_index = args
+    # Get full url for the file that has the data we're asking for
+    partial_url = r'{}{}{}'.format(host,
+                                   dir.format(date, time, real_hour),
+                                   mask.format('{}', '{}', date, time, real_hour))
+    partial_url = partial_url.format(weather_index.name, weather_index.layer)
+    def save_file(partial_url):
+        """!
+        Save the given url
+        @param partial_url Partial url to use for determining name
+        @return Path saved to when using URL to retrieve
+        """
+        out_file = os.path.join(save_dir, save_as.format(weather_index.name))
+        if os.path.isfile(out_file):
+            # HACK: no timestamp so don't download if exists
+            # logging.debug("Have {}".format(out_file))
+            return out_file
+        # logging.debug("Downloading {}".format(out_file))
+        try:
+            common.save_http(save_dir, partial_url, save_as=out_file)
+        except:
+            # get rid of file that's there if there was an error
+            common.try_remove(out_file)
+            raise
+        return out_file
+    return common.try_save(save_file, partial_url)
 
 class HPFXLoader(WeatherLoader):
     """Loads NAEFS data from NOMADS"""
@@ -65,67 +100,6 @@ class HPFXLoader(WeatherLoader):
         'RH': WeatherIndex('RH', [':RH', ':2 m above ground:'], 'TGL_2m'),
         'APCP': WeatherIndex('APCP', [':APCP', ':surface:'], 'SFC_0')
     }
-    def save_wx(self, for_run, for_date):
-        """!
-        Read all weather for given day
-        @param self Pointer to self
-        @param for_run Which run of model to use
-        @param for_date Which date of model to use
-        @return Weather as a pd dataframe
-        """
-        # logging.debug("for_date=" + str(for_date))
-        # logging.debug("for_run=" + str(for_run))
-        diff = for_date - for_run
-        real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
-        date = for_run.strftime(r'%Y%m%d')
-        time = int(for_run.strftime(r'%H'))
-        save_dir = os.path.join(self.DIR_DATA, '{}{}'.format(date, time))
-        save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
-        def do_save(name):
-            """!
-            Generate URL containing data
-            @param weather_index WeatherIndex to get files for
-            """
-            weather_index = self.indices[name]
-            # Get full url for the file that has the data we're asking for
-            #mask = r'CMC_geps-raw_{}_{}_latlon0p5x0p5_{}{:02d}_P{:03d}_allmbrs.grib2'
-            # file = self.mask.format(weather_index.name, weather_index.layer, date, time, real_hour)
-            #dir = r'{}/WXO-DD/ensemble/geps/grib2/raw/{:02d}/{:03d}/'
-            # dir = self.dir.format(date, time, real_hour)
-            # partial_url = r'{}{}{}'.format(self.host, dir, file)
-            partial_url = r'{}{}{}'.format(self.host,
-                                           self.dir.format(date, time, real_hour),
-                                           self.mask.format('{}', '{}', date, time, real_hour))
-            partial_url = partial_url.format(weather_index.name, weather_index.layer)
-            def save_file(partial_url):
-                """!
-                Save the given url
-                @param partial_url Partial url to use for determining name
-                @return Path saved to when using URL to retrieve
-                """
-                out_file = os.path.join(save_dir, save_as.format(weather_index.name))
-                if os.path.isfile(out_file):
-                    # HACK: no timestamp so don't download if exists
-                    return out_file
-                logging.debug("Downloading {}".format(out_file))
-                try:
-                    common.save_http(save_dir, partial_url, save_as=out_file)
-                except:
-                    # get rid of file that's there if there was an error
-                    common.try_remove(out_file)
-                    raise
-                return out_file
-            return common.try_save(save_file, partial_url)
-        indices = ['TMP', 'UGRD', 'VGRD', 'RH']
-        do_save('TMP')
-        do_save('UGRD')
-        do_save('VGRD')
-        do_save('RH')
-        if 0 != real_hour:
-            do_save('APCP')
-            indices = indices + ['APCP']
-        print(indices)
-        # map(do_save, indices)
     def get_nearest_run(self, interval):
         """!
         Find time of most recent run with given update interval
@@ -185,13 +159,23 @@ class HPFXLoader(WeatherLoader):
         hours = list(dict.fromkeys(first_hours + last_hours))
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
-        save_dir = common.ensure_dir(os.path.join(self.DIR_DATA, '{}{}'.format(date, time)))
+        save_dir = common.ensure_dir(os.path.join(self.DIR_DATA, '{}{:02d}'.format(date, time)))
+        args = []
         for hour in hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
-            actual_date = for_run + datetime.timedelta(hours=hour)
-            self.save_wx(for_run, actual_date)
+            for_date = for_run + datetime.timedelta(hours=hour)
+            diff = for_date - for_run
+            real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
+            save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
+            for_what = ['TMP', 'UGRD', 'VGRD', 'RH']
+            if 0 != real_hour:
+                for_what = for_what + ['APCP']
+            for_what = list(map(lambda x: self.indices[x], for_what))
+            n = len(for_what)
+            args = args + list(zip([self.host] * n, [self.dir] * n, [self.mask] * n, [save_dir] * n, [date] * n, [time] * n, [real_hour] * n, [save_as] * n, for_what))
+        pool = Pool(DOWNLOAD_THREADS)
+        pool.map(do_save, args)
         actual_dates = list(map(lambda hour: for_run + datetime.timedelta(hours=hour), hours))
-        from multiprocessing import Pool
         n = len(actual_dates)
         # more than the number of cpus doesn't seem to help
         pool = Pool(os.cpu_count())
@@ -200,10 +184,6 @@ class HPFXLoader(WeatherLoader):
                                    [self.name] * n,
                                    [for_run] * n,
                                    actual_dates)))
-        # for hour in hours:
-            # logging.info("Loading {} records from {} run for hour {}".format(self.name, for_run, hour))
-            # actual_date = for_run + datetime.timedelta(hours=hour)
-            # results.append(self.read_wx(for_run, actual_date))
         # don't save data until everything is loaded
         wx = pd.concat(results)
         self.save_data(wx)
