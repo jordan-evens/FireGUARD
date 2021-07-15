@@ -79,6 +79,7 @@ class HPFXLoader(WeatherLoader):
         real_hour = int((diff.days * 24) + (diff.seconds / 60 / 60))
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
+        save_dir = os.path.join(self.DIR_DATA, '{}{}'.format(date, time))
         save_as = '{}_{}{:02d}_{}_{:03d}'.format(self.name, date, time, "{}", real_hour)
         def do_save(name):
             """!
@@ -102,13 +103,13 @@ class HPFXLoader(WeatherLoader):
                 @param partial_url Partial url to use for determining name
                 @return Path saved to when using URL to retrieve
                 """
-                out_file = os.path.join(self.DIR_DATA, save_as.format(weather_index.name))
+                out_file = os.path.join(save_dir, save_as.format(weather_index.name))
                 if os.path.isfile(out_file):
                     # HACK: no timestamp so don't download if exists
                     return out_file
                 logging.debug("Downloading {}".format(out_file))
                 try:
-                    common.save_http(self.DIR_DATA, partial_url, save_as=out_file)
+                    common.save_http(save_dir, partial_url, save_as=out_file)
                 except:
                     # get rid of file that's there if there was an error
                     common.try_remove(out_file)
@@ -144,12 +145,8 @@ class HPFXLoader(WeatherLoader):
         @return None
         """
         import glob
-        files = glob.glob(self.DIR_DATA + '/{}_*_TMP*'.format(self.name))
-        def file_run(file):
-            start = file.index('_') + 1
-            end = file.index('_', start)
-            return file[start:end]
-        runs = list(set([file_run(d) for d in files]))
+        files = glob.glob(self.DIR_DATA)
+        runs = list(set([os.path.basename(d) for d in files]))
         # sort so we do the dates chronologically
         runs.sort()
         for run in runs:
@@ -186,6 +183,9 @@ class HPFXLoader(WeatherLoader):
         # logging.debug(first_hours)
         # logging.debug(last_hours)
         hours = list(dict.fromkeys(first_hours + last_hours))
+        date = for_run.strftime(r'%Y%m%d')
+        time = int(for_run.strftime(r'%H'))
+        save_dir = common.ensure_dir(os.path.join(self.DIR_DATA, '{}{}'.format(date, time)))
         for hour in hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
             actual_date = for_run + datetime.timedelta(hours=hour)
@@ -196,7 +196,7 @@ class HPFXLoader(WeatherLoader):
         # more than the number of cpus doesn't seem to help
         pool = Pool(os.cpu_count())
         results = list(pool.map(read_wx,
-                               zip([self.DIR_DATA] * n,
+                               zip([save_dir] * n,
                                    [self.name] * n,
                                    [for_run] * n,
                                    actual_dates)))
