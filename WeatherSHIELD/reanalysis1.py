@@ -220,14 +220,7 @@ if __name__ == '__main__':
                 df = get_year(year)
                 retry = True
                 # HACK: keeps failing on insert timing out so try until it doesn't
-                while retry:
-                    try:
-                        ## @cond Doxygen_Suppress
-                        common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'year', addStartDate=False)
-                        retry = False
-                        ## @endcond
-                    except:
-                        pass
+                common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'year')
             else:
                 print('Already have {} data for {}'.format(MODEL_NAME, year))
     finally:

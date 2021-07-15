@@ -199,7 +199,6 @@ CREATE TABLE INPUTS.DAT_Model(
     ModelGeneratedId INT GENERATED ALWAYS AS IDENTITY,
     Model VARCHAR(20) NOT NULL,
     Generated TIMESTAMP NOT NULL,
-    StartDate TIMESTAMP NOT NULL,
     
     CONSTRAINT PK_DatModel PRIMARY KEY(ModelGeneratedId),
     CONSTRAINT UN_DatModel UNIQUE (
@@ -296,7 +295,7 @@ BEGIN
                 DISTINCT c.*
             FROM (SELECT m.Model, MAX(m.Generated) As Generated
                     FROM INPUTS.DAT_Model m
-                    WHERE StartDate < (current_date + (DateOffset + 1) * INTERVAL '1 day')
+                    WHERE m.Generated < (current_date + (DateOffset + 1) * INTERVAL '1 day')
                     GROUP BY m.Model) m
             INNER JOIN LATERAL (
                 SELECT

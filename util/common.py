@@ -560,32 +560,26 @@ SCHEMA = None
 MODELFK = None
 FINAL_TABLE = None
 DF = None
-ADDSTARTDATE = None
-def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=True):
+def insert_weather(schema, final_table, df, modelFK='generated'):
     """!
     Insert weather data into table and foreign key tables
     @param schema Schema that table exists in
     @param final_table Table to insert into
     @param df DataFrame with data to insert
     @param modelFK Foreign key to use for inserting into DAT_Model table
-    @param addStartDate Whether or not to add start date for weather to data
     @return None
     """
     global SCHEMA
     global MODELFK
     global FINAL_TABLE
     global DF
-    global ADDSTARTDATE
     SCHEMA = schema
     MODELFK = modelFK
     FINAL_TABLE = final_table
     DF = df
-    ADDSTARTDATE = addStartDate
     # schema = common.SCHEMA
     # modelFK = common.MODELFK
     # final_table = common.FINAL_TABLE
-    # addStartDate = ADDSTARTDATE
-    # HACK: add column for startdate for run
     def do_insert(cnxn, table, data):
         """Insert and ignore duplicate key failures"""
         stmt_insert = make_insert_statement(table, data.reset_index().columns, False)
@@ -596,13 +590,11 @@ def insert_weather(schema, final_table, df, modelFK='generated', addStartDate=Tr
         # rely on deleting from FK table to remove everything from this table, so just insert
         stmt_insert = make_insert_statement(table, data.reset_index().columns)
         trans_insert_data(cnxn, data, stmt_insert)
-    if addStartDate:
-        df['startdate'] = pd.to_datetime(df.reset_index()['fortime'].min(), utc=True)
     try:
         cnxn = open_local_db()
         cur_df = df
         cur_df = write_foreign(cnxn, schema, 'DAT_Location', ['latitude', 'longitude'], do_insert, cur_df)
-        cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['model', modelFK, 'startdate'] if addStartDate else ['model', modelFK], trans_save_data, cur_df)
+        cur_df = write_foreign(cnxn, schema, 'DAT_Model', ['model', modelFK], trans_save_data, cur_df)
         cur_df = write_foreign(cnxn, schema, 'DAT_LocationModel', ['modelgeneratedid', 'locationid'], do_insert_only, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
         do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
