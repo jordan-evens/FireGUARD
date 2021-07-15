@@ -72,7 +72,10 @@ services:
     volumes:
       - type: bind
         source: ./settings.ini
-        target: /var/www/html/wxshield/settings.ini
+        target: /var/www/html/settings.ini
+      - type: bind
+        source: ./WeatherSHIELD/gui
+        target: /var/www/html/wxshield
     depends_on:
       db:
         condition: service_healthy

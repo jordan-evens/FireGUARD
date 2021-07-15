@@ -1,5 +1,5 @@
 <?php
-    $config = parse_ini_file("settings.ini", true);
+    $config = parse_ini_file("../settings.ini", true);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -222,14 +222,13 @@ return '['.implode(', ', array_map(create_function('$v', 'return "\'".$v."\'";')
     <link rel="stylesheet" href="css/styles.css">
 
     <head>
-        <script type='text/javascript' src='js/jquery-1.11.3.min.js'></script>
-        <script type="text/javascript" src="js/jspdf/jspdf.js"></script>
+        <script type='text/javascript' src='/js/jquery-1.11.3.min.js'></script>
+        <script type="text/javascript" src="/js/jspdf/jspdf.js"></script>
         <script src="js/DateCalculations.js"> </script>
         <script src="js/calc_fwi.js"></script>
         <script src="js/calc_fbp.js"></script>
         <script src="js/Chart.js/Chart.js"></script>
         <script src="js/WindRose.js"></script>
-        <script src="js/Chart.js/samples/utils.js"></script>
         <script src="js/chartjs-plugin-annotation/chartjs-plugin-annotation.js"></script>
         <script src="js/weatherSHIELD_1.js"> </script>
         
