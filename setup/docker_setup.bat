@@ -1,9 +1,11 @@
 @REM setup commands
+pushd \FireGUARD
 docker network create --subnet 172.18.0.0/16 fireguard-network
 docker compose build
 docker compose up -d
 docker compose exec -e PGPASSWORD=docker db psql FireGUARD -U docker -p 5432 -h localhost -f /FireGUARD/postgre.sql
 docker compose run --rm wxcli python reanalysis1.py
+popd
 
 goto :end
 
@@ -18,6 +20,10 @@ docker compose run --rm gis /bin/bash
 
 @REM database access
 docker exec -it fireguard-db psql -U docker -h localhost -d FireGUARD -p 5432
+
+REM select pg_size_pretty(pg_database_size('FireGUARD'));
+REM one run ~455mb
+
 
 @REM wxshield web page
 docker compose exec wxshield /bin/bash
