@@ -2,20 +2,23 @@
 FROM python:3.6-slim
 WORKDIR /FireGUARD
 COPY .docker/requirements_wxcli.txt requirements_wxcli.txt
-WORKDIR /FireGUARD/WeatherSHIELD/
+WORKDIR /FireGUARD/
 RUN pip install -r /FireGUARD/requirements_wxcli.txt \
 	&& apt-get update \
 	&& apt-get install -y gcc make gfortran wget \
 	&& wget ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.0.2 \
 	&& tar -xzvf wgrib2.tgz.v3.0.2 \
 	&& rm wgrib2.tgz.v3.0.2 \
-	&& cd /FireGUARD/WeatherSHIELD/grib2 \
+	&& cd /FireGUARD/grib2 \
 	&& export CC=gcc \
 	&& export FC=gfortran \
 	&& export COMP_SYS=gnu_linux \
+  && sed -i "s/MAKE_SHARED_LIB=0/MAKE_SHARED_LIB=1/" makefile \
 	&& make \
 	&& mv wgrib2/wgrib2 /FireGUARD/wgrib2 \
-	&& make clean \
+  && make clean \
+  && make lib \
+  && cp lib/libwgrib2.so /usr/local/lib/python3.6/site-packages/ \
 	&& apt-get purge -y --auto-remove gcc make gfortran \
 	&& apt-get install -y libgfortran5 libgomp1 \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* \
@@ -27,5 +30,5 @@ RUN pip install -r /FireGUARD/requirements_wxcli.txt \
       /usr/lib/node_modules/npm/man/* \
       /usr/lib/node_modules/npm/doc/* \
       /usr/lib/node_modules/npm/html/* \
-      /usr/lib/node_modules/npm/scripts/* \
-      /FireGUARD/WeatherSHIELD/grib2
+      /usr/lib/node_modules/npm/scripts/*
+WORKDIR /FireGUARD/WeatherSHIELD
