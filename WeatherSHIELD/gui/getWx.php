@@ -179,8 +179,10 @@ if ($conn){
     {
       foreach($cur_model['Members'] as $i=>$m) {
         $old_rain = 0;
-        foreach ($dates_array as $j=>$for_time) {
-          $v = $m[$j];
+        // foreach ($dates_array as $j=>$for_time) {
+          // $v = $m[$j];
+        foreach ($m as $j=>$v) {
+          $for_time = $dates_array[$j];
           $time = new DateTime($for_time);
           if (!is_null($zone))
           {
