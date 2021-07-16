@@ -41,18 +41,15 @@ class WeatherLoader(object):
         @return None
         """
         raise NotImplementedError()
-    def __init__(self, name, for_days, no_download=False):
+    def __init__(self, name, no_download=False):
         """!
         Constructor
         @param self Pointer to this
         @param name Name for weather being loaded
-        @param for_days Which days to load for
         @param no_download Whether or not to not download files
         """   
         ## Name for weather being loaded
         self.name = name
-        ## Which days to load for
-        self.for_days = for_days
         common.ensure_dir(self.DIR_DATA)
         ## Folder to save downloaded weather to
         self.DIR_DATA = os.path.join(self.DIR_DATA, self.name)

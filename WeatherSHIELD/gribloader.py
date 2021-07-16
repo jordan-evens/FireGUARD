@@ -341,7 +341,7 @@ class GribLoader(WeatherLoader):
         @param no_download Whether or not to not download files
         @param lead_time number of hours run happens before start date within run
         """
-        super(GribLoader, self).__init__(name, for_days, no_download)
+        super(GribLoader, self).__init__(name, no_download)
         ## number of hours run happens before start date within run
         self.lead_time = lead_time
         ## how often this data gets updated (hours)
@@ -356,3 +356,5 @@ class GribLoader(WeatherLoader):
         self.dir = dir
         ## Number of ensemble members (including control)
         self.num_members = num_members
+        ## Which days to load for
+        self.for_days = for_days

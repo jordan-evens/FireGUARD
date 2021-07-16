@@ -47,17 +47,10 @@ def do_save(args):
     @param weather_index WeatherIndex to get files for
     """
     host, dir, mask, save_dir, date, time, real_hour, save_as, weather_index = args
-    #  http://hpfx.collab.science.gc.ca/20210716/WXO-DD/ensemble/reps/10km/grib2/00/033/
-    # 20210716T00Z_MSC_REPS_VGRD_AGL-10m_RLatLon0.09x0.09_PT033H.grib2
-    # 20210716T00Z_MSC_REPS_TMP_AGL-2m_RLatLon0.09x0.09_PT000H.grib2
-    # 20210715T00Z_MSC_REPS_TMP_AGL-2m_RLatLon0.09x0.09_PT000H.grib2
-    #mask = r'{}T{:02d}Z_MSC_REPS_{}_{}_RLatLon0.09x0.09_PT{:03d}H.grib2'
-    ## Subdirectory to download files from
-    #dir = r'{}/WXO-DD/ensemble/reps/10km/grib2/{:02d}/{:03d}/'
     # Get full url for the file that has the data we're asking for
     partial_url = r'{}{}{}'.format(host,
-                                   dir.format(date, time, real_hour),
-                                   mask.format(date, time, '{}', '{}', real_hour))
+                                   dir.format(date=date, time=time, real_hour=real_hour),
+                                   mask.format(date=date, time=time, real_hour=real_hour, index='{}', layer='{}'))
     partial_url = partial_url.format(weather_index.name, weather_index.layer)
     def save_file(partial_url):
         """!
@@ -155,14 +148,11 @@ class HPFXLoader(WeatherLoader):
                 logging.debug('Data already loaded - aborting')
                 return pd.Timestamp(for_run)
         results = []
-        total_hours = max(self.for_days) * 24
-        step = 3
-        hours = (list(map(lambda x : x * step, range(int(total_hours / step)))) + [total_hours])
         date = for_run.strftime(r'%Y%m%d')
         time = int(for_run.strftime(r'%H'))
         save_dir = common.ensure_dir(os.path.join(self.DIR_DATA, '{}{:02d}'.format(date, time)))
         args = []
-        for hour in hours:
+        for hour in self.hours:
             logging.info("Downloading {} records from {} run for hour {}".format(self.name, for_run, hour))
             for_date = for_run + datetime.timedelta(hours=hour)
             diff = for_date - for_run
@@ -176,7 +166,7 @@ class HPFXLoader(WeatherLoader):
             args = args + list(zip([self.host] * n, [self.dir] * n, [self.mask] * n, [save_dir] * n, [date] * n, [time] * n, [real_hour] * n, [save_as] * n, for_what))
         pool = Pool(DOWNLOAD_THREADS)
         pool.map(do_save, args)
-        actual_dates = list(map(lambda hour: for_run + datetime.timedelta(hours=hour), hours))
+        actual_dates = list(map(lambda hour: for_run + datetime.timedelta(hours=hour), self.hours))
         n = len(actual_dates)
         # more than the number of cpus doesn't seem to help
         pool = Pool(min(n, os.cpu_count()))
@@ -205,7 +195,7 @@ class HPFXLoader(WeatherLoader):
             try:
                 return self.load_specific_records(for_run)
             except Exception as ex:
-            #except urllib2.HTTPError as ex:
+            # except urllib2.HTTPError as ex:
                 logging.error(ex)
                 # HACK: we set the URL in the place the error originated from
                 # logging.error(ex.url)
@@ -214,18 +204,17 @@ class HPFXLoader(WeatherLoader):
                     raise
                 for_run = for_run + datetime.timedelta(hours=-self.interval)
                 logging.error("**** Moving back 1 run since data is unavailable. Now looking for {}".format(for_run.strftime("%Y%m%d%H")))
-    def __init__(self, name, for_days, interval, mask, dir, no_download=False):
+    def __init__(self, name, interval, mask, dir, no_download=False):
         """!
         Instantiate class
         @param name Name for weather being loaded
-        @param for_days Which days to load for
         @param interval how often this data gets updated (hours)
         @param interval distance between time steps (hours)
         @param mask Mask to use for making URL to download
         @param dir Subdirectory to download files from
         @param no_download Whether or not to not download files
         """
-        super(HPFXLoader, self).__init__(name, for_days, no_download)
+        super(HPFXLoader, self).__init__(name, no_download)
         ## how often this data gets updated (hours)
         self.interval = interval
         ## URL root to download from
@@ -245,12 +234,14 @@ class GepsLoader(HPFXLoader):
         """
         name = 'REPS'
         ## Mask to use for making URL to download
-        # 20210715T00Z_MSC_REPS_TMP_AGL-2m_RLatLon0.09x0.09_PT000H.grib2
-        mask = r'{}T{:02d}Z_MSC_REPS_{}_{}_RLatLon0.09x0.09_PT{:03d}H.grib2'
+        mask = r'{date}T{time:02d}Z_MSC_REPS_{index}_{layer}_RLatLon0.09x0.09_PT{real_hour:03d}H.grib2'
         ## Subdirectory to download files from
-        dir = r'{}/WXO-DD/ensemble/reps/10km/grib2/{:02d}/{:03d}/'
+        dir = r'{date}/WXO-DD/ensemble/reps/10km/grib2/{time:02d}/{real_hour:03d}/'
+        self.for_days = for_days=range(1, 4)
+        total_hours = max(self.for_days) * 24
+        step = 3
+        self.hours = (list(map(lambda x : x * step, range(int(total_hours / step)))) + [total_hours])
         super(GepsLoader, self).__init__(name=name,
-                                         for_days=range(1, 4),
                                          interval=6,
                                          mask=mask,
                                          dir=dir,
