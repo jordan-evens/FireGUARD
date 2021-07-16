@@ -1,5 +1,0 @@
-<map id="firestarr.sql.get_fires_by_date" name="firestarr.sql.get_fires_by_date">
-<area shape="rect" id="node1" title="Get fires that are active as of a certain date." alt="" coords="5,5,143,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1sql.html#a46714dc6daf2f5eb76e6f09e4731c35e" title="Execute query on DFOSS database." alt="" coords="191,5,304,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1sql.html#a0375ca4e6bd0829d281d15eacfa4774e" title="Return connection to DFOSS database." alt="" coords="352,5,497,47"/>
-</map>

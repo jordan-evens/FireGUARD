@@ -1,5 +1,5 @@
 <map id="firestarr::wx::Weather" name="firestarr::wx::Weather">
-<area shape="rect" id="node1" title="Collection of weather indices used for calculating FwiWeather." alt="" coords="380,1229,521,1468"/>
+<area shape="rect" id="node1" title="Collection of weather indices used for calculating FwiWeather." alt="" coords="380,1229,521,1453"/>
 <area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_wind.html" title="Wind with a Speed and Direction." alt="" coords="113,884,236,1167"/>
 <area shape="rect" id="node3" href="$classfirestarr_1_1wx_1_1_direction.html" title="Direction with access to degrees or radians." alt="" coords="52,549,196,759"/>
 <area shape="rect" id="node4" href="$classfirestarr_1_1data_1_1_index.html" title="A wrapper around a double to ensure correct types are used." alt="" coords="388,145,551,472"/>

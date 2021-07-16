@@ -1,9 +1,0 @@
-<map id="firestarr.assets.doRun" name="firestarr.assets.doRun">
-<area shape="rect" id="node1" title="Run for command line arguments." alt="" coords="5,130,152,157"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1assets.html#a19dc83fffed41a090b259aa3d4b82391" title="Summarize assets that are withing the given extent." alt="" coords="200,130,373,157"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1assets.html#afa6c0b10cf9ff51d4c07f894cc9aa26e" title="Find angle and distance to closest point in feature to the given point." alt="" coords="421,5,585,47"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1assets.html#ad65967ba6de33f40d82136ac09bc1e6b" title="Find closest point in feature to the given point." alt="" coords="633,35,764,76"/>
-<area shape="rect" id="node5" href="$namespacefirestarr_1_1assets.html#a35d4c7b4a6a13164f91339085d1e4f37" title="Convert angle in degrees to direction string." alt="" coords="425,123,581,164"/>
-<area shape="rect" id="node6" href="$namespacefirestarr_1_1assets.html#a935f1a2148710d1f4ec84956c54fbee7" title="Determine UTM zone for given spatial reference." alt="" coords="425,189,582,215"/>
-<area shape="rect" id="node7" href="$namespacefirestarr_1_1assets.html#ae735c5a1d47d6fc7aa27f611d6d9ebf4" title="Create a polygon that covers the given extent." alt="" coords="426,240,581,281"/>
-</map>

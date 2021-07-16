@@ -1,13 +1,6 @@
 var searchData=
 [
-  ['weather_5f_2102',['weather_',['../classfirestarr_1_1sim_1_1_spread_info.html#a7cfc87416a6143f813cc546aebd27ce9',1,'firestarr::sim::SpreadInfo::weather_()'],['../classfirestarr_1_1sim_1_1_scenario.html#ae933a8b7e62d3cc6577761359a31e1f9',1,'firestarr::sim::Scenario::weather_()']]],
-  ['weather_5fby_5fhour_5fby_5fday_5f_2103',['weather_by_hour_by_day_',['../classfirestarr_1_1wx_1_1_fire_weather.html#a931a230567681eeef0f8c5a03d92badd',1,'firestarr::wx::FireWeather']]],
-  ['weather_5ffile_5f_2104',['weather_file_',['../classfirestarr_1_1sim_1_1_settings_implementation.html#af36eda6b9355772b0da1515bbc454881',1,'firestarr::sim::SettingsImplementation']]],
-  ['weighted_5fdsr_5f_2105',['weighted_dsr_',['../classfirestarr_1_1wx_1_1_fire_weather.html#ab5c02fb15a84f86e5929a930af84de8d',1,'firestarr::wx::FireWeather']]],
-  ['whitespruce_2106',['WhiteSpruce',['../classfirestarr_1_1fuel_1_1_duff.html#ad8b958cebe92747f756ec011079a2573',1,'firestarr::fuel::Duff']]],
-  ['wind_5f_2107',['wind_',['../classfirestarr_1_1wx_1_1_weather.html#a3d958c16d9bb23bdbfdd6d6ca87face3',1,'firestarr::wx::Weather']]],
-  ['wsv_5fx_5f_2108',['wsv_x_',['../classfirestarr_1_1wx_1_1_wind.html#a65e5bdb98a888135afe522c4b8c0a551',1,'firestarr::wx::Wind']]],
-  ['wsv_5fy_5f_2109',['wsv_y_',['../classfirestarr_1_1wx_1_1_wind.html#ac0a5f92ab36146763e9c3c0f4fcd3a7c',1,'firestarr::wx::Wind']]],
-  ['wx_2110',['wx',['../classfirestarr_1_1_scenario_1_1_scenario.html#a2c798c780163cd7af9e2880da0d7805d',1,'firestarr.Scenario.Scenario.wx()'],['../classrunfake_1_1_fake_settings.html#a4f21dc4585b106e6fa50fad7d098b8ea',1,'runfake.FakeSettings.wx()']]],
-  ['wx_5f_2111',['wx_',['../classfirestarr_1_1wx_1_1_fwi_stream.html#aa2e314b54fa1c0f2518fbd6223ba2ff0',1,'firestarr::wx::FwiStream::wx_()'],['../classfirestarr_1_1sim_1_1_model.html#ad3f637f3952f972c24e1b40f16364890',1,'firestarr::sim::Model::wx_()']]]
+  ['y_1458',['y',['../structfirestarr_1_1sim_1_1_inner_pos.html#a8c4cd47c1ee5b863509ff4ffca906ecd',1,'firestarr::sim::InnerPos']]],
+  ['year_5f_1459',['year_',['../classfirestarr_1_1wx_1_1_score.html#ab49cd5d0a99e32820c11e2034563eef3',1,'firestarr::wx::Score']]],
+  ['yllcorner_5f_1460',['yllcorner_',['../classfirestarr_1_1data_1_1_grid_base.html#ab154a7f6e1d49524197870590b1a68a3',1,'firestarr::data::GridBase']]]
 ];

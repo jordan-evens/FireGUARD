@@ -1,6 +1,0 @@
-<map id="firestarr.getProjectionMXD.doRun" name="firestarr.getProjectionMXD.doRun">
-<area shape="rect" id="node1" title="Run with command line arguments." alt="" coords="5,13,219,39"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_projection_m_x_d.html#a46a2510d450c29ddd34f696d86041c0a" title="Save projection maps for given inputs." alt="" coords="267,5,471,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_projection_m_x_d.html#a73ef855a2ebf13e3910f4b116d68c8db" title="Save projection maps for given inputs." alt="" coords="519,5,713,47"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1get_projection_m_x_d.html#a681919b6de0e11d3838f9fef14d0d077" title="Generate name of mxd to output to when using given parameters." alt="" coords="761,5,956,47"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="firestarr::wx::WxShield::processMember" name="firestarr::wx::WxShield::processMember">
-<area shape="rect" id="node1" title="Process a member of the WeatherModel." alt="" coords="395,5,541,47"/>
-<area shape="rect" id="node2" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a2b23c8f1b1eab048bd778edbeef9eb5a" title="Generate weather streams based on input data." alt="" coords="200,5,347,47"/>
-<area shape="rect" id="node3" href="$classfirestarr_1_1wx_1_1_wx_shield.html#a1811ce18dcf536ff6fef30ab1e2d7fef" title="Initialize a WeatherSHIELD ensemble." alt="" coords="5,5,152,47"/>
-</map>

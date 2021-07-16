@@ -1,6 +1,0 @@
-<map id="firestarr.getWxshield.doRun" name="firestarr.getWxshield.doRun">
-<area shape="rect" id="node1" title="Run with command line arguments." alt="" coords="5,35,184,61"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_wxshield.html#aa158328581016df94dc11cf7059e0394" title="Save a WeatherSHIELD report pdf." alt="" coords="232,27,391,69"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_wxshield.html#abb69d9579d6191d32b4f159286e6ea2f" title="Generate url for retrieving WeatherSHIELD pdf." alt="" coords="439,5,625,32"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1get_wxshield.html#a436386234a0fe0560acb9a44500cc65f" title="Generate file name that export is saved to." alt="" coords="453,57,611,98"/>
-</map>

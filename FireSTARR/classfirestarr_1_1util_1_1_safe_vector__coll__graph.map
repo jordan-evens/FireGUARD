@@ -1,6 +1,6 @@
-<map id="firestarr.util::SafeVector" name="firestarr.util::SafeVector">
-<area shape="rect" id="node1" title="A vector with added thread safety." alt="" coords="5,285,161,495"/>
-<area shape="rect" id="node2" title=" " alt="" coords="7,145,64,223"/>
-<area shape="rect" id="node3" title=" " alt="" coords="88,145,207,223"/>
-<area shape="rect" id="node4" title=" " alt="" coords="118,5,177,83"/>
+<map id="firestarr::util::SafeVector" name="firestarr::util::SafeVector">
+<area shape="rect" id="node1" title="A vector with added thread safety." alt="" coords="5,285,164,495"/>
+<area shape="rect" id="node2" title=" " alt="" coords="8,145,65,223"/>
+<area shape="rect" id="node3" title=" " alt="" coords="89,145,208,223"/>
+<area shape="rect" id="node4" title=" " alt="" coords="119,5,178,83"/>
 </map>

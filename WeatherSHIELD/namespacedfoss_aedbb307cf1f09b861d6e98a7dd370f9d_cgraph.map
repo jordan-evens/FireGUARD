@@ -1,5 +1,0 @@
-<map id="dfoss.copy_ct_wstn" name="dfoss.copy_ct_wstn">
-<area shape="rect" id="node1" title="Copy CT_WSTN (code table for weather stations)" alt="" coords="5,5,143,32"/>
-<area shape="rect" id="node2" href="$namespacedfoss.html#a5a865ed07a9918f95af8b145ca66b163" title="Execute statement and return DataFrame with results." alt="" coords="191,5,320,32"/>
-<area shape="rect" id="node3" href="$namespacedfoss.html#a2460847095e3c26423b44c12ba0ed51c" title="Return connection to DFOSS database." alt="" coords="368,5,552,32"/>
-</map>

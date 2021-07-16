@@ -1,5 +1,0 @@
-<map id="firestarr::util::read_directory" name="firestarr::util::read_directory">
-<area shape="rect" id="node1" title="Get a list of files in the given directory." alt="" coords="5,5,124,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a62d3a0007c849991c2d757753381f241" title="Get a list of files in the given directory matching the given regex." alt="" coords="172,5,291,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a292c93c940c4a180540ebf5072186e33" title="Convert wstring to string." alt="" coords="339,5,492,47"/>
-</map>

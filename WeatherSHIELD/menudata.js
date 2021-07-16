@@ -41,14 +41,7 @@ var menudata={children:[
 {text:"t",url:"namespacemembers.html#index_t"},
 {text:"u",url:"namespacemembers.html#index_u"},
 {text:"y",url:"namespacemembers.html#index_y"}]},
-{text:"Functions",url:"namespacemembers_func.html",children:[
-{text:"c",url:"namespacemembers_func.html#index_c"},
-{text:"f",url:"namespacemembers_func.html#index_f"},
-{text:"g",url:"namespacemembers_func.html#index_g"},
-{text:"l",url:"namespacemembers_func.html#index_l"},
-{text:"r",url:"namespacemembers_func.html#index_r"},
-{text:"s",url:"namespacemembers_func.html#index_s"},
-{text:"t",url:"namespacemembers_func.html#index_t"}]},
+{text:"Functions",url:"namespacemembers_func.html"},
 {text:"Variables",url:"namespacemembers_vars.html"}]}]},
 {text:"Classes",url:"annotated.html",children:[
 {text:"Class List",url:"annotated.html"},
@@ -67,9 +60,22 @@ var menudata={children:[
 {text:"m",url:"functions.html#index_m"},
 {text:"n",url:"functions.html#index_n"},
 {text:"r",url:"functions.html#index_r"},
-{text:"s",url:"functions.html#index_s"},
-{text:"u",url:"functions.html#index_u"}]},
-{text:"Functions",url:"functions_func.html"},
-{text:"Variables",url:"functions_vars.html"}]}]},
+{text:"s",url:"functions.html#index_s"}]},
+{text:"Functions",url:"functions_func.html",children:[
+{text:"_",url:"functions_func.html#index__5F"},
+{text:"c",url:"functions_func.html#index_c"},
+{text:"g",url:"functions_func.html#index_g"},
+{text:"l",url:"functions_func.html#index_l"},
+{text:"r",url:"functions_func.html#index_r"},
+{text:"s",url:"functions_func.html#index_s"}]},
+{text:"Variables",url:"functions_vars.html",children:[
+{text:"d",url:"functions_vars.html#index_d"},
+{text:"f",url:"functions_vars.html#index_f"},
+{text:"h",url:"functions_vars.html#index_h"},
+{text:"i",url:"functions_vars.html#index_i"},
+{text:"l",url:"functions_vars.html#index_l"},
+{text:"m",url:"functions_vars.html#index_m"},
+{text:"n",url:"functions_vars.html#index_n"},
+{text:"s",url:"functions_vars.html#index_s"}]}]}]},
 {text:"Files",url:"files.html",children:[
 {text:"File List",url:"files.html"}]}]}

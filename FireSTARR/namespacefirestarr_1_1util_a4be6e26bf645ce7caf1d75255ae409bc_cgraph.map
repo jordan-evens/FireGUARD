@@ -1,6 +1,0 @@
-<map id="firestarr.util.save_http" name="firestarr.util.save_http">
-<area shape="rect" id="node1" title="Save file at given URL into given directory using an HTTP connection." alt="" coords="5,64,151,91"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#adcfd1143053676749144b5b974ce4b2b" title="Make sure directory exists." alt="" coords="199,5,347,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a572d116f95126a5214f8f66a2c483f06" title="Convert from UTC to local time, respecting DST if required." alt="" coords="213,57,333,98"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1util.html#a1a1826117502e59c33a18e8c2f5eb56e" title="Try to delete file but don&#39;t worry if it doesn&#39;t work." alt="" coords="221,122,324,163"/>
-</map>

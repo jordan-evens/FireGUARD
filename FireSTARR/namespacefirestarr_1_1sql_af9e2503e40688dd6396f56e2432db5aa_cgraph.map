@@ -1,5 +1,0 @@
-<map id="firestarr.sql.get_current_fires" name="firestarr.sql.get_current_fires">
-<area shape="rect" id="node1" title="Get fires that are currently active from DFOSS." alt="" coords="5,5,159,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1sql.html#a46714dc6daf2f5eb76e6f09e4731c35e" title="Execute query on DFOSS database." alt="" coords="207,5,320,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1sql.html#a0375ca4e6bd0829d281d15eacfa4774e" title="Return connection to DFOSS database." alt="" coords="368,5,513,47"/>
-</map>

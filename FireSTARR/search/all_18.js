@@ -1,11 +1,13 @@
 var searchData=
 [
-  ['y_1000',['y',['../structfirestarr_1_1sim_1_1_inner_pos.html#a8c4cd47c1ee5b863509ff4ffca906ecd',1,'firestarr::sim::InnerPos']]],
-  ['ycenter_1001',['YCenter',['../classfirestarr_1_1gis_1_1_extent.html#a0eb24fb950066039692825b3a364c961',1,'firestarr::gis::Extent']]],
-  ['year_1002',['year',['../classfirestarr_1_1_perimeter_list_1_1_perimeter_list.html#a31fec8a654deec79cf2ecbe197eebd10',1,'firestarr.PerimeterList.PerimeterList.year()'],['../classfirestarr_1_1_scenario_1_1_scenario.html#a6466da24ca2af3b962794873b01b3763',1,'firestarr.Scenario.Scenario.year()'],['../classfirestarr_1_1_settings_1_1_settings.html#a402fa0f8314aab169040afcc73cfa179',1,'firestarr.Settings.Settings.year()'],['../classrunfake_1_1_fake_settings.html#a0b950f0d69483194cc7298fe4a9d45b3',1,'runfake.FakeSettings.year()'],['../classfirestarr_1_1wx_1_1_score.html#a029cbe2681dfac5d0c2467b403372f5d',1,'firestarr::wx::Score::year() const noexcept']]],
-  ['year_5f_1003',['year_',['../classfirestarr_1_1wx_1_1_score.html#ab49cd5d0a99e32820c11e2034563eef3',1,'firestarr::wx::Score']]],
-  ['yllcorner_1004',['yllcorner',['../classfirestarr_1_1data_1_1_grid_base.html#ada6e7b58b4d58418c6b29674a017c00b',1,'firestarr::data::GridBase']]],
-  ['yllcorner_5f_1005',['yllcorner_',['../classfirestarr_1_1data_1_1_grid_base.html#ab154a7f6e1d49524197870590b1a68a3',1,'firestarr::data::GridBase']]],
-  ['ymax_1006',['YMax',['../classfirestarr_1_1gis_1_1_extent.html#ad75c54a09bdeb5a0ff2969caf9664c4f',1,'firestarr::gis::Extent']]],
-  ['ymin_1007',['YMin',['../classfirestarr_1_1gis_1_1_extent.html#a9b3d0c3f039c18f135783283ad3fe644',1,'firestarr::gis::Extent']]]
+  ['_7econstantgrid_685',['~ConstantGrid',['../classfirestarr_1_1data_1_1_constant_grid.html#a685801af7fd4a7b4ae2a2816101521fb',1,'firestarr::data::ConstantGrid']]],
+  ['_7edirection_686',['~Direction',['../classfirestarr_1_1wx_1_1_direction.html#a90ced188fd255055d746cc484a733f90',1,'firestarr::wx::Direction']]],
+  ['_7efireweather_687',['~FireWeather',['../classfirestarr_1_1wx_1_1_fire_weather.html#a83011b534c3431665767da933be0b478',1,'firestarr::wx::FireWeather']]],
+  ['_7efwiweather_688',['~FwiWeather',['../classfirestarr_1_1wx_1_1_fwi_weather.html#a750d800585b96b51752bf39d342a5e58',1,'firestarr::wx::FwiWeather']]],
+  ['_7eindex_689',['~Index',['../classfirestarr_1_1data_1_1_index.html#afeb43a857f2d399452e0bf4b029b9722',1,'firestarr::data::Index']]],
+  ['_7esafevector_690',['~SafeVector',['../classfirestarr_1_1util_1_1_safe_vector.html#a258c89a840672ae58ea0f5af6fbd1221',1,'firestarr::util::SafeVector']]],
+  ['_7estartup_691',['~Startup',['../classfirestarr_1_1wx_1_1_startup.html#a9b80ebebc5afb74b57fc04cfa4ecd359',1,'firestarr::wx::Startup']]],
+  ['_7eweather_692',['~Weather',['../classfirestarr_1_1wx_1_1_weather.html#a43d43f54bdf6a87de3cdab9541062aa1',1,'firestarr::wx::Weather']]],
+  ['_7eweathermodel_693',['~WeatherModel',['../classfirestarr_1_1wx_1_1_weather_model.html#aa97206ddbbc4302d02b67a7fdbb8effd',1,'firestarr::wx::WeatherModel']]],
+  ['_7ewind_694',['~Wind',['../classfirestarr_1_1wx_1_1_wind.html#ab7491c8dd19b058e9c4c948ad9369419',1,'firestarr::wx::Wind']]]
 ];

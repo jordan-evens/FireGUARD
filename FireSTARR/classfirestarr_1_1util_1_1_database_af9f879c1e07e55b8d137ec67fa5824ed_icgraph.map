@@ -1,4 +1,0 @@
-<map id="firestarr::util::Database::getDouble" name="firestarr::util::Database::getDouble">
-<area shape="rect" id="node1" title="Read a double from the current column of the current query." alt="" coords="203,5,352,47"/>
-<area shape="rect" id="node2" href="$classfirestarr_1_1util_1_1_database.html#aeefffebae746ff3cc0da47f3f44fa1ec" title="Read a double form the current column of the current query." alt="" coords="5,5,155,47"/>
-</map>

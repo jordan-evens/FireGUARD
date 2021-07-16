@@ -1,8 +1,12 @@
 var searchData=
 [
-  ['unburnable_5f_2091',['unburnable_',['../classfirestarr_1_1sim_1_1_scenario.html#aa209765cf04b625f5a83f52cb5cd48ab',1,'firestarr::sim::Scenario']]],
-  ['url_5fmask_2092',['URL_MASK',['../namespacefirestarr_1_1get_wxshield.html#aae52c21110d2ce9151b4d8d375469097',1,'firestarr::getWxshield']]],
-  ['use_5fperim_2093',['use_perim',['../classfirestarr_1_1_settings_1_1_settings.html#aea7a4ad841d22dc5befffe81bccd618b',1,'firestarr.Settings.Settings.use_perim()'],['../classrunfake_1_1_fake_settings.html#a90c10c0190c23ad8ae0ad509387764bc',1,'runfake.FakeSettings.use_perim()']]],
-  ['used_5fby_5fname_5f_2094',['used_by_name_',['../classfirestarr_1_1fuel_1_1_fuel_lookup_impl.html#ab19ef93ddc60a645b0c820bd06fa8861',1,'firestarr::fuel::FuelLookupImpl']]],
-  ['utm_5fscale_5ffactor_2095',['UTM_SCALE_FACTOR',['../namespacefirestarr_1_1utm.html#a9264757fc781715446f0f9fe5fb4035f',1,'firestarr::utm']]]
+  ['weather_5f_1447',['weather_',['../classfirestarr_1_1sim_1_1_spread_info.html#a7cfc87416a6143f813cc546aebd27ce9',1,'firestarr::sim::SpreadInfo::weather_()'],['../classfirestarr_1_1sim_1_1_scenario.html#ae933a8b7e62d3cc6577761359a31e1f9',1,'firestarr::sim::Scenario::weather_()']]],
+  ['weather_5fby_5fhour_5fby_5fday_5f_1448',['weather_by_hour_by_day_',['../classfirestarr_1_1wx_1_1_fire_weather.html#a931a230567681eeef0f8c5a03d92badd',1,'firestarr::wx::FireWeather']]],
+  ['weather_5ffile_5f_1449',['weather_file_',['../classfirestarr_1_1sim_1_1_settings_implementation.html#af36eda6b9355772b0da1515bbc454881',1,'firestarr::sim::SettingsImplementation']]],
+  ['weighted_5fdsr_5f_1450',['weighted_dsr_',['../classfirestarr_1_1wx_1_1_fire_weather.html#ab5c02fb15a84f86e5929a930af84de8d',1,'firestarr::wx::FireWeather']]],
+  ['whitespruce_1451',['WhiteSpruce',['../classfirestarr_1_1fuel_1_1_duff.html#ad8b958cebe92747f756ec011079a2573',1,'firestarr::fuel::Duff']]],
+  ['wind_5f_1452',['wind_',['../classfirestarr_1_1wx_1_1_weather.html#a3d958c16d9bb23bdbfdd6d6ca87face3',1,'firestarr::wx::Weather']]],
+  ['wsv_5fx_5f_1453',['wsv_x_',['../classfirestarr_1_1wx_1_1_wind.html#a65e5bdb98a888135afe522c4b8c0a551',1,'firestarr::wx::Wind']]],
+  ['wsv_5fy_5f_1454',['wsv_y_',['../classfirestarr_1_1wx_1_1_wind.html#ac0a5f92ab36146763e9c3c0f4fcd3a7c',1,'firestarr::wx::Wind']]],
+  ['wx_5f_1455',['wx_',['../classfirestarr_1_1wx_1_1_fwi_stream.html#aa2e314b54fa1c0f2518fbd6223ba2ff0',1,'firestarr::wx::FwiStream::wx_()'],['../classfirestarr_1_1sim_1_1_model.html#ad3f637f3952f972c24e1b40f16364890',1,'firestarr::sim::Model::wx_()']]]
 ];

@@ -1,6 +1,0 @@
-<map id="firestarr.pdf.makePDF" name="firestarr.pdf.makePDF">
-<area shape="rect" id="node1" title="Create summary pdfs and merge everything together before compressing." alt="" coords="5,56,152,83"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1pdf.html#aceb9cff4c9c3fd81f928e71521a3f4ec" title=" " alt="" coords="202,5,369,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1pdf.html#afc8f76c1f81d08e8055ee43844d8343f" title="Make cover page pdf summarizing FireSTARR results." alt="" coords="208,56,363,83"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1pdf.html#a9ea4452cce550e39192a3cf7f89ffa7b" title="Make summary page for RamPART and risk." alt="" coords="200,107,371,133"/>
-</map>

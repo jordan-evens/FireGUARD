@@ -1,6 +1,0 @@
-<map id="runfire.doRun" name="runfire.doRun">
-<area shape="rect" id="node1" title="Run FireSTARR projections for all matching fires based on Settings." alt="" coords="5,56,103,83"/>
-<area shape="rect" id="node2" href="$namespacerunfire.html#a3d063e80bae453e9a349cc812ef6eb75" title="Clean up flag files in given directory that may have been left from failed runs." alt="" coords="151,5,263,32"/>
-<area shape="rect" id="node3" href="$namespacerunfire.html#a45169120a234baf922cee8a22510d0ee" title="Get a list of fires based on Settings." alt="" coords="152,56,261,83"/>
-<area shape="rect" id="node4" href="$namespacerunfire.html#a7ab1e849f47cc3a69f50f6b5441b7deb" title="Run make for project." alt="" coords="151,107,262,133"/>
-</map>

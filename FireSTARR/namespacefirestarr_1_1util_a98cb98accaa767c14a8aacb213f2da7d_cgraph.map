@@ -1,4 +1,0 @@
-<map id="firestarr.util.getMapOutput" name="firestarr.util.getMapOutput">
-<area shape="rect" id="node1" title="Create directory to put map generation temporary files in." alt="" coords="5,5,176,32"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#adcfd1143053676749144b5b974ce4b2b" title="Make sure directory exists." alt="" coords="224,5,372,32"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="firestarr.assets.find_closest" name="firestarr.assets.find_closest">
-<area shape="rect" id="node1" title="Find closest point in feature to the given point." alt="" coords="633,35,764,76"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1assets.html#afa6c0b10cf9ff51d4c07f894cc9aa26e" title="Find angle and distance to closest point in feature to the given point." alt="" coords="421,5,585,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1assets.html#a19dc83fffed41a090b259aa3d4b82391" title="Summarize assets that are withing the given extent." alt="" coords="200,42,373,69"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1assets.html#a5c2415e269bd9ed29619b317e9355655" title="Run for command line arguments." alt="" coords="5,42,152,69"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="firestarr.util.try_remove" name="firestarr.util.try_remove">
-<area shape="rect" id="node1" title="Try to delete file but don&#39;t worry if it doesn&#39;t work." alt="" coords="199,5,301,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a4be6e26bf645ce7caf1d75255ae409bc" title="Save file at given URL into given directory using an HTTP connection." alt="" coords="5,13,151,39"/>
-</map>

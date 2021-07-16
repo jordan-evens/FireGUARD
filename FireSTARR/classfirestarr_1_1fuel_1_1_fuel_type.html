@@ -71,7 +71,7 @@ $(function() {
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classfirestarr_1_1fuel_1_1_fuel_type-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">firestarr::fuel::FuelType Class Reference</div>  </div>
+<div class="title">firestarr::fuel::FuelType Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -167,39 +167,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9fb1c635dad47312482465444eb12107"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a9fb1c635dad47312482465444eb12107">canCrown</a> () const</td></tr>
 <tr class="memdesc:a9fb1c635dad47312482465444eb12107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not this fuel can have a crown fire.  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a9fb1c635dad47312482465444eb12107">More...</a><br /></td></tr>
 <tr class="separator:a9fb1c635dad47312482465444eb12107"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcdd8035045b4924173e0881ee6d28f1"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#adcdd8035045b4924173e0881ee6d28f1">crownFractionBurned</a> (double rss, double rso) const noexcept</td></tr>
-<tr class="memdesc:adcdd8035045b4924173e0881ee6d28f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crown Fraction Burned (CFB) [ST-X-3 eq 58].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#adcdd8035045b4924173e0881ee6d28f1">More...</a><br /></td></tr>
-<tr class="separator:adcdd8035045b4924173e0881ee6d28f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a415e900c1fac6aad62764acea3c71093"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a415e900c1fac6aad62764acea3c71093">probabilityPeat</a> (double mc_fraction) const noexcept</td></tr>
-<tr class="memdesc:a415e900c1fac6aad62764acea3c71093"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate probability of burning [Anderson eq 1].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a415e900c1fac6aad62764acea3c71093">More...</a><br /></td></tr>
-<tr class="separator:a415e900c1fac6aad62764acea3c71093"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ad674e0deece09c300717877f829257"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a5ad674e0deece09c300717877f829257">survivalProbability</a> (const <a class="el" href="classfirestarr_1_1wx_1_1_fwi_weather.html">wx::FwiWeather</a> &amp;wx) const noexcept</td></tr>
-<tr class="memdesc:a5ad674e0deece09c300717877f829257"><td class="mdescLeft">&#160;</td><td class="mdescRight">Survival probability calculated using probability of ony survival based on multiple formulae.  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a5ad674e0deece09c300717877f829257">More...</a><br /></td></tr>
-<tr class="separator:a5ad674e0deece09c300717877f829257"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae60ee71ecfd7afc85d891990fca35a6b"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#ae60ee71ecfd7afc85d891990fca35a6b">buiEffect</a> (double bui) const</td></tr>
-<tr class="memdesc:ae60ee71ecfd7afc85d891990fca35a6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">BUI Effect on surface fire rate of spread [ST-X-3 eq 54].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#ae60ee71ecfd7afc85d891990fca35a6b">More...</a><br /></td></tr>
-<tr class="separator:ae60ee71ecfd7afc85d891990fca35a6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47250ad90348780ab3a1f8d72d103290"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a47250ad90348780ab3a1f8d72d103290">crownConsumption</a> (double cfb) const</td></tr>
-<tr class="memdesc:a47250ad90348780ab3a1f8d72d103290"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crown Fuel Consumption (CFC) (kg/m^2) [ST-X-3 eq 66].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a47250ad90348780ab3a1f8d72d103290">More...</a><br /></td></tr>
-<tr class="separator:a47250ad90348780ab3a1f8d72d103290"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6424487c2194de48f08963e0168162e5"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a6424487c2194de48f08963e0168162e5">calculateRos</a> (int nd, const <a class="el" href="classfirestarr_1_1wx_1_1_fwi_weather.html">wx::FwiWeather</a> &amp;wx, double isi) const</td></tr>
-<tr class="memdesc:a6424487c2194de48f08963e0168162e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate rate of spread (m/min)  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a6424487c2194de48f08963e0168162e5">More...</a><br /></td></tr>
-<tr class="separator:a6424487c2194de48f08963e0168162e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac18b01e15159ba2191be1361cdc27aaa"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#ac18b01e15159ba2191be1361cdc27aaa">calculateIsf</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread, double isi) const</td></tr>
-<tr class="memdesc:ac18b01e15159ba2191be1361cdc27aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate ISI with slope influence and zero wind (ISF) [ST-X-3 eq 41/42].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#ac18b01e15159ba2191be1361cdc27aaa">More...</a><br /></td></tr>
-<tr class="separator:ac18b01e15159ba2191be1361cdc27aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76698d62e489cc48a5020afc73275d10"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a76698d62e489cc48a5020afc73275d10">surfaceFuelConsumption</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread) const</td></tr>
-<tr class="memdesc:a76698d62e489cc48a5020afc73275d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surface fuel consumption (SFC) (kg/m^2) [ST-X-3 eq 9-25].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a76698d62e489cc48a5020afc73275d10">More...</a><br /></td></tr>
-<tr class="separator:a76698d62e489cc48a5020afc73275d10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56e75faaabee7550400750f307b5dfcf"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a56e75faaabee7550400750f307b5dfcf">lengthToBreadth</a> (double ws) const</td></tr>
-<tr class="memdesc:a56e75faaabee7550400750f307b5dfcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length to Breadth ratio [ST-X-3 eq 79].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a56e75faaabee7550400750f307b5dfcf">More...</a><br /></td></tr>
-<tr class="separator:a56e75faaabee7550400750f307b5dfcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa15115e6b563d7eddca71055fe06748a"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#aa15115e6b563d7eddca71055fe06748a">finalRos</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread, double isi, double cfb, double rss) const</td></tr>
-<tr class="memdesc:aa15115e6b563d7eddca71055fe06748a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final rate of spread (m/min)  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#aa15115e6b563d7eddca71055fe06748a">More...</a><br /></td></tr>
-<tr class="separator:aa15115e6b563d7eddca71055fe06748a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a531008118f5cd0d2ed7e5e52b6abb080"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a531008118f5cd0d2ed7e5e52b6abb080">criticalSurfaceIntensity</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread) const</td></tr>
-<tr class="memdesc:a531008118f5cd0d2ed7e5e52b6abb080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Critical Surface Fire Intensity (CSI) [ST-X-3 eq 56].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a531008118f5cd0d2ed7e5e52b6abb080">More...</a><br /></td></tr>
-<tr class="separator:a531008118f5cd0d2ed7e5e52b6abb080"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add8ecf3a277fb57eb69248ce3bc30efb"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#add8ecf3a277fb57eb69248ce3bc30efb">crownFractionBurned</a> (double rss, double rso) const noexcept=0</td></tr>
+<tr class="memdesc:add8ecf3a277fb57eb69248ce3bc30efb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crown Fraction Burned (CFB) [ST-X-3 eq 58].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#add8ecf3a277fb57eb69248ce3bc30efb">More...</a><br /></td></tr>
+<tr class="separator:add8ecf3a277fb57eb69248ce3bc30efb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e6b07df1fb6182891833b3322417b97"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a5e6b07df1fb6182891833b3322417b97">probabilityPeat</a> (double mc_fraction) const noexcept=0</td></tr>
+<tr class="memdesc:a5e6b07df1fb6182891833b3322417b97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate probability of burning [Anderson eq 1].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a5e6b07df1fb6182891833b3322417b97">More...</a><br /></td></tr>
+<tr class="separator:a5e6b07df1fb6182891833b3322417b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e5523d099335319883bb27337df11e7"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a7e5523d099335319883bb27337df11e7">survivalProbability</a> (const <a class="el" href="classfirestarr_1_1wx_1_1_fwi_weather.html">wx::FwiWeather</a> &amp;wx) const noexcept=0</td></tr>
+<tr class="memdesc:a7e5523d099335319883bb27337df11e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Survival probability calculated using probability of ony survival based on multiple formulae.  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a7e5523d099335319883bb27337df11e7">More...</a><br /></td></tr>
+<tr class="separator:a7e5523d099335319883bb27337df11e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6945e993df3e2bfb6276c13acf010f3b"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a6945e993df3e2bfb6276c13acf010f3b">buiEffect</a> (double bui) const =0</td></tr>
+<tr class="memdesc:a6945e993df3e2bfb6276c13acf010f3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">BUI Effect on surface fire rate of spread [ST-X-3 eq 54].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a6945e993df3e2bfb6276c13acf010f3b">More...</a><br /></td></tr>
+<tr class="separator:a6945e993df3e2bfb6276c13acf010f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3165260ab14e6cf1e13af370e513d0ba"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a3165260ab14e6cf1e13af370e513d0ba">crownConsumption</a> (double cfb) const =0</td></tr>
+<tr class="memdesc:a3165260ab14e6cf1e13af370e513d0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crown Fuel Consumption (CFC) (kg/m^2) [ST-X-3 eq 66].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a3165260ab14e6cf1e13af370e513d0ba">More...</a><br /></td></tr>
+<tr class="separator:a3165260ab14e6cf1e13af370e513d0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d46505da498b3f18628df8c8950e809"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a8d46505da498b3f18628df8c8950e809">calculateRos</a> (int nd, const <a class="el" href="classfirestarr_1_1wx_1_1_fwi_weather.html">wx::FwiWeather</a> &amp;wx, double isi) const =0</td></tr>
+<tr class="memdesc:a8d46505da498b3f18628df8c8950e809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate rate of spread (m/min)  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a8d46505da498b3f18628df8c8950e809">More...</a><br /></td></tr>
+<tr class="separator:a8d46505da498b3f18628df8c8950e809"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4706b056c65c0fa6abadc0040ea81732"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a4706b056c65c0fa6abadc0040ea81732">calculateIsf</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread, double isi) const =0</td></tr>
+<tr class="memdesc:a4706b056c65c0fa6abadc0040ea81732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate ISI with slope influence and zero wind (ISF) [ST-X-3 eq 41/42].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a4706b056c65c0fa6abadc0040ea81732">More...</a><br /></td></tr>
+<tr class="separator:a4706b056c65c0fa6abadc0040ea81732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f3010d1b2fb22d7b8c4c0cd53d72374"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a8f3010d1b2fb22d7b8c4c0cd53d72374">surfaceFuelConsumption</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread) const =0</td></tr>
+<tr class="memdesc:a8f3010d1b2fb22d7b8c4c0cd53d72374"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surface fuel consumption (SFC) (kg/m^2) [ST-X-3 eq 9-25].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a8f3010d1b2fb22d7b8c4c0cd53d72374">More...</a><br /></td></tr>
+<tr class="separator:a8f3010d1b2fb22d7b8c4c0cd53d72374"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a774cb8f1bfbf4cd87154b6a290d17274"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a774cb8f1bfbf4cd87154b6a290d17274">lengthToBreadth</a> (double ws) const =0</td></tr>
+<tr class="memdesc:a774cb8f1bfbf4cd87154b6a290d17274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length to Breadth ratio [ST-X-3 eq 79].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a774cb8f1bfbf4cd87154b6a290d17274">More...</a><br /></td></tr>
+<tr class="separator:a774cb8f1bfbf4cd87154b6a290d17274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad625d8936ff1dd0579c2a98dd714c3fd"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#ad625d8936ff1dd0579c2a98dd714c3fd">finalRos</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread, double isi, double cfb, double rss) const =0</td></tr>
+<tr class="memdesc:ad625d8936ff1dd0579c2a98dd714c3fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final rate of spread (m/min)  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#ad625d8936ff1dd0579c2a98dd714c3fd">More...</a><br /></td></tr>
+<tr class="separator:ad625d8936ff1dd0579c2a98dd714c3fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6ed63449f045a379903aec17b2341ad"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#af6ed63449f045a379903aec17b2341ad">criticalSurfaceIntensity</a> (const <a class="el" href="classfirestarr_1_1sim_1_1_spread_info.html">SpreadInfo</a> &amp;spread) const =0</td></tr>
+<tr class="memdesc:af6ed63449f045a379903aec17b2341ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Critical Surface Fire Intensity (CSI) [ST-X-3 eq 56].  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#af6ed63449f045a379903aec17b2341ad">More...</a><br /></td></tr>
+<tr class="separator:af6ed63449f045a379903aec17b2341ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30b502469a8011c6df38119eb33736fc"><td class="memItemLeft" align="right" valign="top">constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfirestarr_1_1fuel_1_1_fuel_type.html#a30b502469a8011c6df38119eb33736fc">name</a> () const</td></tr>
 <tr class="memdesc:a30b502469a8011c6df38119eb33736fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the fuel.  <a href="classfirestarr_1_1fuel_1_1_fuel_type.html#a30b502469a8011c6df38119eb33736fc">More...</a><br /></td></tr>
 <tr class="separator:a30b502469a8011c6df38119eb33736fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -297,8 +297,8 @@ FuelCodeSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae60ee71ecfd7afc85d891990fca35a6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae60ee71ecfd7afc85d891990fca35a6b">&#9670;&nbsp;</a></span>buiEffect()</h2>
+<a id="a6945e993df3e2bfb6276c13acf010f3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6945e993df3e2bfb6276c13acf010f3b">&#9670;&nbsp;</a></span>buiEffect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -316,7 +316,7 @@ FuelCodeSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -330,12 +330,12 @@ FuelCodeSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>BUI Effect on surface fire rate of spread [ST-X-3 eq 54] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ab1f70680f95080a096391b3bc30b6529">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ab1f70680f95080a096391b3bc30b6529">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a9aabf58b3c57b9408a907f9aee0707e1">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad6726c63b5e731cff9c4eb11bcc94e3b">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>.</p>
 
 </div>
 </div>
-<a id="ac18b01e15159ba2191be1361cdc27aaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac18b01e15159ba2191be1361cdc27aaa">&#9670;&nbsp;</a></span>calculateIsf()</h2>
+<a id="a4706b056c65c0fa6abadc0040ea81732"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4706b056c65c0fa6abadc0040ea81732">&#9670;&nbsp;</a></span>calculateIsf()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,7 +363,7 @@ FuelCodeSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -378,12 +378,12 @@ FuelCodeSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ISI with slope influence and zero wind (ISF) [ST-X-3 eq 41/42] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; 6, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; 30, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a2ba6e643f8e3156c1805f0471a4bd6fc">firestarr::fuel::InvalidFuel</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a741aab9a626170467bfcb60076586f76">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a7009e317d8109d3865195729aa379f5a">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; 6, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#acd335257941e3b4780ebec5d42404f4d">firestarr::fuel::FuelNonMixed&lt; 30, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a2ba6e643f8e3156c1805f0471a4bd6fc">firestarr::fuel::InvalidFuel</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_ac18b01e15159ba2191be1361cdc27aaa_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_ac18b01e15159ba2191be1361cdc27aaa_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_ac18b01e15159ba2191be1361cdc27aaa_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_ac18b01e15159ba2191be1361cdc27aaa_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a4706b056c65c0fa6abadc0040ea81732_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a4706b056c65c0fa6abadc0040ea81732_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a4706b056c65c0fa6abadc0040ea81732_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a4706b056c65c0fa6abadc0040ea81732_icgraph">
 <area shape="rect" title="Calculate ISI with slope influence and zero wind (ISF) [ST&#45;X&#45;3 eq 41/42]." alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aef4ae1e1517f987b8480df86416a331e" title="Calculate ISI with slope influence and zero wind (ISF) [ST&#45;X&#45;3 eq 41]." alt="" coords="5,5,176,47"/>
 </map>
@@ -391,8 +391,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a6424487c2194de48f08963e0168162e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6424487c2194de48f08963e0168162e5">&#9670;&nbsp;</a></span>calculateRos()</h2>
+<a id="a8d46505da498b3f18628df8c8950e809"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d46505da498b3f18628df8c8950e809">&#9670;&nbsp;</a></span>calculateRos()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -426,7 +426,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -442,12 +442,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rate of spread (m/min) </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ae338846ce1180cc7cf2f252391def525">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d2.html#a52bf7e741057ec068805aebf126a547d">firestarr::fuel::fbp::FuelD2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; 6, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; 30, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ae338846ce1180cc7cf2f252391def525">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d2.html#a52bf7e741057ec068805aebf126a547d">firestarr::fuel::fbp::FuelD2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a80bf9f3f44c7b06b08967c2beab38644">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; 6, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_non_mixed.html#a8c2bd46d5490d2127ebb168b0a338981">firestarr::fuel::FuelNonMixed&lt; 30, 232, 160, 32, 0, 0, 61, 59, 24 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a978321482336139df16a4e7a45bec33e">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a6424487c2194de48f08963e0168162e5_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a6424487c2194de48f08963e0168162e5_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a6424487c2194de48f08963e0168162e5_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a6424487c2194de48f08963e0168162e5_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a8d46505da498b3f18628df8c8950e809_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a8d46505da498b3f18628df8c8950e809_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a8d46505da498b3f18628df8c8950e809_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a8d46505da498b3f18628df8c8950e809_icgraph">
 <area shape="rect" title="Calculate rate of spread (m/min)" alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a23b8ad0236a5b591a49217fc04647590" title="Initial rate of spread (m/min) [ST&#45;X&#45;3 eq 26]." alt="" coords="5,5,176,47"/>
 </map>
@@ -581,8 +581,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a531008118f5cd0d2ed7e5e52b6abb080"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a531008118f5cd0d2ed7e5e52b6abb080">&#9670;&nbsp;</a></span>criticalSurfaceIntensity()</h2>
+<a id="af6ed63449f045a379903aec17b2341ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6ed63449f045a379903aec17b2341ad">&#9670;&nbsp;</a></span>criticalSurfaceIntensity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -600,7 +600,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -614,12 +614,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Critical Surface Fire Intensity (CSI) [ST-X-3 eq 56] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a84e5a2b8c4fa3326a39da380f2859070">firestarr::fuel::InvalidFuel</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ab81c50aaf3fb129f3e4aae527567da92">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a84e5a2b8c4fa3326a39da380f2859070">firestarr::fuel::InvalidFuel</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a531008118f5cd0d2ed7e5e52b6abb080_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a531008118f5cd0d2ed7e5e52b6abb080_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a531008118f5cd0d2ed7e5e52b6abb080_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a531008118f5cd0d2ed7e5e52b6abb080_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_af6ed63449f045a379903aec17b2341ad_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_af6ed63449f045a379903aec17b2341ad_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_af6ed63449f045a379903aec17b2341ad_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_af6ed63449f045a379903aec17b2341ad_icgraph">
 <area shape="rect" title="Critical Surface Fire Intensity (CSI) [ST&#45;X&#45;3 eq 56]." alt="" coords="224,5,384,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a0b1494d1a97b88b7741b3334a3408f87" title="Critical Surface Fire Intensity (CSI) [ST&#45;X&#45;3 eq 56]." alt="" coords="5,5,176,47"/>
 </map>
@@ -627,8 +627,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a47250ad90348780ab3a1f8d72d103290"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47250ad90348780ab3a1f8d72d103290">&#9670;&nbsp;</a></span>crownConsumption()</h2>
+<a id="a3165260ab14e6cf1e13af370e513d0ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3165260ab14e6cf1e13af370e513d0ba">&#9670;&nbsp;</a></span>crownConsumption()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -646,7 +646,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -660,12 +660,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Crown Fuel Consumption (CFC) (kg/m^2) [ST-X-3 eq 66] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#acbeaad6cf6231047c63a649f14d6b132">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#acbeaad6cf6231047c63a649f14d6b132">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af366f8bf2b384edccd1e2bea0c1bf3d5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#ad7e29468c4ad61f480cb0439eaacf47d">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#ab0f8ff38e6a853f7c4f0f77df75ffdc9">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>.</p>
 
 </div>
 </div>
-<a id="adcdd8035045b4924173e0881ee6d28f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcdd8035045b4924173e0881ee6d28f1">&#9670;&nbsp;</a></span>crownFractionBurned()</h2>
+<a id="add8ecf3a277fb57eb69248ce3bc30efb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add8ecf3a277fb57eb69248ce3bc30efb">&#9670;&nbsp;</a></span>crownFractionBurned()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -693,7 +693,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -708,12 +708,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Crown Fraction Burned (CFB) [ST-X-3 eq 58] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a154362ebc84e5ac9bcde0ca8c4471b04">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a776d4f5b6532fa965a59b3931974ebef">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a154362ebc84e5ac9bcde0ca8c4471b04">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a776d4f5b6532fa965a59b3931974ebef">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_adcdd8035045b4924173e0881ee6d28f1_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_adcdd8035045b4924173e0881ee6d28f1_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_adcdd8035045b4924173e0881ee6d28f1_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_adcdd8035045b4924173e0881ee6d28f1_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_add8ecf3a277fb57eb69248ce3bc30efb_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_add8ecf3a277fb57eb69248ce3bc30efb_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_add8ecf3a277fb57eb69248ce3bc30efb_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_add8ecf3a277fb57eb69248ce3bc30efb_icgraph">
 <area shape="rect" title="Crown Fraction Burned (CFB) [ST&#45;X&#45;3 eq 58]." alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#af8408f7c9eed1717166efcebd6fa9e90" title="Crown Fraction Burned (CFB) [ST&#45;X&#45;3 eq 58]." alt="" coords="5,5,176,47"/>
 </map>
@@ -721,8 +721,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="aa15115e6b563d7eddca71055fe06748a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa15115e6b563d7eddca71055fe06748a">&#9670;&nbsp;</a></span>finalRos()</h2>
+<a id="ad625d8936ff1dd0579c2a98dd714c3fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad625d8936ff1dd0579c2a98dd714c3fd">&#9670;&nbsp;</a></span>finalRos()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -762,7 +762,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -779,12 +779,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Final rate of spread (m/min) </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c6.html#ac1d66c0aff8a84a933659f7c67b2e7dc">firestarr::fuel::fbp::FuelC6</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a4693949631c629e7ff94b6c5f5356669">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c6.html#ac1d66c0aff8a84a933659f7c67b2e7dc">firestarr::fuel::fbp::FuelC6</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a4693949631c629e7ff94b6c5f5356669">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a2a4441e8682ecc5f0271abb49f5b2854">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_aa15115e6b563d7eddca71055fe06748a_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_aa15115e6b563d7eddca71055fe06748a_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_aa15115e6b563d7eddca71055fe06748a_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_aa15115e6b563d7eddca71055fe06748a_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_ad625d8936ff1dd0579c2a98dd714c3fd_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_ad625d8936ff1dd0579c2a98dd714c3fd_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_ad625d8936ff1dd0579c2a98dd714c3fd_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_ad625d8936ff1dd0579c2a98dd714c3fd_icgraph">
 <area shape="rect" title="Final rate of spread (m/min)" alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a851f08296e9ec2c9c60195f1b7099773" title="Final rate of spread (m/min)" alt="" coords="5,5,176,47"/>
 </map>
@@ -849,8 +849,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a56e75faaabee7550400750f307b5dfcf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56e75faaabee7550400750f307b5dfcf">&#9670;&nbsp;</a></span>lengthToBreadth()</h2>
+<a id="a774cb8f1bfbf4cd87154b6a290d17274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a774cb8f1bfbf4cd87154b6a290d17274">&#9670;&nbsp;</a></span>lengthToBreadth()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -868,7 +868,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -882,7 +882,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Length to Breadth ratio [ST-X-3 eq 79] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a3c9e986fcbb5bb7735cd0d363fe0c82b">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a3c9e986fcbb5bb7735cd0d363fe0c82b">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a5aedea9453a2f17107b5787b05cdb9c5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, Bui0, 6, 80, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_standard_fuel.html#a728a6f95c9da861ad8cdd16c2041eb72">firestarr::fuel::StandardFuel&lt; A, B, C, 1, 0, 0, 0, 0, static_cast&lt; int &gt;(DUFF_FFMC_DEPTH *10.0)&gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#a140e9867f764bef1a5b130ca8a60a973">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
 
 </div>
 </div>
@@ -932,8 +932,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a415e900c1fac6aad62764acea3c71093"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a415e900c1fac6aad62764acea3c71093">&#9670;&nbsp;</a></span>probabilityPeat()</h2>
+<a id="a5e6b07df1fb6182891833b3322417b97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e6b07df1fb6182891833b3322417b97">&#9670;&nbsp;</a></span>probabilityPeat()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -951,7 +951,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -965,12 +965,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Calculate probability of burning [Anderson eq 1] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a1c75b2a1d50bb296debb8bdbde0bac23">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a8f8697c56dd0787b4a0296344dac9229">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#a1c75b2a1d50bb296debb8bdbde0bac23">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a8f8697c56dd0787b4a0296344dac9229">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a415e900c1fac6aad62764acea3c71093_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a415e900c1fac6aad62764acea3c71093_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a415e900c1fac6aad62764acea3c71093_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a415e900c1fac6aad62764acea3c71093_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a5e6b07df1fb6182891833b3322417b97_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a5e6b07df1fb6182891833b3322417b97_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a5e6b07df1fb6182891833b3322417b97_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a5e6b07df1fb6182891833b3322417b97_icgraph">
 <area shape="rect" title="Calculate probability of burning [Anderson eq 1]." alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#ab0c89a1321fc9e18c7472ab0d9690833" title="Calculate probability of burning [Anderson eq 1]." alt="" coords="5,5,176,47"/>
 </map>
@@ -1085,8 +1085,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a76698d62e489cc48a5020afc73275d10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76698d62e489cc48a5020afc73275d10">&#9670;&nbsp;</a></span>surfaceFuelConsumption()</h2>
+<a id="a8f3010d1b2fb22d7b8c4c0cd53d72374"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f3010d1b2fb22d7b8c4c0cd53d72374">&#9670;&nbsp;</a></span>surfaceFuelConsumption()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1104,7 +1104,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1118,12 +1118,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Surface fuel consumption (SFC) (kg/m^2) [ST-X-3 eq 9-25] </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; A, B, C, Bui0, FfcA, FfcB, WfcA, WfcB, BulkDensity &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 40, 438, 170, 63, 10, -130, 6, -600, 132 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 55, 829, 320, 31, 12, -166, 20, -210, 100 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 75, 297, 130, 38, 4, -250, 4, -340, 78 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d2.html#aaac3340c08afadd4955b5ddebd2b96a2">firestarr::fuel::fbp::FuelD2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c7.html#acd5035780d4f1210b51f079d8ae831e2">firestarr::fuel::fbp::FuelC7</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c2.html#aab7326f75775c1055abb9d8412267f73">firestarr::fuel::fbp::FuelC2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c1.html#a986a1a01891790e51873874d1ecf22a4">firestarr::fuel::fbp::FuelC1</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; RosMultiplier, RatioMixed &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; 10, PercentConifer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; 2, PercentConifer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d1.html#aa1b5bd40a8c065702b0ef22f860ae286">firestarr::fuel::fbp::FuelD1</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; 30, 800, 300, 62, 7, 180, 50, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; 30, 697, 400, 56, 18, 120, 93, 46 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; 110, 293, 150, 66, 4, 120, 31, 62 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; 110, 444, 300, 62, 8, 115, 20, 65 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ac6cad821f63a693876d2438266109277">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; A, B, C, Bui0, FfcA, FfcB, WfcA, WfcB, BulkDensity &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 40, 438, 170, 63, 10, -130, 6, -600, 132 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 55, 829, 320, 31, 12, -166, 20, -210, 100 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_slash.html#aeff44353a263b345d762861906b088c5">firestarr::fuel::FuelSlash&lt; 75, 297, 130, 38, 4, -250, 4, -340, 78 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d2.html#aaac3340c08afadd4955b5ddebd2b96a2">firestarr::fuel::fbp::FuelD2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c7.html#acd5035780d4f1210b51f079d8ae831e2">firestarr::fuel::fbp::FuelC7</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c2.html#aab7326f75775c1055abb9d8412267f73">firestarr::fuel::fbp::FuelC2</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_c1.html#a986a1a01891790e51873874d1ecf22a4">firestarr::fuel::fbp::FuelC1</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; RosMultiplier, RatioMixed &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; 10, PercentConifer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed_wood.html#a6c5bd042131d3755d9e73edb80e4db80">firestarr::fuel::FuelMixedWood&lt; 2, PercentConifer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentMixed, BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; A, B, C, Bui0, RosMultiplier, PercentDeadFir, 61, 15, 75 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_mixed.html#a06882f889cc4c67ea40893e78acf8cc5">firestarr::fuel::FuelMixed&lt; 110, 282, 150, 50, RosMultiplier, RatioMixed, 108, 25, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1fbp_1_1_fuel_d1.html#aa1b5bd40a8c065702b0ef22f860ae286">firestarr::fuel::fbp::FuelD1</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; 30, 800, 300, 62, 7, 180, 50, 50 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_pine.html#abf7d39b106f00dadbdfa91d37a12242c">firestarr::fuel::FuelPine&lt; 30, 697, 400, 56, 18, 120, 93, 46 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; A, B, C, Bui0, Cbh, Cfl, BulkDensity, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; 110, 293, 150, 66, 4, 120, 31, 62 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_jackpine.html#aa0ae5cfd4f1449011e2e0d27172a6e7c">firestarr::fuel::FuelJackpine&lt; 110, 444, 300, 62, 8, 115, 20, 65 &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ac6cad821f63a693876d2438266109277">firestarr::fuel::InvalidFuel</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; A, B, C &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; 190, 310, 140 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_grass.html#aae0db4116788b50d94433d85311e3872">firestarr::fuel::FuelGrass&lt; 250, 350, 170 &gt;</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a76698d62e489cc48a5020afc73275d10_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a76698d62e489cc48a5020afc73275d10_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a76698d62e489cc48a5020afc73275d10_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a76698d62e489cc48a5020afc73275d10_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a8f3010d1b2fb22d7b8c4c0cd53d72374_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a8f3010d1b2fb22d7b8c4c0cd53d72374_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a8f3010d1b2fb22d7b8c4c0cd53d72374_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a8f3010d1b2fb22d7b8c4c0cd53d72374_icgraph">
 <area shape="rect" title="Surface fuel consumption (SFC) (kg/m^2) [ST&#45;X&#45;3 eq 9&#45;25]." alt="" coords="225,5,397,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#aab3b4418e22678a7af192887980f8bc5" title="Surface Fuel Consumption (SFC) (kg/m^2) [ST&#45;X&#45;3 eq 9&#45;25]." alt="" coords="5,5,177,47"/>
 </map>
@@ -1131,8 +1131,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a5ad674e0deece09c300717877f829257"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ad674e0deece09c300717877f829257">&#9670;&nbsp;</a></span>survivalProbability()</h2>
+<a id="a7e5523d099335319883bb27337df11e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e5523d099335319883bb27337df11e7">&#9670;&nbsp;</a></span>survivalProbability()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1150,7 +1150,7 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1164,12 +1164,12 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Chance of survival (% / 100) </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a748d7f71e6cb627cdcd62045900ca491">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ac95cbdad24387d4c72dcdcaa7c7f3d19">firestarr::fuel::InvalidFuel</a>.</p>
+<p>Implemented in <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_base.html#a748d7f71e6cb627cdcd62045900ca491">firestarr::fuel::FuelBase&lt; BulkDensity, InorganicPercent, DuffDepth &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelSpring, FuelSummer &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelM3&lt; PercentDeadFir &gt;, FuelM4&lt; PercentDeadFir &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelM1&lt; PercentConifer &gt;, FuelM2&lt; PercentConifer &gt; &gt;</a>, <a class="el" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1">firestarr::fuel::FuelVariable&lt; FuelD1, FuelD2 &gt;</a>, and <a class="el" href="classfirestarr_1_1fuel_1_1_invalid_fuel.html#ac95cbdad24387d4c72dcdcaa7c7f3d19">firestarr::fuel::InvalidFuel</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a5ad674e0deece09c300717877f829257_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a5ad674e0deece09c300717877f829257_icgraph" alt=""/></div>
-<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a5ad674e0deece09c300717877f829257_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a5ad674e0deece09c300717877f829257_icgraph">
+<div class="center"><img src="classfirestarr_1_1fuel_1_1_fuel_type_a7e5523d099335319883bb27337df11e7_icgraph.png" border="0" usemap="#aclassfirestarr_1_1fuel_1_1_fuel_type_a7e5523d099335319883bb27337df11e7_icgraph" alt=""/></div>
+<map name="aclassfirestarr_1_1fuel_1_1_fuel_type_a7e5523d099335319883bb27337df11e7_icgraph" id="aclassfirestarr_1_1fuel_1_1_fuel_type_a7e5523d099335319883bb27337df11e7_icgraph">
 <area shape="rect" title="Survival probability calculated using probability of ony survival based on multiple formulae." alt="" coords="224,5,375,47"/>
 <area shape="rect" href="classfirestarr_1_1fuel_1_1_fuel_variable.html#a95020902eb7fab03b956ba32ade06da1" title="Survival probability calculated using probability of ony survival based on multiple formulae." alt="" coords="5,5,176,47"/>
 </map>

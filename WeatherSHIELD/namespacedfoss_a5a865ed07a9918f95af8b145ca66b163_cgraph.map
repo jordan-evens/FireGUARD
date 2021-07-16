@@ -1,4 +1,0 @@
-<map id="dfoss.read_remote" name="dfoss.read_remote">
-<area shape="rect" id="node1" title="Execute statement and return DataFrame with results." alt="" coords="5,5,135,32"/>
-<area shape="rect" id="node2" href="$namespacedfoss.html#a2460847095e3c26423b44c12ba0ed51c" title="Return connection to DFOSS database." alt="" coords="183,5,367,32"/>
-</map>

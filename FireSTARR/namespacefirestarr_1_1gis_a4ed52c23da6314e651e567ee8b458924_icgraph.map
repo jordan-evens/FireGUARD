@@ -1,6 +1,0 @@
-<map id="firestarr.gis.GetSpatialReference" name="firestarr.gis.GetSpatialReference">
-<area shape="rect" id="node1" title="Determine spatial reference from a source file." alt="" coords="381,49,531,90"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1gis.html#a21c19693f1860a555b2c3a9cb0a6a60a" title="Project to given spatial reference." alt="" coords="197,5,327,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1gis.html#afd870bbed21bf8649b934538d634d1c4" title="Convert a perimeter to a raster." alt="" coords="5,49,143,90"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1gis.html#a75438be02522ab63151633de0a27dda8" title="Convert a shapefile into a raster with the given spatial reference." alt="" coords="191,107,333,133"/>
-</map>

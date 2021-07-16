@@ -1,6 +1,0 @@
-<map id="firestarr.shared.project" name="firestarr.shared.project">
-<area shape="rect" id="node1" title="Project a feature to the requested projection." alt="" coords="5,31,155,57"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#a73bf42626e8b386145bde00aac71429b" title="Check if result exists and if not make it with fct." alt="" coords="203,31,387,57"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1shared.html#aa9c17fa88642158f488439cc3a27a657" title="Revert to last settings for all environment variables." alt="" coords="439,5,597,32"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1shared.html#ad2e60ff00df918c33c1426e807b32f72" title="Push all environment variables so we can revert easily." alt="" coords="435,56,601,83"/>
-</map>

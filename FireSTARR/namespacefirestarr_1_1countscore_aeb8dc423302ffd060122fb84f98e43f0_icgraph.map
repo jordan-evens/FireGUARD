@@ -1,4 +1,0 @@
-<map id="firestarr.countscore.get_time" name="firestarr.countscore.get_time">
-<area shape="rect" id="node1" title="Parse time from line of a log." alt="" coords="207,5,392,32"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1countscore.html#a28c46335a59082a6d63ed73eb9f2fa7e" title="Calculate scores that simulations had." alt="" coords="5,5,159,32"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="firestarr.PerimeterList.PerimeterList.get_perims" name="firestarr.PerimeterList.PerimeterList.get_perims">
-<area shape="rect" id="node1" title="Return perimeters that match a specific fire." alt="" coords="216,5,383,47"/>
-<area shape="rect" id="node2" href="$classfirestarr_1_1_perimeter_list_1_1_perimeter_list.html#a26c94896c9d0725efc503dd8d243af78" title="Return perimter for a specific fire on a specific day." alt="" coords="5,5,168,47"/>
-</map>

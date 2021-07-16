@@ -1,8 +1,0 @@
-<map id="fpaloader.FPALoader.load_from_results" name="fpaloader.FPALoader.load_from_results">
-<area shape="rect" id="node1" title="Load data from a list of files." alt="" coords="5,49,176,90"/>
-<area shape="rect" id="node2" href="$namespacefpaloader.html#a80722c91b28af44a7f1f1e4b73fdc176" title="Load data from given string." alt="" coords="244,5,379,32"/>
-<area shape="rect" id="node3" href="$namespacefpaloader.html#aa900e54563fb26a37a5db27260939c0a" title="Load location data that was used for FPA points." alt="" coords="231,56,392,83"/>
-<area shape="rect" id="node4" href="$classfpaloader_1_1_f_p_a_loader.html#a50ffe214eab68f1b35cbce78261a8724" title="Save data if not in database already, unless forced." alt="" coords="224,107,399,149"/>
-<area shape="rect" id="node5" href="$classweatherloader_1_1_weather_loader.html#aeea169c6ab6432f70add8335c4480c60" title="Check if data for given Generated time already exists." alt="" coords="459,78,691,119"/>
-<area shape="rect" id="node6" href="$classweatherloader_1_1_weather_loader.html#a8f0107b9ac5417435a5edef9ce7e8e0b" title="Save data into database." alt="" coords="447,144,704,171"/>
-</map>

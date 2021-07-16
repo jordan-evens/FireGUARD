@@ -1,4 +1,0 @@
-<map id="firestarr.counttime.get_time" name="firestarr.counttime.get_time">
-<area shape="rect" id="node1" title="Parse time from line of a log." alt="" coords="200,5,379,32"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1counttime.html#a255f3e08c85fe53a7ab00ac6f571295f" title="Calculate time that simulations took to run." alt="" coords="5,5,152,32"/>
-</map>

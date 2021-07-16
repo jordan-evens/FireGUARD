@@ -1,5 +1,0 @@
-<map id="firestarr.utm.footpoint_latitude" name="firestarr.utm.footpoint_latitude">
-<area shape="rect" id="node1" title="Computes the footpoint latitude for use in converting transverse Mercator coordinates to ellipsoidal ..." alt="" coords="372,5,515,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1utm.html#a252104c9cd56639e4bb52eda3063f080" title="Converts Transverse Mercator to latitude/longitude." alt="" coords="187,5,324,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1utm.html#a328a5e6bc704edf95ad39a911508ca23" title="Convert UTM to latitude/longitude." alt="" coords="5,5,139,47"/>
-</map>

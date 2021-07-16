@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finalize_123',['finalize',['../namespacegetscores.html#a4192e13ee143cef9eeae7dac09cae907',1,'getscores']]]
+  ['do_5fsave_98',['do_save',['../namespacegepsloader.html#ab9caad6d0d8d2a85fd5677fde0cfba65',1,'gepsloader.do_save()'],['../namespacerepsloader.html#a99c7914e9320bde83d0d73298769668d',1,'repsloader.do_save()']]]
 ];

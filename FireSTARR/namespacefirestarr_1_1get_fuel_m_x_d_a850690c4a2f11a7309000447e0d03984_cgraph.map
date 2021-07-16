@@ -1,6 +1,0 @@
-<map id="firestarr.getFuelMXD.doRun" name="firestarr.getFuelMXD.doRun">
-<area shape="rect" id="node1" title="Run with command line arguments." alt="" coords="5,13,185,39"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_fuel_m_x_d.html#a9705be7cf48b021ae0087e11b92ad719" title="Save fuel map for given inputs." alt="" coords="233,5,404,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_fuel_m_x_d.html#a65397c73671386ad8ac2ebbbd11b721d" title="Save fuel map for given inputs." alt="" coords="452,5,613,47"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1get_fuel_m_x_d.html#a79e6989cdc6894c9c2f5e9c28d63a469" title="Get path to save fuel map for given inputs to." alt="" coords="661,5,823,47"/>
-</map>

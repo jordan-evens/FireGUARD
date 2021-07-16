@@ -1,14 +1,9 @@
 var searchData=
 [
-  ['n_5f_1972',['n_',['../classfirestarr_1_1util_1_1_statistics.html#ab37c27f3f448d3d29c84b1f421febce9',1,'firestarr::util::Statistics']]],
-  ['name_5f_1973',['name_',['../classfirestarr_1_1fuel_1_1_fuel_type.html#a75825125203ef4f467286762063ed9f5',1,'firestarr::fuel::FuelType::name_()'],['../classfirestarr_1_1wx_1_1_weather_model.html#a65373d48bd813536dc5658ca0560ac75',1,'firestarr::wx::WeatherModel::name_()']]],
-  ['nd_5f_1974',['nd_',['../classfirestarr_1_1sim_1_1_spread_info.html#a64df6c24aac52b4aa4c62ff1521452fa',1,'firestarr::sim::SpreadInfo::nd_()'],['../classfirestarr_1_1sim_1_1_model.html#a51f0169d120f1415b6ac84015710292f',1,'firestarr::sim::Model::nd_()']]],
-  ['no_5fasync_1975',['no_async',['../classfirestarr_1_1_scenario_1_1_scenario.html#ac048362c858350555a8921463b4c28cb',1,'firestarr.Scenario.Scenario.no_async()'],['../classfirestarr_1_1_settings_1_1_settings.html#a68af78839b7af975f286206d8c46161a',1,'firestarr.Settings.Settings.no_async()'],['../classrunfake_1_1_fake_settings.html#a28a887ee6e96b29f33f59d54a1b8b9c1',1,'runfake.FakeSettings.no_async()']]],
-  ['no_5fdata_5f_1976',['no_data_',['../classfirestarr_1_1data_1_1_grid.html#aa9232fcf215d34ec855df098a3c6c6fb',1,'firestarr::data::Grid']]],
-  ['no_5fmaps_1977',['no_maps',['../classfirestarr_1_1_scenario_1_1_scenario.html#a3315035f676993076fb2d6eeb339fc13',1,'firestarr.Scenario.Scenario.no_maps()'],['../classfirestarr_1_1_settings_1_1_settings.html#aae65fd84e98e3a76cfb197e362ff45da',1,'firestarr.Settings.Settings.no_maps()'],['../classrunfake_1_1_fake_settings.html#a252fbe83459c121f189c39015adfe3dd',1,'runfake.FakeSettings.no_maps()']]],
-  ['nodata_5f_1978',['nodata_',['../classfirestarr_1_1data_1_1_grid_base.html#a6d9df169d747980d5b9d4d74626795dc',1,'firestarr::data::GridBase']]],
-  ['nolocation_1979',['NoLocation',['../classfirestarr_1_1sim_1_1_event.html#adc7ac35cadb8e350ce603217b0b57aff',1,'firestarr::sim::Event']]],
-  ['normal_1980',['NORMAL',['../namespacefirestarr_1_1pdf.html#af6d50f49c00a8258acbac7598972c7fd',1,'firestarr::pdf']]],
-  ['normal_5fpriority_5fclass_1981',['NORMAL_PRIORITY_CLASS',['../namespacefirestarr_1_1processflags.html#afcfe7c53ce84794f05de5bf73231df87',1,'firestarr::processflags']]],
-  ['not_5fburnable_5f_1982',['not_burnable_',['../classfirestarr_1_1topo_1_1_environment.html#a049cb8d6de8f09bf2b84b2db923b14d2',1,'firestarr::topo::Environment']]]
+  ['observers_5f_1377',['observers_',['../classfirestarr_1_1sim_1_1_scenario.html#ab8f4ac29c3f7e3b9639befcc46481eed',1,'firestarr::sim::Scenario']]],
+  ['offset_5fsunrise_5f_1378',['offset_sunrise_',['../classfirestarr_1_1sim_1_1_settings_implementation.html#a6d38e428884e46171f06b99f55c31a79',1,'firestarr::sim::SettingsImplementation']]],
+  ['offset_5fsunset_5f_1379',['offset_sunset_',['../classfirestarr_1_1sim_1_1_settings_implementation.html#a5da9474a7f60394c129fcf068dc789e4',1,'firestarr::sim::SettingsImplementation']]],
+  ['offsets_5f_1380',['offsets_',['../classfirestarr_1_1sim_1_1_spread_info.html#a152f0347df0331f1243c097c365454dd',1,'firestarr::sim::SpreadInfo::offsets_()'],['../classfirestarr_1_1sim_1_1_scenario.html#ab4facb078959b2798a979f07ef9d5348',1,'firestarr::sim::Scenario::offsets_()']]],
+  ['output_5fdate_5foffsets_5f_1381',['output_date_offsets_',['../classfirestarr_1_1sim_1_1_settings_implementation.html#ab611b80b2aaa89e7d4a540508efaffcf',1,'firestarr::sim::SettingsImplementation']]],
+  ['output_5fdirectory_5f_1382',['output_directory_',['../classfirestarr_1_1sim_1_1_model.html#ae0b50fe862e90f6c51d3fee0e6cb1c7d',1,'firestarr::sim::Model']]]
 ];

@@ -1,4 +1,0 @@
-<map id="firestarr::wx::FireWeather::at" name="firestarr::wx::FireWeather::at">
-<area shape="rect" id="node1" title="Get FwiWeather for given time." alt="" coords="5,13,185,39"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a5a25c7eae1bb4c27eee50652d9ff3675" title="Convert day and hour into time index." alt="" coords="233,5,352,47"/>
-</map>

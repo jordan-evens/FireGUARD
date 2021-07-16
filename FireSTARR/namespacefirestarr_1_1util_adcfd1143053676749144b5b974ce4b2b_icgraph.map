@@ -1,5 +1,0 @@
-<map id="firestarr.util.ensure_dir" name="firestarr.util.ensure_dir">
-<area shape="rect" id="node1" title="Make sure directory exists." alt="" coords="224,31,372,57"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#a98cb98accaa767c14a8aacb213f2da7d" title="Create directory to put map generation temporary files in." alt="" coords="5,5,176,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a4be6e26bf645ce7caf1d75255ae409bc" title="Save file at given URL into given directory using an HTTP connection." alt="" coords="18,56,163,83"/>
-</map>

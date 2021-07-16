@@ -1,5 +1,0 @@
-<map id="firestarr::util::Database::readModel" name="firestarr::util::Database::readModel">
-<area shape="rect" id="node1" title="Read a map of WeatherModels to maps of days to Weather." alt="" coords="5,5,155,47"/>
-<area shape="rect" id="node2" href="$classfirestarr_1_1util_1_1_database.html#aa85fabe3a19ec6e5617c2c61a7239996" title="Read a wstring from the current column of the current query." alt="" coords="203,5,352,47"/>
-<area shape="rect" id="node3" href="$classfirestarr_1_1util_1_1_database.html#a1408317acb9523a77a9972dfc171b4cd" title="Check if the result is an error and output message if so." alt="" coords="400,5,549,47"/>
-</map>

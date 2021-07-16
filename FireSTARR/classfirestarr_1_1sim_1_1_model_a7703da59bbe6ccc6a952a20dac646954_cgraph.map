@@ -1,6 +1,4 @@
 <map id="firestarr::sim::Model::readWeather" name="firestarr::sim::Model::readWeather">
-<area shape="rect" id="node1" title="Read weather used for Scenarios." alt="" coords="5,27,139,69"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1util.html#af3454ef26fced73a1407de0ecdf63574" title="Read a date from the given stream." alt="" coords="195,5,345,32"/>
-<area shape="rect" id="node4" href="$classfirestarr_1_1fuel_1_1_fuel_lookup.html#a9a29abd1545c76bca5ae10c24fc21392" title="Retrieve set of FuelTypes that are used in the lookup table." alt="" coords="187,57,353,98"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1util.html#a933f0ea560bbcbddf9b1233b359dac3c" title="Read from a stream until delimiter is found." alt="" coords="401,5,533,32"/>
+<area shape="rect" id="node1" title="Read weather used for Scenarios." alt="" coords="5,5,139,47"/>
+<area shape="rect" id="node2" href="$classfirestarr_1_1fuel_1_1_fuel_lookup.html#a9a29abd1545c76bca5ae10c24fc21392" title="Retrieve set of FuelTypes that are used in the lookup table." alt="" coords="187,5,353,47"/>
 </map>

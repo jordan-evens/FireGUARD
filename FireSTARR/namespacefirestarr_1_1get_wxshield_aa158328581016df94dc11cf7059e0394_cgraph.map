@@ -1,5 +1,0 @@
-<map id="firestarr.getWxshield.getWxSHIELD" name="firestarr.getWxshield.getWxSHIELD">
-<area shape="rect" id="node1" title="Save a WeatherSHIELD report pdf." alt="" coords="5,27,164,69"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1get_wxshield.html#abb69d9579d6191d32b4f159286e6ea2f" title="Generate url for retrieving WeatherSHIELD pdf." alt="" coords="212,5,399,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1get_wxshield.html#a436386234a0fe0560acb9a44500cc65f" title="Generate file name that export is saved to." alt="" coords="226,57,385,98"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="firestarr.shared.check_make" name="firestarr.shared.check_make">
-<area shape="rect" id="node1" title="Check if result exists and if not make it with fct." alt="" coords="203,5,387,32"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1shared.html#ab10b61f2a10cf088bb51205e02ee2458" title="Project a feature to the requested projection." alt="" coords="5,5,155,32"/>
-</map>

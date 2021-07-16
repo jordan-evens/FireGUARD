@@ -1,4 +1,0 @@
-<map id="firestarr.gis.Rasterize" name="firestarr.gis.Rasterize">
-<area shape="rect" id="node1" title="Convert a shapefile into a raster with the given spatial reference." alt="" coords="5,13,148,39"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1gis.html#a4ed52c23da6314e651e567ee8b458924" title="Determine spatial reference from a source file." alt="" coords="196,5,345,47"/>
-</map>

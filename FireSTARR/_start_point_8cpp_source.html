@@ -122,7 +122,7 @@ $(function() {
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">double</span> longitude,</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                             <span class="keyword">const</span> <span class="keywordtype">bool</span> for_sunrise) noexcept</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">auto</span> Zenith = <a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(96);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">auto</span> Zenith = util::to_radians(96);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">auto</span> LocalOffset = -5;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> t_hour = for_sunrise ? 6 : 18;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// http://edwilliams.org/sunrise_sunset_algorithm.htm</span></div>
@@ -130,18 +130,18 @@ $(function() {
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> t = jd + (t_hour - lng_hour) / 24;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> m = 0.9856 * t - 3.289;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> l = fix_degrees(</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    m + 1.916 * sin(<a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(m)) + 0.020 * sin(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(2 * m)) + 282.634);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">auto</span> ra = fix_degrees(<a class="code" href="namespacefirestarr_1_1util.html#a332d871cd3b5b638cb94e5f30accb5da">util::to_degrees</a>(atan(0.91764 * tan(<a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(l)))));</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    m + 1.916 * sin(util::to_radians(m)) + 0.020 * sin(</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      util::to_radians(2 * m)) + 282.634);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">auto</span> ra = fix_degrees(util::to_degrees(atan(0.91764 * tan(util::to_radians(l)))));</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> l_quadrant = floor(l / 90) * 90;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> ra_quadrant = floor(ra / 90) * 90;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  ra += l_quadrant - ra_quadrant;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  ra /= 15;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> sin_dec = 0.39782 * sin(<a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(l));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> sin_dec = 0.39782 * sin(util::to_radians(l));</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> cos_dec = cos(asin(sin_dec));</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> cos_h = (cos(Zenith) - sin_dec * sin(<a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(latitude))) / (cos_dec</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> cos_h = (cos(Zenith) - sin_dec * sin(util::to_radians(latitude))) / (cos_dec</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    *</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    cos(<a class="code" href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">util::to_radians</a>(latitude)));</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    cos(util::to_radians(latitude)));</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordflow">if</span> (cos_h &gt; 1)</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  {</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// sun never rises</span></div>
@@ -152,7 +152,7 @@ $(function() {
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// sun never sets</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> for_sunrise ? 25 : -1;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">auto</span> h = <a class="code" href="namespacefirestarr_1_1util.html#a332d871cd3b5b638cb94e5f30accb5da">util::to_degrees</a>(acos(cos_h));</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">auto</span> h = util::to_degrees(acos(cos_h));</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keywordflow">if</span> (for_sunrise)</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  {</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    h = 360 - h;</div>
@@ -219,8 +219,6 @@ $(function() {
 <div class="ttc" id="aclassfirestarr_1_1topo_1_1_start_point_html"><div class="ttname"><a href="classfirestarr_1_1topo_1_1_start_point.html">firestarr::topo::StartPoint</a></div><div class="ttdoc">A Point that has sunrise and sunset times for each day.</div><div class="ttdef"><b>Definition:</b> <a href="_start_point_8h_source.html#l00028">StartPoint.h:29</a></div></div>
 <div class="ttc" id="aclassfirestarr_1_1topo_1_1_start_point_html_a0c33afe1a54a99437a4003404f127b0a"><div class="ttname"><a href="classfirestarr_1_1topo_1_1_start_point.html#a0c33afe1a54a99437a4003404f127b0a">firestarr::topo::StartPoint::operator=</a></div><div class="ttdeci">StartPoint &amp; operator=(const StartPoint &amp;rhs)=default</div><div class="ttdoc">Copy assignment.</div></div>
 <div class="ttc" id="aclassfirestarr_1_1topo_1_1_start_point_html_aedfd9608351a5b99e5fd5c2dd2cf6e79"><div class="ttname"><a href="classfirestarr_1_1topo_1_1_start_point.html#aedfd9608351a5b99e5fd5c2dd2cf6e79">firestarr::topo::StartPoint::StartPoint</a></div><div class="ttdeci">StartPoint(double latitude, double longitude) noexcept</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_start_point_8cpp_source.html#l00124">StartPoint.cpp:124</a></div></div>
-<div class="ttc" id="anamespacefirestarr_1_1util_html_a332d871cd3b5b638cb94e5f30accb5da"><div class="ttname"><a href="namespacefirestarr_1_1util.html#a332d871cd3b5b638cb94e5f30accb5da">firestarr.util::to_degrees</a></div><div class="ttdeci">constexpr double to_degrees(const double radians)</div><div class="ttdoc">Convert radians to degrees.</div><div class="ttdef"><b>Definition:</b> <a href="_util_8h_source.html#l00146">Util.h:146</a></div></div>
-<div class="ttc" id="anamespacefirestarr_1_1util_html_a9a56b59e9e56e464019be9064248e613"><div class="ttname"><a href="namespacefirestarr_1_1util.html#a9a56b59e9e56e464019be9064248e613">firestarr.util::to_radians</a></div><div class="ttdeci">constexpr double to_radians(const double degrees) noexcept</div><div class="ttdoc">Convert degrees to radians.</div><div class="ttdef"><b>Definition:</b> <a href="_util_8h_source.html#l00128">Util.h:128</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

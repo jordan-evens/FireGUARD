@@ -1,5 +1,0 @@
-<map id="fpaloader.FPALoader.save_and_read" name="fpaloader.FPALoader.save_and_read">
-<area shape="rect" id="node1" title="Save a URL and then return the contents of the saved file." alt="" coords="443,5,617,47"/>
-<area shape="rect" id="node2" href="$classfpaloader_1_1_f_p_a_loader.html#ad9b211142cd1ec84cc05eaaebf05b419" title="Load data." alt="" coords="224,13,395,39"/>
-<area shape="rect" id="node3" href="$classfpaloader_1_1_f_p_a_loader.html#a5cc6e5102d6ac2e7668c14fba1d81beb" title="Load the latest records using the specified interval to determine run." alt="" coords="5,5,176,47"/>
-</map>

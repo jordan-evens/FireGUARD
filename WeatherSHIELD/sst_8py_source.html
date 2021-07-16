@@ -72,7 +72,7 @@ $(function() {
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="namespacesst.html">    1</a></span>&#160;<span class="stringliteral">&quot;&quot;&quot;Gets ocean temperature indices and collates them&quot;&quot;&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">import</span> sys</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;sys.path.append(<span class="stringliteral">&#39;..\util&#39;</span>)</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;sys.path.append(<span class="stringliteral">&#39;../util&#39;</span>)</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">import</span> common</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">import</span> csv</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">import</span> netCDF4</div>
@@ -80,7 +80,7 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">import</span> datetime</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">import</span> os</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">import</span> numpy</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">import</span> pyodbc</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">import</span> psycopg2</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">import</span> math</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">import</span> logging</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
@@ -137,17 +137,14 @@ $(function() {
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="stringliteral">    Load data for all indices</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="stringliteral">    @return pandas DataFrame of loaded data</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="stringliteral">    &quot;&quot;&quot;</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">if</span> common.CURRENT_PROXY <span class="keywordflow">is</span> <span class="keywordflow">not</span> <span class="keywordtype">None</span> <span class="keywordflow">and</span> common.CURRENT_PROXY.endswith(common.MNR_PROXY):</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        common.set_proxy(<span class="keywordtype">None</span>)</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    common.check_proxy()</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    nino1_2 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino1+2&quot;</span>, url_nino1_2)</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    nino3 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino3&quot;</span>, url_nino3)</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    nino3_4 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino3.4&quot;</span>, url_nino3_4)</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    nino4 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino4&quot;</span>, url_nino4)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    all = pd.merge(pd.merge(pd.merge(nino1_2, nino3), nino3_4), nino4).set_index([<span class="stringliteral">&#39;Date&#39;</span>]).transpose()</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    all.index.name = <span class="stringliteral">&#39;Index&#39;</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    all.to_csv(<span class="stringliteral">r&#39;C:\inetpub\wwwroot\wxshield\nino.csv&#39;</span>)</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">return</span> all</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    nino1_2 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino1+2&quot;</span>, url_nino1_2)</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    nino3 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino3&quot;</span>, url_nino3)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    nino3_4 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino3.4&quot;</span>, url_nino3_4)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    nino4 = <a class="code" href="namespacesst.html#ae66e88607c089d3794107a093afcea33">getValues</a>(<span class="stringliteral">&quot;Nino4&quot;</span>, url_nino4)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    all = pd.merge(pd.merge(pd.merge(nino1_2, nino3), nino3_4), nino4).set_index([<span class="stringliteral">&#39;Date&#39;</span>]).transpose()</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    all.index.name = <span class="stringliteral">&#39;Index&#39;</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    all.to_csv(<span class="stringliteral">r&#39;C:\inetpub\wwwroot\wxshield\nino.csv&#39;</span>)</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">return</span> all</div>
 <div class="ttc" id="anamespacesst_html_a0bf68383a159aebff8c1ea58f6f6e233"><div class="ttname"><a href="namespacesst.html#a0bf68383a159aebff8c1ea58f6f6e233">sst.save_file</a></div><div class="ttdeci">def save_file(url)</div><div class="ttdoc">Save the given url.</div><div class="ttdef"><b>Definition:</b> <a href="sst_8py_source.html#l00028">sst.py:28</a></div></div>
 <div class="ttc" id="anamespacesst_html_a98c1d392de18e73c8bea56ee6a59dccd"><div class="ttname"><a href="namespacesst.html#a98c1d392de18e73c8bea56ee6a59dccd">sst.load</a></div><div class="ttdeci">def load()</div><div class="ttdoc">Load data for all indices.</div><div class="ttdef"><b>Definition:</b> <a href="sst_8py_source.html#l00064">sst.py:64</a></div></div>
 <div class="ttc" id="anamespacesst_html_ae66e88607c089d3794107a093afcea33"><div class="ttname"><a href="namespacesst.html#ae66e88607c089d3794107a093afcea33">sst.getValues</a></div><div class="ttdeci">def getValues(name, url)</div><div class="ttdoc">Get values for given name and url.</div><div class="ttdef"><b>Definition:</b> <a href="sst_8py_source.html#l00036">sst.py:36</a></div></div>

@@ -1,4 +1,0 @@
-<map id="firestarr.gis.find_best_raster" name="firestarr.gis.find_best_raster">
-<area shape="rect" id="node1" title="Find the raster with the closest meridian." alt="" coords="5,5,113,47"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1gis.html#a17ddfc6d0dcca472636f82db24b0c8aa" title="Find the meridians of input rasters for the given year." alt="" coords="161,5,287,47"/>
-</map>

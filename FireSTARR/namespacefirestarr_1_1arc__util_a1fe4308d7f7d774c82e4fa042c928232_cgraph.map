@@ -1,7 +1,0 @@
-<map id="firestarr.arc_util.setCommon" name="firestarr.arc_util.setCommon">
-<area shape="rect" id="node1" title="Set common elements that are on all maps." alt="" coords="5,111,188,138"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1arc__util.html#a61e6ea8d763c1e9000f8f15b12209941" title="Apply extent to data frame in map." alt="" coords="244,5,387,47"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1arc__util.html#a510bc46ad993ee783789e5ce347717d2" title="Apply perimeter to layer within mxd." alt="" coords="244,71,387,112"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1arc__util.html#aac815c6564fbc3d3b76b82963914cc19" title=" " alt="" coords="236,136,395,177"/>
-<area shape="rect" id="node5" href="$namespacefirestarr_1_1arc__util.html#a7d97e499e7d8a2a74b1f0e3c7fe92769" title="Set text for element." alt="" coords="237,202,393,229"/>
-</map>

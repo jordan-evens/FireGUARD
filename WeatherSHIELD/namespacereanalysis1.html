@@ -97,14 +97,14 @@ string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="na
 <tr class="memdesc:a586b0581a11b446b19cce0fb08423afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name to use for model data. <br /></td></tr>
 <tr class="separator:a586b0581a11b446b19cce0fb08423afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3464051909f2ea3247177ecac35043a"><td class="memItemLeft" align="right" valign="top"><a id="ae3464051909f2ea3247177ecac35043a"></a>
-string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereanalysis1.html#ae3464051909f2ea3247177ecac35043a">DIR_DATA</a> = '../data/wx/reanalysis1'</td></tr>
+string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereanalysis1.html#ae3464051909f2ea3247177ecac35043a">DIR_DATA</a> = '/FireGUARD/data/wx/reanalysis1'</td></tr>
 <tr class="memdesc:ae3464051909f2ea3247177ecac35043a"><td class="mdescLeft">&#160;</td><td class="mdescRight">directory to use for data save/load <br /></td></tr>
 <tr class="separator:ae3464051909f2ea3247177ecac35043a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4adf52027b704dee32455c3d71aaea49"><td class="memItemLeft" align="right" valign="top"><a id="a4adf52027b704dee32455c3d71aaea49"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>cnxn</b> = None</td></tr>
 <tr class="separator:a4adf52027b704dee32455c3d71aaea49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61fde40b5dbe2320e550a828dfe9dd7f"><td class="memItemLeft" align="right" valign="top"><a id="a61fde40b5dbe2320e550a828dfe9dd7f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>hindcasts</b> = pandas.read_sql('SELECT * FROM [HINDCAST].[DAT_Model] WHERE [Model]=\'{}\''.format(<a class="el" href="namespacereanalysis1.html#a586b0581a11b446b19cce0fb08423afe">MODEL_NAME</a>), cnxn)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>hindcasts</b> = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Model WHERE model=\'{}\''.format(<a class="el" href="namespacereanalysis1.html#a586b0581a11b446b19cce0fb08423afe">MODEL_NAME</a>), cnxn)</td></tr>
 <tr class="separator:a61fde40b5dbe2320e550a828dfe9dd7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a445721b78312f1090bae8978fcfcd47a"><td class="memItemLeft" align="right" valign="top"><a id="a445721b78312f1090bae8978fcfcd47a"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereanalysis1.html#a445721b78312f1090bae8978fcfcd47a">df</a> = <a class="el" href="namespacereanalysis1.html#a166ac21617cfa737114540efc2bb4110">get_year</a>(year)</td></tr>
@@ -152,7 +152,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>retry</b> = True</td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>netCDF4.Dataset of data read </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00071">71</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00070">70</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -201,7 +201,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>2d array of all valid combinations of lat/long within the bounds </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00053">53</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00052">52</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -239,7 +239,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>pandas.DataFrame with data for all indices for the year </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00100">100</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00099">99</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -296,7 +296,7 @@ Here is the call graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Relative Humidity (%) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00086">86</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00085">85</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 
 </div>
 </div>
@@ -325,7 +325,7 @@ Here is the call graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Path that file was saved to </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00034">34</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00033">33</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 
 </div>
 </div>
@@ -353,7 +353,7 @@ Here is the call graph for this function:</div>
 </div><!-- fragment -->
 <p>Provides mapping between fields we're looking for and the file names that contain them. </p>
 
-<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00017">17</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="reanalysis1_8py_source.html#l00016">16</a> of file <a class="el" href="reanalysis1_8py_source.html">reanalysis1.py</a>.</p>
 
 </div>
 </div>

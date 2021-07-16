@@ -1,8 +1,0 @@
-<map id="fpaloader.FPALoader.read_file" name="fpaloader.FPALoader.read_file">
-<area shape="rect" id="node1" title="Read entire contents of file into string." alt="" coords="687,42,881,69"/>
-<area shape="rect" id="node2" href="$classfpaloader_1_1_f_p_a_loader.html#a640a601b180cbf331f589d32805b3557" title="Load from specific set of files instead of current live version." alt="" coords="443,13,639,39"/>
-<area shape="rect" id="node4" href="$classfpaloader_1_1_f_p_a_loader.html#a5c9df72090ff81cc713b3a53dc1c4cf6" title="Save a URL and then return the contents of the saved file." alt="" coords="453,64,628,105"/>
-<area shape="rect" id="node3" href="$classfpaloader_1_1_f_p_a_loader.html#a363de235b191ceda6a3033b3b48b0d11" title="Determine which past run files we have and load them." alt="" coords="224,5,395,47"/>
-<area shape="rect" id="node5" href="$classfpaloader_1_1_f_p_a_loader.html#ad9b211142cd1ec84cc05eaaebf05b419" title="Load data." alt="" coords="224,71,395,98"/>
-<area shape="rect" id="node6" href="$classfpaloader_1_1_f_p_a_loader.html#a5cc6e5102d6ac2e7668c14fba1d81beb" title="Load the latest records using the specified interval to determine run." alt="" coords="5,64,176,105"/>
-</map>

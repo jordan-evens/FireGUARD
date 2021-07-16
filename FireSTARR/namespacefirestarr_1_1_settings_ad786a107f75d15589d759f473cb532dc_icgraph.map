@@ -1,6 +1,0 @@
-<map id="firestarr.Settings.getHomeDir" name="firestarr.Settings.getHomeDir">
-<area shape="rect" id="node1" title="Get home directory to be used as root." alt="" coords="256,56,444,83"/>
-<area shape="rect" id="node2" href="$namespacefirestarr_1_1_settings.html#afcbcd3459f190dcda8ce29c3e9b6f212" title="Expand path to include home directory." alt="" coords="13,5,200,32"/>
-<area shape="rect" id="node3" href="$namespacefirestarr_1_1_settings.html#adddcf0d399aef0eec00449cb89080ccd" title="Get folder that input rasters reside in." alt="" coords="5,56,208,83"/>
-<area shape="rect" id="node4" href="$namespacefirestarr_1_1_settings.html#ae4d24bea9648d10099eb746f7b2406a7" title="Reduce path to be relative to home directory." alt="" coords="16,107,197,133"/>
-</map>

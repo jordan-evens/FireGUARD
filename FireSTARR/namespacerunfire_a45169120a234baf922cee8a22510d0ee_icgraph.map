@@ -1,4 +1,0 @@
-<map id="runfire.get_fires" name="runfire.get_fires">
-<area shape="rect" id="node1" title="Get a list of fires based on Settings." alt="" coords="151,5,260,32"/>
-<area shape="rect" id="node2" href="$namespacerunfire.html#a2f70533d9dc3aea85a9a70d7451e970a" title="Run FireSTARR projections for all matching fires based on Settings." alt="" coords="5,5,103,32"/>
-</map>
