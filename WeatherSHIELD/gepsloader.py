@@ -212,7 +212,7 @@ class HPFXLoader(WeatherLoader):
                     raise
                 for_run = for_run + datetime.timedelta(hours=-self.interval)
                 logging.error("**** Moving back 1 run since data is unavailable. Now looking for {}".format(for_run.strftime("%Y%m%d%H")))
-    def __init__(self, name, for_days, interval, mask, dir, num_members, no_download=False):
+    def __init__(self, name, for_days, interval, mask, dir, no_download=False):
         """!
         Instantiate class
         @param name Name for weather being loaded
@@ -221,7 +221,6 @@ class HPFXLoader(WeatherLoader):
         @param interval distance between time steps (hours)
         @param mask Mask to use for making URL to download
         @param dir Subdirectory to download files from
-        #param num_members Number of ensemble members (including control)
         @param no_download Whether or not to not download files
         """
         super(HPFXLoader, self).__init__(name, for_days, no_download)
@@ -233,8 +232,6 @@ class HPFXLoader(WeatherLoader):
         self.mask = mask
         ## Subdirectory to download files from
         self.dir = dir
-        ## Number of ensemble members (including control)
-        self.num_members = num_members
 
 
 class GepsLoader(HPFXLoader):
@@ -254,7 +251,6 @@ class GepsLoader(HPFXLoader):
                                          interval=12,
                                          mask=mask,
                                          dir=dir,
-                                         num_members=21,
                                          no_download=no_download)
 
 
