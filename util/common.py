@@ -45,6 +45,15 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 # query parameter value required for driver
 PARAM = "%s"
 
+#DB_HOST = '172.18.0.200'
+DB_HOST = 'db'
+DB_PORT = 5432
+DB_NAME = 'FireGUARD'
+DB_USER = 'wx_readwrite'
+DB_PASSWORD = 'wx_r34dwr1t3p455w0rd!'
+#DB_USER = 'docker'
+#DB_PASSWORD = 'docker'
+
 def ensure_dir(dir):
     """!
     Check if directory exists and make it if not
@@ -420,18 +429,13 @@ def fix_execute(cursor, stmt, data):
                 logging.error(e2)
                 sys.exit(-1)
 
-DB_USER = 'wx_readwrite'
-DB_PASSWORD = 'wx_r34dwr1t3p455w0rd!'
-#DB_USER = 'docker'
-#DB_PASSWORD = 'docker'
-
 def open_local_db():
     """!
     @param dbname Name of database to open, or None to open default
     @return psycopg2 connection to database
     """
     logging.debug("Opening local database connection")
-    return psycopg2.connect(dbname='FireGUARD', port=5432, user=DB_USER, password=DB_PASSWORD, host='172.18.0.200')
+    return psycopg2.connect(dbname=DB_NAME, port=DB_PORT, user=DB_USER, password=DB_PASSWORD, host=DB_HOST)
 
 
 def save_data(table, wx, delete_all=False, dbname=None):

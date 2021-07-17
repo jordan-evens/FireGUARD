@@ -1,6 +1,5 @@
 @REM setup commands
 pushd ..
-docker network create --subnet 172.18.0.0/16 fireguard-network
 docker-compose build
 docker-compose up -d
 docker-compose exec -e PGPASSWORD=docker db psql FireGUARD -U docker -p 5432 -h localhost -f /FireGUARD/postgre.sql
@@ -27,6 +26,8 @@ REM one run ~455mb
 
 @REM wxshield web page
 docker compose exec wxshield /bin/bash
+REM sysctl net.ipv4.conf.all.forwarding=1
+REM sudo iptables -P FORWARD ACCEPT
 
 @REM firestarr cli
 docker compose run --rm firestarr /bin/bash

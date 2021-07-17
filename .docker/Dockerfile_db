@@ -1,3 +1,4 @@
 # syntax=docker/dockerfile:1
 FROM kartoza/postgis:13-3.1
 COPY WeatherSHIELD/db/postgre.sql /FireGUARD/
+EXPOSE 5432

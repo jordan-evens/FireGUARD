@@ -9,7 +9,6 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile_db
-    container_name: fireguard-db
     deploy:
       mode: global
     image: kartoza/postgis:13-3.1
@@ -26,16 +25,12 @@ services:
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
     ports:
       - 25432:5432
-    networks:
-      default:
-        ipv4_address: 172.18.0.200
     restart: on-failure
     healthcheck:
       test: "exit 0"
 
   db-backups:
     image: kartoza/pg-backup:13.0
-    container_name: pg-backups
     deploy:
       mode: global
     volumes:
@@ -46,10 +41,7 @@ services:
       - POSTGRES_PASS=docker
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
-      - POSTGRES_DBNAME=gis
-    networks:
-      default:
-        ipv4_address: 172.18.0.201
+      - POSTGRES_DBNAME=FireGUARD
     restart: on-failure
     depends_on:
       db:
@@ -59,15 +51,11 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile_gui
-    container_name: fireguard-wxshield
     deploy:
       mode: global
     image: "php:7.2-apache"
     ports:
       - 8080:80
-    networks:
-      default:
-        ipv4_address: 172.18.0.202
     restart: on-failure
     volumes:
       - type: bind
@@ -136,8 +124,3 @@ services:
       - type: bind
         source: ./data/generated/tiled
         target: /FireGUARD/100m/default
-
-networks:
-  default:
-    external: true
-    name: fireguard-network
