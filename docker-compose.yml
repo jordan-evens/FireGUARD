@@ -53,17 +53,17 @@ services:
       dockerfile: .docker/Dockerfile_gui
     deploy:
       mode: global
-    image: "php:7.2-apache"
+    image: "webdevops/php-nginx"
     ports:
-      - 8080:80
+      - "80:80"
     restart: on-failure
     volumes:
       - type: bind
         source: ./settings.ini
-        target: /var/www/html/settings.ini
+        target: /app/wxshield/settings.ini
       - type: bind
         source: ./WeatherSHIELD/gui
-        target: /var/www/html/wxshield
+        target: /app/wxshield/
     depends_on:
       db:
         condition: service_healthy

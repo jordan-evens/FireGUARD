@@ -1,17 +1,15 @@
-FROM php:7.2-apache
-WORKDIR /var/www/html/
+FROM webdevops/php-nginx
+WORKDIR /app/
 RUN apt-get update \
-	&& apt-get install -y libpq-dev \
-	&& docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-	&& docker-php-ext-install pdo pdo_pgsql pgsql \
+	&& apt-get install -y libpq-dev php-pgsql \
 	&& apt-get install -y wget unzip \
 	&& wget --no-check-certificate https://github.com/twbs/bootstrap/releases/download/v3.4.1/bootstrap-3.4.1-dist.zip \
 	&& rm -rf bootstrap \
 	&& unzip -o bootstrap-3.4.1-dist.zip \
 	&& rm bootstrap-3.4.1-dist.zip \
 	&& mv bootstrap-3.4.1-dist bootstrap \
-	&& mkdir -p /var/www/html/js/ \
-	&& cd /var/www/html/js/ \
+	&& mkdir -p /app/js/ \
+	&& cd /app/js/ \
 	&& wget --no-check-certificate https://code.jquery.com/jquery-1.11.3.js \
 	&& wget --no-check-certificate https://code.jquery.com/jquery-1.11.3.min.js \
 	&& wget --no-check-certificate https://github.com/jquery-validation/jquery-validation/archive/1.11.1.zip \
@@ -22,8 +20,8 @@ RUN apt-get update \
 	&& wget --no-check-certificate https://github.com/MrRio/jsPDF/archive/v1.2.61.zip \
 	&& unzip -o v1.2.61.zip \
 	&& rm v1.2.61.zip \
-	&& mkdir -p /var/www/html/js/jspdf \
-	&& mv /var/www/html/js/jsPDF-1.2.61/dist/jspdf.min.js /var/www/html/js/jspdf/jspdf.js \
+	&& mkdir -p /app/js/jspdf \
+	&& mv /app/js/jsPDF-1.2.61/dist/jspdf.min.js /app/js/jspdf/jspdf.js \
 	&& rm -rf jsPDF-1.2.61 \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* \
 	&& rm -rf \
@@ -35,4 +33,5 @@ RUN apt-get update \
       /usr/lib/node_modules/npm/doc/* \
       /usr/lib/node_modules/npm/html/* \
       /usr/lib/node_modules/npm/scripts/*
+EXPOSE 80
 EXPOSE 8080
