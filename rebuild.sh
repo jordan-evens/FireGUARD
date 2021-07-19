@@ -1,10 +1,13 @@
 #############  setup commands
 mkdir -p data/generated/tiled
+mkdir -p data/wx/longrange
 docker-compose stop
 docker-compose rm -f
 docker-compose build
 docker-compose up -d
 docker-compose exec -e PGPASSWORD=docker db psql FireGUARD -U docker -p 5432 -h localhost -f /FireGUARD/postgre.sql
+cp setup/lib/longrange_200001010000.csv data/wx/longrange/
+docker-compose run --rm wxcli python load_previous.py historic
 docker-compose run --rm wxcli python reanalysis1.py
 
 #############  utility commands that are useful
