@@ -34,4 +34,4 @@ RUN apt-get update \
       /usr/lib/node_modules/npm/html/* \
       /usr/lib/node_modules/npm/scripts/*
 EXPOSE 80
-EXPOSE 8080
+EXPOSE 443
