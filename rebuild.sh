@@ -16,23 +16,23 @@ docker-compose run --rm wxcli python load_previous.py historic
 #############  utility commands that are useful
 
 #############  wxcli python container
-# docker compose run --rm wxcli /bin/bash
-# docker compose run --rm wxcli python update.py
+# docker-compose run --rm wxcli /bin/bash
+# docker-compose run --rm wxcli python update.py
 
 #############  gis python container
-# docker compose run --rm gis /bin/bash
+# docker-compose run --rm gis /bin/bash
 
 #############  database access
-# docker exec -it fireguard-db psql -U docker -h localhost -d FireGUARD -p 5432
+# docker-compose exec -e PGPASSWORD=docker db psql --username=docker --host=db -d FireGUARD -p 5432
 
 # select pg_size_pretty(pg_database_size('FireGUARD'));
 
 
 #############  wxshield web page
-# docker compose exec wxshield /bin/bash
+# docker-compose exec wxshield /bin/bash
 
 #############  firestarr cli
-# docker compose run --rm firestarr /bin/bash
+# docker-compose run --rm firestarr /bin/bash
 
 #############  test firestarr
-# docker compose run --rm firestarr ./FireSTARR ./Data/output 2017-08-27 52.01 -89.024 12:15 -v --wx Data/output/wx.csv --ffmc 90 --dmc 40 --dc 300 --apcp_0800 0
+# docker-compose run --rm firestarr ./FireSTARR ./Data/output 2017-08-27 52.01 -89.024 12:15 -v --wx Data/output/wx.csv --ffmc 90 --dmc 40 --dc 300 --apcp_0800 0
