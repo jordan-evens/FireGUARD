@@ -25,7 +25,9 @@ from osgeo import ogr
 import osgeo
 import subprocess
 
-from Settings import Settings
+import sys
+sys.path.append('../util')
+import common
 
 ##########################
 # https://stackoverflow.com/questions/3662361/fill-in-missing-values-with-nearest-neighbour-in-python-numpy-masked-arrays
@@ -60,9 +62,6 @@ def fill(data, invalid=None):
     return data[tuple(ind)]
 ###########################
 
-
-settings = Settings()
-
 CELL_SIZE = 100
 DATA_DIR = os.path.realpath('/FireGUARD/data')
 EXTRACTED_DIR = os.path.join(DATA_DIR, 'extracted')
@@ -86,12 +85,12 @@ def getFeatures(gdf):
     import json
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
 
-ZONE_MIN = 15 + (settings.longitude_min + 93.0) / 6.0
+ZONE_MIN = 15 + (common.BOUNDS['longitude']['min'] + 93.0) / 6.0
 if int(ZONE_MIN) + 0.5 > ZONE_MIN:
     ZONE_MIN = float(int(ZONE_MIN))
 else:
     ZONE_MIN = int(ZONE_MIN) + 0.5
-ZONE_MAX = 15 + (settings.longitude_max + 93.0) / 6.0
+ZONE_MAX = 15 + (common.BOUNDS['longitude']['max'] + 93.0) / 6.0
 if round(ZONE_MAX, 0) < ZONE_MAX:
     ZONE_MAX = int(ZONE_MAX) + 0.5
 else:
@@ -111,7 +110,7 @@ def clip_zone(fp, prefix, zone):
     proj_srs = osr.SpatialReference(wkt=wkt)
     toProj = Proj(proj_srs.ExportToProj4())
     lat = (meridian, meridian)
-    lon = (settings.latitude_min, settings.latitude_max)
+    lon = (common.BOUNDS['latitude']['min'], common.BOUNDS['latitude']['max'])
     df = pd.DataFrame(np.c_[lat, lon], columns=['Longitude', 'Latitude'])
     x, y = toProj(df['Longitude'].values, df['Latitude'].values)
     MIN_EASTING = 300000
@@ -290,7 +289,7 @@ def check_base(fp, zone):
         proj_srs = osr.SpatialReference(wkt=wkt)
         toProj = Proj(proj_srs.ExportToProj4())
         lat = (meridian, meridian)
-        lon = (settings.latitude_min, settings.latitude_max)
+        lon = (common.BOUNDS['latitude']['min'], common.BOUNDS['latitude']['max'])
         df = pd.DataFrame(np.c_[lat, lon], columns=['Longitude', 'Latitude'])
         x, y = toProj(df['Longitude'].values, df['Latitude'].values)
         MIN_EASTING = 300000
