@@ -18,8 +18,10 @@ import rasterio
 from rasterio.merge import merge
 from rasterio.plot import show
 import glob
-import util
 import logging
+import sys
+sys.path.append('../util')
+import common
 
 DATA_DIR = os.path.realpath('../data')
 GIS = os.path.join(DATA_DIR, 'GIS')
@@ -31,9 +33,6 @@ MASK = r'http://mirrors.iplantcollaborative.org/earthenv_dem_data/EarthEnv-DEM90
 DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download/ftp', os.path.dirname(MASK.replace('http://', '')))
 
 def define_bounds():
-    import sys
-    sys.path.append('../util')
-    import common
     global RANGE_LATITUDE
     global RANGE_LONGITUDE
     MIN_LAT = int(common.BOUNDS['latitude']['min'] / 5) * 5
@@ -60,7 +59,7 @@ def define_bounds():
 
 
 def to_download(url):
-    return util.save_http(DOWNLOAD_DIR, url, ignore_existing=True)
+    return common.save_http(DOWNLOAD_DIR, url, ignore_existing=True)
 
 if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=4)
