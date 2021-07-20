@@ -10,9 +10,9 @@ class Settings:
         else:
             config.add_section('GIS')
             config.set('GIS', 'latitude_min', 41.0)
-            config.set('GIS', 'latitude_max', 57.0)
-            config.set('GIS', 'longitude_min', -96.0)
-            config.set('GIS', 'longitude_max', -73.0)
+            config.set('GIS', 'latitude_max', 84.0)
+            config.set('GIS', 'longitude_min', -141.0)
+            config.set('GIS', 'longitude_max', -52.0)
         with open(from_file, 'w') as to_file:
             config.write(to_file)
         self.latitude_min = float(config.get('GIS', 'latitude_min'))
