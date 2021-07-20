@@ -10,18 +10,25 @@ RUN pip install -r /FireGUARD/requirements_wxcli.txt \
 	&& tar -xzvf wgrib2.tgz.v3.0.2 \
 	&& rm wgrib2.tgz.v3.0.2 \
 	&& cd /FireGUARD/grib2 \
+  && sed -i "s/MAKE_SHARED_LIB=0/MAKE_SHARED_LIB=1/" makefile \
 	&& export CC=gcc \
 	&& export FC=gfortran \
 	&& export COMP_SYS=gnu_linux \
-  && sed -i "s/MAKE_SHARED_LIB=0/MAKE_SHARED_LIB=1/" makefile \
-	&& make \
-	&& mv wgrib2/wgrib2 /FireGUARD/wgrib2 \
   && make clean \
   && make lib \
-  && cp lib/libwgrib2.so /usr/local/lib/python3.6/site-packages/ \
-	&& apt-get purge -y --auto-remove gcc make gfortran \
-	&& apt-get install -y libgfortran5 libgomp1 \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/* \
+  && cp lib/libwgrib2.so /usr/local/lib/python3.6/site-packages/
+# don't need the wgrib2 binary but this is how you would get it
+#RUN export CC=gcc \
+#	&& export FC=gfortran \
+#	&& export COMP_SYS=gnu_linux \
+# && make clean \
+#	&& make \
+#	&& mv wgrib2/wgrib2 /FireGUARD/wgrib2
+RUN apt-get purge -y --auto-remove gcc make gfortran \
+	&& apt-get install -y libgfortran5 libgomp1 cron util-linux
+WORKDIR /FireGUARD/WeatherSHIELD
+RUN echo "*/5 * * * * root /usr/bin/flock -n /tmp/update.lockfile /FireGUARD/WeatherSHIELD/update.sh > /proc/1/fd/1 2>/proc/1/fd/2" >> /etc/crontab
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
 	&& rm -rf \
       /usr/share/man/* \
       /usr/includes/* \
@@ -31,4 +38,4 @@ RUN pip install -r /FireGUARD/requirements_wxcli.txt \
       /usr/lib/node_modules/npm/doc/* \
       /usr/lib/node_modules/npm/html/* \
       /usr/lib/node_modules/npm/scripts/*
-WORKDIR /FireGUARD/WeatherSHIELD
+ENTRYPOINT cron -f

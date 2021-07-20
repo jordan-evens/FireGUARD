@@ -16,8 +16,8 @@ docker-compose run --rm wxcli python load_previous.py historic
 #############  utility commands that are useful
 
 #############  wxcli python container
-# docker-compose run --rm wxcli /bin/bash
-# docker-compose run --rm wxcli python update.py
+# docker-compose exec wxcli /bin/bash
+# docker-compose exec wxcli python update.py
 
 #############  gis python container
 # docker-compose run --rm gis /bin/bash
