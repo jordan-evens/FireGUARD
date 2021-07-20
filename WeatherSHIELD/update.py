@@ -7,7 +7,6 @@ import common
 from gefsloader import GefsLoader
 from gepsloader import GepsLoader
 import gethistoric
-import sst
 
 def try_no_fail(fct):
     """!
@@ -30,7 +29,6 @@ def get_standard():
     """
     try_no_fail(gethistoric.get_standard)
     try_no_fail(GepsLoader().load_records)
-    try_no_fail(sst.load)
 
 
 # run get_standard() for each file

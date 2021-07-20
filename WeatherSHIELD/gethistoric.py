@@ -6,6 +6,7 @@ import datetime
 import sys
 sys.path.append('../util')
 import common
+import db
 from common import split_line
 import numpy
 import os
@@ -99,12 +100,12 @@ def load_file(for_run, force=False):
     def do_insert_only(cnxn, table, data):
         """Insert and assume success because no duplicate keys should exist"""
         # rely on deleting from FK table to remove everything from this table, so just insert
-        stmt_insert = common.make_insert_statement(table, data.reset_index().columns)
-        common.trans_insert_data(cnxn, data, stmt_insert)
+        stmt_insert = db.make_insert_statement(table, data.reset_index().columns)
+        db.trans_insert_data(cnxn, data, stmt_insert)
     try:
-        cnxn = common.open_local_db()
+        cnxn = db.open_local_db()
         cur_df = df
-        cur_df = common.write_foreign(cnxn, schema, 'DAT_Historic', ['generated'], common.trans_save_data, cur_df)
+        cur_df = db.write_foreign(cnxn, schema, 'DAT_Historic', ['generated'], db.trans_save_data, cur_df)
         logging.debug('Writing data to {}'.format(final_table))
         do_insert_only(cnxn, '{}.{}'.format(schema, final_table), cur_df)
         cnxn.commit()
@@ -119,7 +120,7 @@ def check_exists(for_run):
     @return Whether or not data exists in database for given run
     """
     try:
-        cnxn = common.open_local_db()
+        cnxn = db.open_local_db()
         df = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Historic', cnxn)
     finally:
         cnxn.close()

@@ -2,6 +2,7 @@
 import sys
 sys.path.append('../util')
 import common
+import db
 import csv
 import netCDF4
 import pandas
@@ -211,7 +212,7 @@ if __name__ == '__main__':
     #~ for year in [2019]:
     cnxn = None
     try:
-        cnxn = common.open_local_db()
+        cnxn = db.open_local_db()
         hindcasts = pandas.read_sql('SELECT * FROM HINDCAST.DAT_Model WHERE model=\'{}\''.format(MODEL_NAME), cnxn)
         for year in range(1948, datetime.datetime.now().year):
         #for year in [1948]:
@@ -220,7 +221,7 @@ if __name__ == '__main__':
                 df = get_year(year)
                 retry = True
                 # HACK: keeps failing on insert timing out so try until it doesn't
-                common.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'year')
+                db.insert_weather('HINDCAST', 'DAT_Hindcast', df, 'year')
             else:
                 print('Already have {} data for {}'.format(MODEL_NAME, year))
     finally:

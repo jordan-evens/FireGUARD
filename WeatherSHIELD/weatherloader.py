@@ -3,6 +3,7 @@
 import sys
 sys.path.append('../util')
 import common
+import db
 import pandas
 import os
 
@@ -19,7 +20,7 @@ class WeatherLoader(object):
         """
         cnxn = None
         try:
-            cnxn = common.open_local_db()
+            cnxn = db.open_local_db()
             df = pandas.read_sql('SELECT * FROM INPUTS.DAT_Model WHERE model=\'{}\''.format(self.name), cnxn)
         finally:
             if cnxn:
@@ -32,7 +33,7 @@ class WeatherLoader(object):
         @param wx Weather to put into database
         @return None
         """
-        common.insert_weather('INPUTS', 'DAT_Forecast', wx)
+        db.insert_weather('INPUTS', 'DAT_Forecast', wx)
     def load_records(self, max_retries=5):
         """!
         Load the latest records using the specified interval to determine run
