@@ -38,15 +38,15 @@ def make_insert_statement(table, columns, no_join=True):
     @return INSERT statement that was created
     """
     if no_join:
-        return "INSERT INTO {table}({cols}) values ({vals})".format(
+        return "INSERT INTO {table}({cols}) values {vals}".format(
                 table=table,
                 cols=', '.join(columns),
-                vals=', '.join([PARAM] * len(columns))
+                vals=PARAM
             )
     return """
 INSERT INTO {table}({cols})
 SELECT {val_cols}
-FROM (VALUES ({vals})) val ({cols})
+FROM (VALUES {vals}) val ({cols})
 LEFT JOIN {table} d ON
     {join_stmt}
 WHERE
@@ -57,7 +57,7 @@ WHERE
         val_cols=', '.join(map(lambda x: 'val.' + x, columns)),
         join_stmt=' AND '.join(map(lambda x: 'val.' + x + '=d.' + x, columns)),
         null_stmt=' AND '.join(map(lambda x: 'd.' + x + ' IS NULL', columns)),
-        vals=', '.join([PARAM] * len(columns))
+        vals=PARAM
     )
 
 
@@ -78,14 +78,14 @@ def make_sub_insert_statement(table, columns, fkId, fkName, fkTable, fkColumns):
         INSERT INTO {table}({actual_cols})
         SELECT d.{fkId} AS {fkName}, {val_cols}
         FROM
-            (VALUES ({vals})) val ({cols})
+            (VALUES {vals}) val ({cols})
             LEFT JOIN {fkTable} d
             ON {join_stmt}
         """.format(
                 table=table,
                 actual_cols=', '.join([fkName] + actual_columns),
                 cols=', '.join(columns),
-                vals=', '.join([PARAM] * len(columns)),
+                vals=PARAM,
                 fkId=fkId,
                 fkName=fkName,
                 val_cols=', '.join(map(lambda x: 'val.' + x, actual_columns)),
@@ -126,21 +126,18 @@ def fix_execute(cursor, stmt, data):
     @return None
     """
     try:
-        psycopg2.extras.execute_batch(cursor, stmt, data, page_size=100000)
+        print(stmt)
+        if 'DELETE' in stmt:
+            psycopg2.extras.execute_batch(cursor, stmt, data, page_size=100000)
+        else:
+            psycopg2.extras.execute_values(cursor, stmt, (tuple(map(fix_Types, x)) for x in data))
         # doesn't want to work
         # cursor.execute("PREPARE stmt AS {}".format(stmt))
         # execute_batch(cur, "EXECUTE stmt (%s)", params_list)
         # cursor.execute("DEALLOCATE stmt")
     except psycopg2.Error as e:
         logging.error(e)
-        for vals in (tuple(map(fix_Types, x)) for x in data):
-            try:
-                cursor.execute(stmt, vals)
-            except psycopg2.Error as e2:
-                logging.error('Error inserting:')
-                logging.error(vals)
-                logging.error(e2)
-                sys.exit(-1)
+        sys.exit(-1)
 
 def open_local_db():
     """!
