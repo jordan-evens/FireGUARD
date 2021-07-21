@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['infolist_39',['infolist',['../classunpack_1_1_tar_file_wrapper.html#af7157907307ee7b0e00ef9bde209f4b5',1,'unpack::TarFileWrapper']]],
-  ['isnotnoneorinvalid_40',['isNotNoneOrInvalid',['../namespaceshared.html#aa7c0d942b94b0d3a6b57d95324048f23',1,'shared']]]
+  ['tarfilewrapper_18',['TarFileWrapper',['../classunpack_1_1_tar_file_wrapper.html',1,'unpack']]],
+  ['try_5fremove_19',['try_remove',['../namespaceutil.html#a9283027692a65eb1e9989befd4812817',1,'util']]]
 ];

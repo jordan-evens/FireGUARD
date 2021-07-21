@@ -1,5 +1,0 @@
-<map id="sst.load" name="sst.load">
-<area shape="rect" id="node1" title="Load data for all indices." alt="" coords="5,5,72,32"/>
-<area shape="rect" id="node2" href="$namespacesst.html#ae66e88607c089d3794107a093afcea33" title="Get values for given name and url." alt="" coords="120,5,221,32"/>
-<area shape="rect" id="node3" href="$namespacesst.html#a0bf68383a159aebff8c1ea58f6f6e233" title="Save the given url." alt="" coords="269,5,364,32"/>
-</map>

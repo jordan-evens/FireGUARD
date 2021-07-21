@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['getfeatures_37',['getFeatures',['../namespaceshared.html#a872f106391b0d74e9658de99a0e624ce',1,'shared']]],
-  ['getrasters_38',['getRasters',['../namespaceshared.html#ae2328414a85450aed078093ade9c6e22',1,'shared']]]
+  ['save_5fftp_16',['save_ftp',['../namespaceutil.html#abbd2bcd09b48d783e40f65d9ce9bed5b',1,'util']]],
+  ['save_5fhttp_17',['save_http',['../namespaceutil.html#a725fbd008e7ba7e8aef19e5cfc3df3e2',1,'util']]]
 ];

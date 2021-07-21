@@ -1,5 +1,0 @@
-<map id="sst.getValues" name="sst.getValues">
-<area shape="rect" id="node1" title="Get values for given name and url." alt="" coords="325,5,427,32"/>
-<area shape="rect" id="node2" href="$namespacesst.html#a98c1d392de18e73c8bea56ee6a59dccd" title="Load data for all indices." alt="" coords="211,5,277,32"/>
-<area shape="rect" id="node3" href="$namespacegetscores.html#a8506c12e0723154c26642bfe7da358d3" title="Get values for all indices and calculate moving averages and trends." alt="" coords="5,5,163,32"/>
-</map>
