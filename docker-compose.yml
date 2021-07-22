@@ -9,8 +9,6 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile_db
-    deploy:
-      mode: global
     image: kartoza/postgis:13-3.1
     volumes:
       - postgis-data:/var/lib/postgresql
@@ -29,8 +27,6 @@ services:
 
   db-backups:
     image: kartoza/pg-backup:13.0
-    deploy:
-      mode: global
     volumes:
       - dbbackups:/backups
     environment:
@@ -48,8 +44,6 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile_gui
-    deploy:
-      mode: global
     image: "webdevops/php-nginx"
     ports:
       - "80:80"
